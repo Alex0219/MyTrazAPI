@@ -1,0 +1,15 @@
+eclipse.preferences.version=1
+encoding//src/de/fileinputstream/none/api/commands/CommandBan.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandCheck.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandHistory.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandMute.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandRang.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandTempBan.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandTempMute.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandUnBan.java=UTF-8
+encoding//src/de/fileinputstream/none/api/commands/CommandUnMute.java=UTF-8
+encoding//src/de/fileinputstream/none/api/listeners/ListenerChat.java=UTF-8
+encoding//src/de/fileinputstream/none/api/listeners/ListenerJoin.java=UTF-8
+encoding//src/de/fileinputstream/none/api/punishment/BanManager.java=UTF-8
+encoding//src/de/fileinputstream/none/api/punishment/MuteManager.java=UTF-8
+encoding//src/de/fileinputstream/none/api/rank/scoreboard/NameTags.java=UTF-8

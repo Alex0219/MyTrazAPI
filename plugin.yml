@@ -1,0 +1,24 @@
+name: NoneAPI
+version: 1.0
+main: de.fileinputstream.none.api.Bootstrap
+author: FileInputStream
+
+commands:
+
+    ban:
+    
+    mute:
+    
+    unmute:
+    
+    unban:
+    
+    check:
+    
+    tempban:
+    
+    history:
+    
+    tempmute:
+    
+    rang:

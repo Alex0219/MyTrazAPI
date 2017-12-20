@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="NoneAPI">
+    <output-path>$USER_HOME$/Documents</output-path>
+    <root id="archive" name="NoneAPI.jar">
+      <element id="module-output" name="None - API" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+    </root>
+  </artifact>
+</component>
