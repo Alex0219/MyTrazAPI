@@ -35,8 +35,6 @@ public class Client {
 	private boolean autoKill;
 	private boolean secureMode;
 	private boolean muted;
-	
-	private boolean alreadyExecuted;
 
 	/**
 	 * Constructs a simple client with just a hostname and port to connect to
@@ -234,6 +232,7 @@ public class Client {
 							}
 						}
 
+                        onConnectionGood();
 
 						// Auf eingehende Nachricht warten und diese bei Eintreffen lesen
 						ObjectInputStream ois = new ObjectInputStream(loginSocket.getInputStream());
@@ -314,13 +313,12 @@ public class Client {
 			tempOIS.close();
 			tempSocket.close();
 
-		
 			if (raw instanceof Datapackage) {
 				return (Datapackage) raw;
 			}
-		
 		} catch (Exception ex) {
-		}
+
+        }
 
 		return null;
 	}

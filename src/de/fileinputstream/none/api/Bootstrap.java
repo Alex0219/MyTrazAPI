@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import de.fileinputstream.none.api.cache.UserCache;
+import de.fileinputstream.none.api.commands.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -11,19 +13,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.blogspot.debukkitsblog.net.Datapackage;
 
-import de.fileinputstream.none.api.commands.CommandBan;
-import de.fileinputstream.none.api.commands.CommandCheck;
-import de.fileinputstream.none.api.commands.CommandHistory;
-import de.fileinputstream.none.api.commands.CommandMute;
-import de.fileinputstream.none.api.commands.CommandRang;
-import de.fileinputstream.none.api.commands.CommandTempBan;
-import de.fileinputstream.none.api.commands.CommandTempMute;
-import de.fileinputstream.none.api.commands.CommandUnBan;
-import de.fileinputstream.none.api.commands.CommandUnMute;
 import de.fileinputstream.none.api.listeners.ListenerChat;
 import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
 import de.fileinputstream.none.api.listeners.ListenerJoin;
 import de.fileinputstream.none.api.listeners.ListenerLogin;
+import de.fileinputstream.none.api.listeners.ListenerWorldChange;
 import de.fileinputstream.none.api.rank.scoreboard.NameTags;
 import de.fileinputstream.none.api.resilentclient.ResilentClient;
 import de.fileinputstream.none.api.sql.MySQL;
@@ -39,47 +33,34 @@ public class Bootstrap extends JavaPlugin {
 	public boolean isConnected ;
 	
 	private static String serverName;
-	
-	
-	
-	@Override
-	public void onEnable() {
-		instance = this;
-		serverName = getConfig().getString("ServerName");
-		NameTags.initScoreboardTeams();
+
+    private static UserCache userCache;
+
+    public static String getServerName() {
+        return serverName;
+    }
+
+    public static ResilentClient getResilentClient() {
+        return resilentClient;
+    }
+
+    @Override
+    public void onDisable() {
+        instance = null;
+    }
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        serverName = getConfig().getString("ServerName");
+        NameTags.initScoreboardTeams();
 		registerCommands();
 		registerListeners();
 		createConfig();
 		connectMySQL();
-		connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
-		
-		
-	}
-	
-	@Override
-	public void onDisable() {
-		instance = null;
-	}
-	
-	public void registerCommands() {
-		   getCommand("ban").setExecutor(new CommandBan());
-	        getCommand("unban").setExecutor(new CommandUnBan());
-	        getCommand("history").setExecutor(new CommandHistory());
-	        getCommand("check").setExecutor(new CommandCheck());
-	        getCommand("mute").setExecutor(new CommandMute());
-	        getCommand("tempban").setExecutor(new CommandTempBan());
-	        getCommand("unmute").setExecutor(new CommandUnMute());
-	        getCommand("tempmute").setExecutor(new CommandTempMute());
-	        getCommand("rang").setExecutor(new CommandRang());
-	  
-	}
-	
-	public void registerListeners() {
-		PluginManager pm = Bukkit.getPluginManager();
-		pm.registerEvents(new ListenerChat(), this);
-		pm.registerEvents(new ListenerCommandExecutor(), this);
-		pm.registerEvents(new ListenerLogin(), this);
-		pm.registerEvents(new ListenerJoin(), this);
+        //connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
+
+
 	}
 	
 	public static MySQL getMysql() {
@@ -115,23 +96,40 @@ public class Bootstrap extends JavaPlugin {
 		saveConfig(); 
 		
 		}
-	
-	public void connectToResilentServer(String hostname, int port) {
-		resilentClient = new ResilentClient(hostname, port);
-		resilentClient.start();
-		resilentClient.sendMessage(new Datapackage("HANDSHAKE", "N/Z(HU(&/GZGVT&HU&T/IJUZ/(JUIHWZ/HEUHZEHWUJDWUZDHWNJDIUWHDWNDJWDHWDN",getServerName()));
-	}
-	
-	public boolean isConnected() {
-		return isConnected;
-	}
-	
-	public static ResilentClient getResilentClient() {
-		return resilentClient;
-	}
-	
-	public static String getServerName() {
-		return serverName;
+
+    //public void connectToResilentServer(String hostname, int port) {
+    //	resilentClient = new ResilentClient(hostname, port);
+    //	resilentClient.start();
+    //	resilentClient.sendMessage(new Datapackage("HANDSHAKE", "N/Z(HU(&/GZGVT&HU&T/IJUZ/(JUIHWZ/HEUHZEHWUJDWUZDHWNJDIUWHDWNDJWDHWDN",getServerName(), Bukkit.getPort()));
+//	}
+
+    public void registerCommands() {
+        getCommand("ban").setExecutor(new CommandBan());
+        getCommand("unban").setExecutor(new CommandUnBan());
+        getCommand("history").setExecutor(new CommandHistory());
+        getCommand("check").setExecutor(new CommandCheck());
+        getCommand("mute").setExecutor(new CommandMute());
+        getCommand("tempban").setExecutor(new CommandTempBan());
+        getCommand("unmute").setExecutor(new CommandUnMute());
+        getCommand("tempmute").setExecutor(new CommandTempMute());
+        getCommand("rang").setExecutor(new CommandRang());
+        getCommand("vanish").setExecutor(new ExternalCommands());
+
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void registerListeners() {
+        PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new ListenerChat(), this);
+        pm.registerEvents(new ListenerCommandExecutor(), this);
+        pm.registerEvents(new ListenerLogin(), this);
+        pm.registerEvents(new ListenerJoin(), this);
+        pm.registerEvents(new ListenerWorldChange(), this);
+        pm.registerEvents(new ExternalCommands(), this);
+
 	}
 	
 	public void enableSigns() {

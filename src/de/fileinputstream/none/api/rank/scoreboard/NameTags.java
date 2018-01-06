@@ -1,24 +1,19 @@
 package de.fileinputstream.none.api.rank.scoreboard;
 
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import de.fileinputstream.none.api.cache.UUIDFetcher;
+import de.fileinputstream.none.api.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.rank.RankManager;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class NameTags {
 
-	private static HashMap<String, Object> teams = new HashMap<>();
-
+    public static HashMap<UUID, String> userCache = new HashMap<>();
+    private static HashMap<String, Object> teams = new HashMap<>();
 
     public static void updateTeams() {
         for (Map.Entry entry : teams.entrySet()) {
@@ -28,9 +23,7 @@ public class NameTags {
                 try {
                     Constructor<?> scoreboardTeamConstructor = getNMSClass("PacketPlayOutScoreboardTeam")
                             .getConstructor(getNMSClass("ScoreboardTeam"), int.class);
-
                     sendPacket(all, scoreboardTeamConstructor.newInstance(entry.getValue(), 1));
-
                     sendPacket(all, scoreboardTeamConstructor.newInstance(entry.getValue(), 0));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -64,67 +57,67 @@ public class NameTags {
         String uuid = UUIDFetcher.getUUID(player.getName()).toString();
         if (RankManager.getRank(uuid).equalsIgnoreCase("admin".toLowerCase())) {
             setPlayer(player, "admin");
-            player.setPlayerListName("§4Admin §7● §4" + player.getName());
+            player.setPlayerListName("§4§l" + player.getName());
             return;
-        } else if(RankManager.getRank(uuid).equalsIgnoreCase("owner".toLowerCase())) {
-            setPlayer(player, "owner");
-            player.setPlayerListName("§4Owner §7● §4" + player.getName());
-            return;
-        } else if(RankManager.getRank(uuid).equalsIgnoreCase("dev".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("dev".toLowerCase())) {
             setPlayer(player, "dev");
-            player.setPlayerListName("§3Dev §7● §3" + player.getName());
+            player.setPlayerListName("§3" + player.getName());
             return;
-        } else  if(RankManager.getRank(uuid).equalsIgnoreCase("sup".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("sup".toLowerCase())) {
             setPlayer(player, "sup");
-            player.setPlayerListName("§2Sup §7● §2" + player.getName());
+            player.setPlayerListName("§1" + player.getName());
             return;
-        } else  if(RankManager.getRank(uuid).equalsIgnoreCase("builder".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("architekt".toLowerCase())) {
             setPlayer(player, "builder");
-            player.setPlayerListName("§eBuilder §7● §e" +player.getName());
+            player.setPlayerListName("§2" + player.getName());
             return;
-        } else  if(RankManager.getRank(uuid).equalsIgnoreCase("youtuber".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("youtuber".toLowerCase())) {
             setPlayer(player, "youtube");
-            player.setPlayerListName("§5YouTuber §7● §5" + player.getName());
+            player.setPlayerListName("§5" + player.getName());
             return;
-        } else  if(RankManager.getRank(uuid).equalsIgnoreCase("premium".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("premium".toLowerCase())) {
             setPlayer(player, "premium");
             player.setPlayerListName("§6" + player.getName());
             return;
-        } else if(RankManager.getRank(uuid).equalsIgnoreCase("spieler".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("spieler".toLowerCase())) {
             setPlayer(player, "spieler");
             player.setPlayerListName("§7" + player.getName());
             return;
-        } else if(RankManager.getRank(uuid).equalsIgnoreCase("premiumplus".toLowerCase())) {
-            setPlayer(player, "premiumplus");
-            player.setPlayerListName("§6Premium+ §7● §6" + player.getName());
-            return;
-        }  else if(RankManager.getRank(uuid).equalsIgnoreCase("mod".toLowerCase())) {
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("mod".toLowerCase())) {
             setPlayer(player, "mod");
-            player.setPlayerListName("§cMod §7● §c" + player.getName());
+            player.setPlayerListName("§cM" + player.getName());
             return;
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("bauleitung".toLowerCase())) {
+            setPlayer(player, "bauleitung");
+            player.setPlayerListName("§2§l" + player.getName());
+            return;
+        } else if (RankManager.getRank(uuid).equalsIgnoreCase("teamleitung".toLowerCase())) {
+            setPlayer(player, "teamleitung");
+            player.setPlayerListName("§c§l" + player.getName());
+            return;
+            //§8[§8] §8[§cM§8]§c" + p.getName() + "§7 » "
         }
-
 
 
     }
 
     public static void initScoreboardTeams() {
-        String suffix = "§8┃ §7";
-
+        String suffix = "";
         try {
+
             Constructor<?> boardConstructor = getNMSClass("Scoreboard").getConstructor();
             Object board = boardConstructor.newInstance();
-            init("00000001Owner", "owner", "§4Owner" + suffix, board);
-            init("00000002Admin","admin","§4Admin" + suffix, board);
-            init("00000002Dev","dev","§3Dev" + suffix, board);
-            init("00000003Mod", "mod", "§cMod" + suffix, board);
-            init("00000004Sup", "sup", "§2Sup" + suffix, board);
-            init("00000005Builder", "builder", "§eBuilder" + suffix, board);
-            init("00000006YouTube", "youtube", "§5YouTuber" + suffix, board);
-            init("00000007Premium+", "premiumplus", "§6Premium+" + suffix, board);
-            init("00000008Premium", "premium", "§6" + "", board);
-            init("00000009Spieler", "spieler", "§7" + "", board);
-
+            init("00001O", "owner", "§4Owner" + suffix, board);
+            init("00002A", "admin", "§4§l" + suffix, board);
+            init("00003TL", "teamleitung", "§c§l" + suffix, board);
+            init("00004D", "dev", "§3" + suffix, board);
+            init("00005M", "mod", "§c" + suffix, board);
+            init("00006S", "sup", "§1" + suffix, board);
+            init("00007BL", "bauleitung", "§2§l" + suffix, board);
+            init("00008Builder", "builder", "§2" + suffix, board);
+            init("00009YT", "youtube", "§5" + suffix, board);
+            init("000010Premium", "premium", "§6", board);
+            init("000011Spieler", "spieler", "§7", board);
         } catch (Exception e) {
             e.printStackTrace();
             Bukkit.getConsoleSender().sendMessage("§4Die Scoreboard Teams konnten nicht initialisiert werden!");
@@ -198,9 +191,7 @@ public class NameTags {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
             Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
             playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -209,9 +200,7 @@ public class NameTags {
         String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         try {
             return Class.forName("net.minecraft.server." + version + "." + name);
-        }
-
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }

@@ -21,34 +21,34 @@ public class ListenerChat implements Listener {
 
         String uuid = UUIDFetcher.getUUID(p.getName()).toString();
         if (RankManager.getRank(uuid).equalsIgnoreCase("mod".toLowerCase())) {
-            e.setFormat("§cMod §7● §c " + p.getName() + "§7 » " + msg);
+            e.setFormat("§c" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("builder".toLowerCase())) {
-            e.setFormat("§eBuilder §7● §e" + p.getName() + "§7 » " + msg);
+        if (RankManager.getRank(uuid).equalsIgnoreCase("architekt".toLowerCase())) {
+            e.setFormat("§2" + p.getName() + "§7 » " + msg);
         }
         if (RankManager.getRank(uuid).equalsIgnoreCase("spieler".toLowerCase())) {
             e.setFormat("§7" + p.getName() + "§7 » " + msg);
         }
         if (RankManager.getRank(uuid).equalsIgnoreCase("dev".toLowerCase())) {
-            e.setFormat("§3Dev §7● §3" + p.getName() + "§7 » " + msg);
-        }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("premiumplus".toLowerCase())) {
-            e.setFormat("§6Premium+ §7● §6" + p.getName() + "§7 » " + msg);
+            e.setFormat("§3" + p.getName() + "§7 » " + msg);
         }
         if (RankManager.getRank(uuid).equalsIgnoreCase("admin".toLowerCase())) {
-            e.setFormat("§4Admin §7● §4" + p.getName() + "§7 » " + msg);
+            e.setFormat("§4§l" + p.getName() + "§7 » " + msg);
         }
         if (RankManager.getRank(uuid).equalsIgnoreCase("sup".toLowerCase())) {
-            e.setFormat("§2Sup §7● §2" + p.getName() + "§7 » " + msg);
+            e.setFormat("§1" + p.getName() + "§7 » " + msg);
         }
         if (RankManager.getRank(uuid).equalsIgnoreCase("youtuber".toLowerCase())) {
-            e.setFormat("§5YouTuber §7● §5" + p.getName() + "§7 » " + msg);
+            e.setFormat("§5" + p.getName() + "§7 » " + msg);
         }
         if (RankManager.getRank(uuid).equalsIgnoreCase("premium".toLowerCase())) {
             e.setFormat("§6" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("owner".toLowerCase())) {
-            e.setFormat("§4Owner §7● §4" + p.getName() + "§7 » " + msg);
+        if (RankManager.getRank(uuid).equalsIgnoreCase("bauleitung".toLowerCase())) {
+            e.setFormat("§2§l" + p.getName() + "§7 » " + msg);
+        }
+        if (RankManager.getRank(uuid).equalsIgnoreCase("teamleitung".toLowerCase())) {
+            e.setFormat("§c§l" + p.getName() + "§7 » " + msg);
         }
         
     }

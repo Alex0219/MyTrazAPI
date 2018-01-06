@@ -44,9 +44,6 @@ public class RankManager {
 
     public static String getRank(String uuid)
     {
-
-
-
             String str = "";
             if (playerExists(uuid)) {
                 try {
