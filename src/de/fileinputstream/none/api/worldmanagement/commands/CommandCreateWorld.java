@@ -1,12 +1,16 @@
-package de.fileinputstream.none.api.cache;
+package de.fileinputstream.none.api.worldmanagement.commands;
 
-import java.util.HashMap;
-import java.util.UUID;
+import de.fileinputstream.none.api.Bootstrap;
+import de.fileinputstream.none.api.message.MessageManager;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * User: Alexander<br/>
- * Date: 04.01.2018<br/>
- * Time: 19:31<br/>
+ * Date: 06.01.2018<br/>
+ * Time: 15:48<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -38,33 +42,17 @@ import java.util.UUID;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class UserCache {
+public class CommandCreateWorld implements CommandExecutor {
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
 
-    public HashMap<UUID, String> userCache;
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
 
-    public UserCache() {
-        userCache = new HashMap<UUID, String>();
-    }
-
-    public void addEntry(UUID uuid, String rankName) {
-        userCache.put(uuid, rankName);
-    }
-
-    public void removeEntry(UUID uuid) {
-        userCache.remove(uuid);
-    }
-
-    public String getRank(UUID uuid) {
-        if (entryExists(uuid)) {
-            return userCache.get(uuid);
-        }
-        return "SPIELER";
-    }
-    public boolean entryExists(UUID uuid) {
-        if (userCache.containsKey(uuid)) {
-            return true;
         } else {
-            return false;
+            sender.sendMessage(Bootstrap.getMessageManager().COMMAND_NOT_AVAILABLE);
+            return true;
         }
+        return false;
     }
 }

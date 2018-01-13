@@ -1,12 +1,13 @@
-package de.fileinputstream.none.api.cache;
+package de.fileinputstream.none.api.worldmanagement.files;
 
-import java.util.HashMap;
-import java.util.UUID;
+import de.fileinputstream.none.api.Bootstrap;
+
+import java.io.File;
 
 /**
  * User: Alexander<br/>
- * Date: 04.01.2018<br/>
- * Time: 19:31<br/>
+ * Date: 07.01.2018<br/>
+ * Time: 16:50<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -38,33 +39,13 @@ import java.util.UUID;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class UserCache {
+public class WorldFileManager {
 
-    public HashMap<UUID, String> userCache;
+    public WorldFileManager() {
 
-    public UserCache() {
-        userCache = new HashMap<UUID, String>();
     }
 
-    public void addEntry(UUID uuid, String rankName) {
-        userCache.put(uuid, rankName);
-    }
-
-    public void removeEntry(UUID uuid) {
-        userCache.remove(uuid);
-    }
-
-    public String getRank(UUID uuid) {
-        if (entryExists(uuid)) {
-            return userCache.get(uuid);
-        }
-        return "SPIELER";
-    }
-    public boolean entryExists(UUID uuid) {
-        if (userCache.containsKey(uuid)) {
-            return true;
-        } else {
-            return false;
-        }
+    public void createWorldFile() {
+        File file = new File(Bootstrap.getInstance().getDataFolder() + "/Users/Worlds");
     }
 }

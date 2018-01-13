@@ -1,17 +1,13 @@
 package de.fileinputstream.none.api;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import de.fileinputstream.none.api.cache.UserCache;
-import de.fileinputstream.none.api.commands.*;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.blogspot.debukkitsblog.net.Datapackage;
+import de.fileinputstream.none.api.cache.UserCache;
+import de.fileinputstream.none.api.commands.*;
+import de.fileinputstream.none.api.message.MessageManager;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import de.fileinputstream.none.api.listeners.ListenerChat;
 import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
@@ -36,6 +32,8 @@ public class Bootstrap extends JavaPlugin {
 
     private static UserCache userCache;
 
+    private static MessageManager messageManager;
+
     public static String getServerName() {
         return serverName;
     }
@@ -49,19 +47,9 @@ public class Bootstrap extends JavaPlugin {
         instance = null;
     }
 
-    @Override
-    public void onEnable() {
-        instance = this;
-        serverName = getConfig().getString("ServerName");
-        NameTags.initScoreboardTeams();
-		registerCommands();
-		registerListeners();
-		createConfig();
-		connectMySQL();
-        //connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
-
-
-	}
+    public static MessageManager getMessageManager() {
+        return messageManager;
+    }
 	
 	public static MySQL getMysql() {
 		return mysql;
@@ -80,7 +68,28 @@ public class Bootstrap extends JavaPlugin {
 	    mysql.update("CREATE TABLE IF NOT EXISTS Mutes (Spielername VARCHAR(100), UUID VARCHAR(100), Ende VARCHAR(100), Grund VARCHAR(100), Dauer VARCHAR(100), Muter VARCHAR(100))");
 	    mysql.update("CREATE TABLE IF NOT EXISTS chatlogs(id VARCHAR(10), uuid VARCHAR(64), messages LONGTEXT);");
 	}
-	
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        userCache = new UserCache();
+        serverName = getConfig().getString("ServerName");
+        NameTags.initScoreboardTeams();
+        registerCommands();
+        registerListeners();
+        createConfig();
+        connectMySQL();
+        Bukkit.getOnlinePlayers().forEach(p -> {
+
+            NameTags.updateTeams();
+            NameTags.addToTeam(p);
+            NameTags.updateTeams();
+        });
+        connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
+
+
+    }
+
 	public void createConfig() {
 		getConfig().options().copyDefaults(true);
 		getConfig().addDefault("MySQl.Host", "");
@@ -93,15 +102,8 @@ public class Bootstrap extends JavaPlugin {
 		getConfig().addDefault("Resilent-Port", 8000);
 		getConfig().addDefault("LobbyMode", false);
 		getConfig().addDefault("ServerName", "");
-		saveConfig(); 
-		
-		}
-
-    //public void connectToResilentServer(String hostname, int port) {
-    //	resilentClient = new ResilentClient(hostname, port);
-    //	resilentClient.start();
-    //	resilentClient.sendMessage(new Datapackage("HANDSHAKE", "N/Z(HU(&/GZGVT&HU&T/IJUZ/(JUIHWZ/HEUHZEHWUJDWUZDHWNJDIUWHDWNDJWDHWDN",getServerName(), Bukkit.getPort()));
-//	}
+        saveConfig();
+    }
 
     public void registerCommands() {
         getCommand("ban").setExecutor(new CommandBan());
@@ -137,4 +139,18 @@ public class Bootstrap extends JavaPlugin {
 			
 		}
 	}
+
+    public void connectToResilentServer(String hostname, int port) {
+        resilentClient = new ResilentClient(hostname, port);
+        resilentClient.start();
+        resilentClient.sendMessage(new Datapackage("HANDSHAKE", "N/Z(HU(&/GZGVT&HU&T/IJUZ/(JUIHWZ/HEUHZEHWUJDWUZDHWNJDIUWHDWNDJWDHWDN", getServerName(), Bukkit.getPort()));
+    }
+
+    public void setupInstances() {
+        messageManager = new MessageManager();
+    }
+
+    public UserCache getUserCache() {
+        return userCache;
+    }
 }

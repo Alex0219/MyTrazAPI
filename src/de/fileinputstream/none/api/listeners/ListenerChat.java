@@ -12,46 +12,52 @@ import de.fileinputstream.none.api.cache.UUIDFetcher;
 import de.fileinputstream.none.api.punishment.MuteManager;
 import de.fileinputstream.none.api.rank.RankManager;
 
+import java.util.UUID;
+
 public class ListenerChat implements Listener {
 	
 	@EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
+        String uuid = UUIDFetcher.getUUID(p.getName()).toString();
         String msg = "%2$s";
 
-        String uuid = UUIDFetcher.getUUID(p.getName()).toString();
-        if (RankManager.getRank(uuid).equalsIgnoreCase("mod".toLowerCase())) {
+        String rank = "";
+        rank = RankManager.getRank(uuid);
+        Bootstrap.getInstance().getUserCache().addEntry(UUID.fromString(uuid), rank);
+        if (rank.equalsIgnoreCase("mod".toLowerCase())) {
             e.setFormat("§c" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("architekt".toLowerCase())) {
+        if (rank.equalsIgnoreCase("architekt".toLowerCase())) {
             e.setFormat("§2" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("spieler".toLowerCase())) {
+        if (rank.equalsIgnoreCase("spieler".toLowerCase())) {
             e.setFormat("§7" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("dev".toLowerCase())) {
+        if (rank.equalsIgnoreCase("dev".toLowerCase())) {
             e.setFormat("§3" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("admin".toLowerCase())) {
+        if (rank.equalsIgnoreCase("admin".toLowerCase())) {
             e.setFormat("§4§l" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("sup".toLowerCase())) {
+        if (rank.equalsIgnoreCase("sup".toLowerCase())) {
             e.setFormat("§1" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("youtuber".toLowerCase())) {
+        if (rank.equalsIgnoreCase("youtuber".toLowerCase())) {
             e.setFormat("§5" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("premium".toLowerCase())) {
+        if (rank.equalsIgnoreCase("premium".toLowerCase())) {
             e.setFormat("§6" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("bauleitung".toLowerCase())) {
+        if (rank.equalsIgnoreCase("bauleitung".toLowerCase())) {
             e.setFormat("§2§l" + p.getName() + "§7 » " + msg);
         }
-        if (RankManager.getRank(uuid).equalsIgnoreCase("teamleitung".toLowerCase())) {
+        if (rank.equalsIgnoreCase("teamleitung".toLowerCase())) {
             e.setFormat("§c§l" + p.getName() + "§7 » " + msg);
         }
         
     }
+
 
     @EventHandler
     public void chatFormat(AsyncPlayerChatEvent e) {
@@ -70,8 +76,8 @@ public class ListenerChat implements Listener {
             }
             if (((current < end ? 1 : 0) | (end == current ? 1 : 0)) != 0) {
                 e.setCancelled(true);
-             
-                p.sendMessage("§cSystem §7● §7Du wurdest f§r §e" + MuteManager.getDauer(uuid + " §7aus dem Chat gebannt§8!"));
+
+                p.sendMessage("§cSystem §7● §7Du wurdest für §e" + MuteManager.getDauer(uuid + " §7aus dem Chat gebannt§8!"));
                 p.sendMessage("§cSystem §7● §aVerbleibende Zeit§8: §e" + MuteManager.getRemainingTime(uuid));
             } else {
                 MuteManager.unmute(uuid);
@@ -79,5 +85,6 @@ public class ListenerChat implements Listener {
             }
         }
     }
+
 
 }

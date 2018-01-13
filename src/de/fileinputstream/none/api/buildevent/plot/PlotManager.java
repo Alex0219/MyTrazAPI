@@ -1,12 +1,16 @@
-package de.fileinputstream.none.api.cache;
+package de.fileinputstream.none.api.buildevent.plot;
 
-import java.util.HashMap;
-import java.util.UUID;
+import de.fileinputstream.none.api.Bootstrap;
+import de.fileinputstream.none.api.user.MyTrazUser;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
 
 /**
  * User: Alexander<br/>
- * Date: 04.01.2018<br/>
- * Time: 19:31<br/>
+ * Date: 08.01.2018<br/>
+ * Time: 21:02<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -38,33 +42,16 @@ import java.util.UUID;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class UserCache {
+public class PlotManager {
 
-    public HashMap<UUID, String> userCache;
+    public PlotManager() {
 
-    public UserCache() {
-        userCache = new HashMap<UUID, String>();
     }
 
-    public void addEntry(UUID uuid, String rankName) {
-        userCache.put(uuid, rankName);
-    }
+    public void setNewPlot(MyTrazUser user, int x1, int x2, int z1, int z2) {
 
-    public void removeEntry(UUID uuid) {
-        userCache.remove(uuid);
-    }
-
-    public String getRank(UUID uuid) {
-        if (entryExists(uuid)) {
-            return userCache.get(uuid);
-        }
-        return "SPIELER";
-    }
-    public boolean entryExists(UUID uuid) {
-        if (userCache.containsKey(uuid)) {
-            return true;
-        } else {
-            return false;
-        }
+        File file = new File(Bootstrap.getInstance().getDataFolder() + "/" + "buildPlots.yml");
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        // config.set();
     }
 }

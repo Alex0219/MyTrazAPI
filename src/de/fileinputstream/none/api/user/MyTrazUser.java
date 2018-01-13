@@ -1,12 +1,19 @@
-package de.fileinputstream.none.api.cache;
+package de.fileinputstream.none.api.user;
 
-import java.util.HashMap;
+import de.fileinputstream.none.api.cache.UUIDFetcher;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * User: Alexander<br/>
- * Date: 04.01.2018<br/>
- * Time: 19:31<br/>
+ * Date: 07.01.2018<br/>
+ * Time: 19:16<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -38,33 +45,28 @@ import java.util.UUID;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class UserCache {
+public class MyTrazUser {
 
-    public HashMap<UUID, String> userCache;
 
-    public UserCache() {
-        userCache = new HashMap<UUID, String>();
+    String name;
+    Player w;
+    List<World> worldList = new ArrayList<World>();
+
+    public MyTrazUser(String name) {
+        this.name = name;
     }
 
-    public void addEntry(UUID uuid, String rankName) {
-        userCache.put(uuid, rankName);
+    public boolean hasPlot() {
+        return new File("/BuildEvent/" + getUUID() + ".yml").exists();
     }
 
-    public void removeEntry(UUID uuid) {
-        userCache.remove(uuid);
+    public UUID getUUID() {
+        return UUIDFetcher.getUUID(this.name);
     }
 
-    public String getRank(UUID uuid) {
-        if (entryExists(uuid)) {
-            return userCache.get(uuid);
-        }
-        return "SPIELER";
-    }
-    public boolean entryExists(UUID uuid) {
-        if (userCache.containsKey(uuid)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // public List<World> getUserWorlds() {
+
+    //  }
+
+
 }

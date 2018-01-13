@@ -1,7 +1,9 @@
 package de.fileinputstream.none.api.listeners;
 
 import java.lang.reflect.Field;
+import java.util.UUID;
 
+import de.fileinputstream.none.api.Bootstrap;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,22 +29,26 @@ public class ListenerJoin implements Listener {
             player.sendMessage("");
         }
     	String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-        if (!RankManager.playerExists(uuid)) {
-            RankManager.createPlayer(uuid);
-        
-            	 NameTags.addToTeam(player);
-                 NameTags.updateTeams();
-   
-
+        if (Bootstrap.getInstance().getUserCache().entryExists(UUID.fromString(uuid))) {
+            return;
         } else {
-  
-            NameTags.addToTeam(player);
-            NameTags.updateTeams();
+            if (!RankManager.playerExists(uuid)) {
+                RankManager.createPlayer(uuid);
+                NameTags.addToTeam(player);
+                NameTags.updateTeams();
+                Bootstrap.getInstance().getUserCache().addEntry(UUID.fromString(uuid), "SPIELER");
+
+            } else {
+                NameTags.addToTeam(player);
+                NameTags.updateTeams();
+                Bootstrap.getInstance().getUserCache().addEntry(UUID.fromString(uuid), RankManager.getRank(uuid));
+            }
         }
+
       //  event.setJoinMessage(null);
 
-     
-        sendTablistHeaderAndFooter(player, "§7MyTraz.net", "§7Unser Teamspeak: §cts.mytraz.net");
+
+        sendTablistHeaderAndFooter(player, "§7§lMyTraz.net - §6No Limit Modded Minecraft Netzwerk", "§7Unser Teamspeak: §cts.mytraz.net");
     }
 
     public void sendTablistHeaderAndFooter(Player p, String header, String footer) {

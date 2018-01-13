@@ -118,6 +118,7 @@ public class NameTags {
             init("00009YT", "youtube", "§5" + suffix, board);
             init("000010Premium", "premium", "§6", board);
             init("000011Spieler", "spieler", "§7", board);
+
         } catch (Exception e) {
             e.printStackTrace();
             Bukkit.getConsoleSender().sendMessage("§4Die Scoreboard Teams konnten nicht initialisiert werden!");
