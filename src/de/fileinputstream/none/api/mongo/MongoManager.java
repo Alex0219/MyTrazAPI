@@ -1,17 +1,21 @@
-package de.fileinputstream.none.api.buildevent;
+package de.fileinputstream.none.api.mongo;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import org.bson.Document;
+
+
+import java.net.UnknownHostException;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * User: Alexander<br/>
- * Date: 08.01.2018<br/>
- * Time: 20:39<br/>
+ * Date: 29.01.2018<br/>
+ * Time: 16:55<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,29 +47,44 @@ import java.util.Date;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class BuildEventManager {
+public class MongoManager {
 
-    public void storeUserData(String uuid, String userName, String contactName) {
-        File file = new File("/BuildEvent/" + uuid + ".yml");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-                FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-                config.set("UUID", uuid);
-                config.set("Name", userName);
-                config.set("Timestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
-                config.set("ContactName", contactName);
+    private final String hostname;
+    private final int port;
 
-                config.save(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
+    private Mongo client;
+    private DB database;
 
-        }
+    private DBCollection playerWorlds;
+    private DBCollection players;
+
+    public MongoManager(String hostname, int port) {
+        this.hostname = hostname;
+        this.port = port;
     }
 
-    public void openBuildGUI() {
+    public void connect() {
+        this.client = new MongoClient(this.hostname, this.port);
+
+        this.database = this.client.getDB("MyTraz");
+
+
+        this.playerWorlds = this.database.getCollection("playerWorlds");
+        this.players = this.database.getCollection("Players");
+        this.database.createCollection("Players", null);
+        System.out.println("Backend -> Connected to mongo! Let the mongo begin!");
+        players.insert(new BasicDBObject("FirstCreate", "Test"));
+        playerWorlds.insert(new BasicDBObject("FirstCreate", "Test"));
 
     }
+
+    public DBCollection getPlayers() {
+        return players;
+    }
+
+    public DBCollection getPlayerWorlds() {
+        return playerWorlds;
+    }
+
+
 }

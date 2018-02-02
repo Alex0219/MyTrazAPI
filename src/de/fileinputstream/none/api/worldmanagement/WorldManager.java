@@ -1,7 +1,17 @@
 package de.fileinputstream.none.api.worldmanagement;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import de.fileinputstream.none.api.Bootstrap;
+import de.fileinputstream.none.api.user.MyTrazUser;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * User: Alexander<br/>
@@ -40,12 +50,44 @@ import org.bukkit.WorldCreator;
  */
 public class WorldManager {
 
+    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    static SecureRandom rnd = new SecureRandom();
+
     public WorldManager() {
 
     }
 
-    public void createWorld() {
+    public void createWorld(MyTrazUser user) {
         //WorldCreator wc = new WorldCreator()
-        //    Bukkit.createWorld(new WorldCreator())
+        ArrayList<String> worldResidents = new ArrayList<String>();
+        String worldID = getNewWorldID();
+        Bukkit.createWorld(new WorldCreator(getNewWorldID()));
+        user.getPlayer().sendMessage("§aDeine Welt " + "§c" + worldID + " §awird nun erstellt. Wenn die Erstellung abgeschlossen ist, wirst du automatisch in deine Welt teleportiert.");
+        DBObject worldRequest = new BasicDBObject("uuid", user.getUUID())
+                .append("worldid", worldID)
+                .append("timestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()))
+                .append("owner", user.getUUID())
+                .append("residents", worldResidents);
+        Bootstrap.getMongoManager().getPlayerWorlds().insert(worldRequest);
+
+        Bukkit.getScheduler().runTaskLater(Bootstrap.getInstance(), new BukkitRunnable() {
+            @Override
+            public void run() {
+                //Teleport the player to the spawn location
+                user.getPlayer().teleport(Bukkit.getWorld(worldID).getSpawnLocation());
+            }
+        }, 30);
+
+    }
+
+    public String getNewWorldID() {
+        return "#" + randomString(7);
+    }
+
+    public String randomString(int len) {
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++)
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
     }
 }

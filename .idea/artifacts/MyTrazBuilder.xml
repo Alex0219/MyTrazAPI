@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MyTrazBuilder">
+    <output-path>$USER_HOME$/Documents</output-path>
+    <root id="archive" name="MyTrazBuilder.jar">
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/mongo-java-driver-3.6.1.jar" path-in-jar="/" />
+      <element id="module-output" name="None - API" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/lombok.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

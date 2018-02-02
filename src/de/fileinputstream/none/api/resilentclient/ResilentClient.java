@@ -17,11 +17,11 @@ public class ResilentClient extends Client {
 	public void onConnectionGood() {
 		
 		Bootstrap.getInstance().isConnected = true;
-			System.out.println("Succesfully established connection to bungeecord.");
-	}
-	
-	@Override
+        System.out.println("Backend -> Succesfully established connection to bungeecord.");
+    }
+
+    @Override
 	public void onConnectionProblem() {
-		System.out.println("Could not connect to bungeecord!");
-	}
+        System.out.println("Backend -> Could not connect to bungeecord!");
+    }
 }

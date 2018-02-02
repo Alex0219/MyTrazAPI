@@ -34,5 +34,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="spigot-api-1.8.8-R0.1-SNAPSHOT-latest-shaded" level="project" />
+    <orderEntry type="library" name="lombok" level="project" />
+    <orderEntry type="library" name="mongo-java-driver-3.6.1" level="project" />
   </component>
 </module>

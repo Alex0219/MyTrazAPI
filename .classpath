@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/Alexander/Desktop/Spigot-Server/plugins/ProtocolLib.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Alexander/Desktop/Spigot-Server/spigot.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Alexander/Downloads/mongo-java-driver-3.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

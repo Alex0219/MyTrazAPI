@@ -2,9 +2,13 @@ package de.fileinputstream.none.api;
 
 
 import com.blogspot.debukkitsblog.net.Datapackage;
+import com.mongodb.DBCursor;
+import com.mongodb.client.MongoCollection;
 import de.fileinputstream.none.api.cache.UserCache;
 import de.fileinputstream.none.api.commands.*;
 import de.fileinputstream.none.api.message.MessageManager;
+import de.fileinputstream.none.api.mongo.MongoManager;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,21 +22,27 @@ import de.fileinputstream.none.api.rank.scoreboard.NameTags;
 import de.fileinputstream.none.api.resilentclient.ResilentClient;
 import de.fileinputstream.none.api.sql.MySQL;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 public class Bootstrap extends JavaPlugin {
 	
 	private static Bootstrap instance;
 	
 	private static MySQL mysql;
-	
-	private static ResilentClient resilentClient;
-	
-	public boolean isConnected ;
+
+    private static MongoManager mongoManager;
+
+    private static ResilentClient resilentClient;
+
+    public boolean isConnected ;
 	
 	private static String serverName;
 
     private static UserCache userCache;
 
     private static MessageManager messageManager;
+    //Mongo
+    private MongoCollection<Document> ranks;
 
     public static String getServerName() {
         return serverName;
@@ -69,6 +79,16 @@ public class Bootstrap extends JavaPlugin {
 	    mysql.update("CREATE TABLE IF NOT EXISTS chatlogs(id VARCHAR(10), uuid VARCHAR(64), messages LONGTEXT);");
 	}
 
+    public static MongoManager getMongoManager() {
+        return mongoManager;
+
+    }
+
+    public void connectToMongo() {
+        mongoManager = new MongoManager("127.0.0.1", 27017);
+        getMongoManager().connect();
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -78,31 +98,34 @@ public class Bootstrap extends JavaPlugin {
         registerCommands();
         registerListeners();
         createConfig();
-        connectMySQL();
-        Bukkit.getOnlinePlayers().forEach(p -> {
 
+        //  connectMySQL();
+        connectToMongo();
+
+        //Reload Tablist after reload
+      /*
+        Bukkit.getOnlinePlayers().forEach(p ->
+         {
             NameTags.updateTeams();
             NameTags.addToTeam(p);
             NameTags.updateTeams();
         });
+
+         */
+
+        //Connect to resilent server
         connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
 
+        DBCursor cursor = getMongoManager().getPlayers().find();
+        try {
+            while (cursor.hasNext()) {
+                System.out.println(cursor.next());
+            }
+        } finally {
+            cursor.close();
+        }
 
-    }
 
-	public void createConfig() {
-		getConfig().options().copyDefaults(true);
-		getConfig().addDefault("MySQl.Host", "");
-		getConfig().addDefault("MySQl.Port", 3306);
-		getConfig().addDefault("MySQl.User", "root");
-		getConfig().addDefault("MySQl.Database", "");
-		getConfig().addDefault("MySQl.Password", "");
-		getConfig().addDefault("LogMode", false);
-		getConfig().addDefault("Resilent-Host", "localhost");
-		getConfig().addDefault("Resilent-Port", 8000);
-		getConfig().addDefault("LobbyMode", false);
-		getConfig().addDefault("ServerName", "");
-        saveConfig();
     }
 
     public void registerCommands() {
@@ -123,19 +146,25 @@ public class Bootstrap extends JavaPlugin {
         return isConnected;
     }
 
-    public void registerListeners() {
-        PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new ListenerChat(), this);
-        pm.registerEvents(new ListenerCommandExecutor(), this);
-        pm.registerEvents(new ListenerLogin(), this);
-        pm.registerEvents(new ListenerJoin(), this);
-        pm.registerEvents(new ListenerWorldChange(), this);
-        pm.registerEvents(new ExternalCommands(), this);
+    public void createConfig() {
+        getConfig().options().copyDefaults(true);
+        getConfig().addDefault("MySQl.Host", "");
+        getConfig().addDefault("MySQl.Port", 3306);
+        getConfig().addDefault("MySQl.User", "root");
+        getConfig().addDefault("MySQl.Database", "");
+        getConfig().addDefault("MySQl.Password", "");
+        getConfig().addDefault("LogMode", false);
+        getConfig().addDefault("Resilent-Host", "localhost");
+        getConfig().addDefault("Resilent-Port", 8000);
+        getConfig().addDefault("LobbyMode", false);
+        getConfig().addDefault("ServerName", "");
+        getConfig().addDefault("MongoIP", "127.0.0.1");
+        getConfig().addDefault("MongoPort", "27017");
+        saveConfig();
+    }
 
-	}
-	
-	public void enableSigns() {
-		if(getConfig().getBoolean("LobbyMode") == true) {
+    public void enableSigns() {
+        if(getConfig().getBoolean("LobbyMode") == true) {
 			
 		}
 	}
@@ -153,4 +182,16 @@ public class Bootstrap extends JavaPlugin {
     public UserCache getUserCache() {
         return userCache;
     }
+
+    public void registerListeners() {
+        PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new ListenerChat(), this);
+        pm.registerEvents(new ListenerCommandExecutor(), this);
+        //    pm.registerEvents(new ListenerLogin(), this);
+        pm.registerEvents(new ListenerJoin(), this);
+        pm.registerEvents(new ListenerWorldChange(), this);
+        pm.registerEvents(new ExternalCommands(), this);
+
+    }
+
 }
