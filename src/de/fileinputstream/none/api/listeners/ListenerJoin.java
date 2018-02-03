@@ -1,13 +1,12 @@
 package de.fileinputstream.none.api.listeners;
 
-import java.lang.reflect.Field;
-import java.util.UUID;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import de.fileinputstream.none.api.Bootstrap;
+import de.fileinputstream.none.api.cache.UUIDFetcher;
 import de.fileinputstream.none.api.handling.JoinHandler;
+import de.fileinputstream.none.api.rank.RankManager;
+import de.fileinputstream.none.api.rank.scoreboard.NameTags;
 import de.fileinputstream.none.api.user.MyTrazUser;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,45 +15,29 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.rank.RankManager;
-import de.fileinputstream.none.api.rank.scoreboard.NameTags;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
+import java.lang.reflect.Field;
 
 public class ListenerJoin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         new MyTrazUser(event.getPlayer().getName()).createMyTrazUser();
-        new JoinHandler().handleJoin(new MyTrazUser(event.getPlayer().getName()));
+        // new JoinHandler().handleJoin(new MyTrazUser(event.getPlayer().getName()));
         Player player = event.getPlayer();
         for (int i = 0; i < 150; i++) {
             player.sendMessage("");
         }
 
+        NameTags.addToTeam(player);
+        NameTags.updateTeams();
 
-        //  if (!RankManager.playerExists(uuid)) {
-        // RankManager.createPlayer(uuid);
-        //  NameTags.addToTeam(player);
-        // NameTags.updateTeams();
-        // Bootstrap.getInstance().getUserCache().addEntry(UUID.fromString(uuid), "SPIELER");
-
-        //   } else {
-        //  NameTags.addToTeam(player);
-        //  NameTags.updateTeams();
-        // Bootstrap.getInstance().getUserCache().addEntry(UUID.fromString(uuid), RankManager.getRank(uuid));
-        //  }
-
-      //  event.setJoinMessage(null);
-
-
-        //Set Tablist
         sendTablistHeaderAndFooter(player, "§7§lMyTraz.net - §6No Limit Modded Minecraft Netzwerk", "§7Unser Teamspeak: §cts.mytraz.net");
     }
+    //Set Tablist
+
+
 
     public void sendTablistHeaderAndFooter(Player p, String header, String footer) {
         if (header == null) header = "";
@@ -92,11 +75,11 @@ public class ListenerJoin implements Listener {
     @Deprecated
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-    	if(RankManager.ranks.containsKey(UUIDFetcher.getUUID(event.getPlayer().getName()))) {
-    		RankManager.ranks.remove(UUIDFetcher.getUUID(event.getPlayer().getName()));
-    	}
-    	
+        if (RankManager.ranks.containsKey(UUIDFetcher.getUUID(event.getPlayer().getName()))) {
+            RankManager.ranks.remove(UUIDFetcher.getUUID(event.getPlayer().getName()));
+        }
+
     }
-   
-   
+
+
 }

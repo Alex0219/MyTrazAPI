@@ -3,46 +3,36 @@ package de.fileinputstream.none.api;
 
 import com.blogspot.debukkitsblog.net.Datapackage;
 import com.mongodb.DBCursor;
-import com.mongodb.client.MongoCollection;
 import de.fileinputstream.none.api.cache.UserCache;
 import de.fileinputstream.none.api.commands.*;
+import de.fileinputstream.none.api.listeners.ListenerChat;
+import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
+import de.fileinputstream.none.api.listeners.ListenerJoin;
+import de.fileinputstream.none.api.listeners.ListenerWorldChange;
 import de.fileinputstream.none.api.message.MessageManager;
 import de.fileinputstream.none.api.mongo.MongoManager;
-import org.bson.Document;
+import de.fileinputstream.none.api.rank.scoreboard.NameTags;
+import de.fileinputstream.none.api.resilentclient.ResilentClient;
+import de.fileinputstream.none.api.sql.MySQL;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.fileinputstream.none.api.listeners.ListenerChat;
-import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
-import de.fileinputstream.none.api.listeners.ListenerJoin;
-import de.fileinputstream.none.api.listeners.ListenerLogin;
-import de.fileinputstream.none.api.listeners.ListenerWorldChange;
-import de.fileinputstream.none.api.rank.scoreboard.NameTags;
-import de.fileinputstream.none.api.resilentclient.ResilentClient;
-import de.fileinputstream.none.api.sql.MySQL;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 public class Bootstrap extends JavaPlugin {
-	
-	private static Bootstrap instance;
-	
-	private static MySQL mysql;
+
+    private static Bootstrap instance;
+
+    private static MySQL mysql;
 
     private static MongoManager mongoManager;
 
     private static ResilentClient resilentClient;
-
-    public boolean isConnected ;
-	
-	private static String serverName;
-
+    private static String serverName;
     private static UserCache userCache;
-
     private static MessageManager messageManager;
+    public boolean isConnected;
     //Mongo
-    private MongoCollection<Document> ranks;
 
     public static String getServerName() {
         return serverName;
@@ -52,36 +42,36 @@ public class Bootstrap extends JavaPlugin {
         return resilentClient;
     }
 
+    public static MessageManager getMessageManager() {
+        return messageManager;
+    }
+
+    public static MySQL getMysql() {
+        return mysql;
+    }
+
+    public static Bootstrap getInstance() {
+        return instance;
+    }
+
+    public static MongoManager getMongoManager() {
+        return mongoManager;
+
+    }
+
     @Override
     public void onDisable() {
         instance = null;
     }
 
-    public static MessageManager getMessageManager() {
-        return messageManager;
-    }
-	
-	public static MySQL getMysql() {
-		return mysql;
-	}
-	
-	public static Bootstrap getInstance() {
-		return instance;
-	}
-	
-	public void connectMySQL() {
-		mysql = new MySQL(getConfig().getString("MySQl.Host"), getConfig().getString("MySQl.Database"), getConfig().getString("MySQl.User"), getConfig().getString("MySQl.Password"));
-		mysql.connect();
-		mysql.update("CREATE TABLE IF NOT EXISTS Rank (UUID VARCHAR(100), RANG VARCHAR(100))");
-	    mysql.update("CREATE TABLE IF NOT EXISTS History (Typ VARCHAR(100), UUID VARCHAR(100), Grund VARCHAR(100), Von VARCHAR(100), Dauer VARCHAR(100), Datum VARCHAR(100), Name VARCHAR(100))");
-	    mysql.update("CREATE TABLE IF NOT EXISTS Bans (Spielername VARCHAR(100), UUID VARCHAR(100), Ende VARCHAR(100), Grund VARCHAR(100), Dauer VARCHAR(100), Banner VARCHAR(100) , BanID VARCHAR(100))");
-	    mysql.update("CREATE TABLE IF NOT EXISTS Mutes (Spielername VARCHAR(100), UUID VARCHAR(100), Ende VARCHAR(100), Grund VARCHAR(100), Dauer VARCHAR(100), Muter VARCHAR(100))");
-	    mysql.update("CREATE TABLE IF NOT EXISTS chatlogs(id VARCHAR(10), uuid VARCHAR(64), messages LONGTEXT);");
-	}
-
-    public static MongoManager getMongoManager() {
-        return mongoManager;
-
+    public void connectMySQL() {
+        mysql = new MySQL(getConfig().getString("MySQl.Host"), getConfig().getString("MySQl.Database"), getConfig().getString("MySQl.User"), getConfig().getString("MySQl.Password"));
+        mysql.connect();
+        mysql.update("CREATE TABLE IF NOT EXISTS Rank (UUID VARCHAR(100), RANG VARCHAR(100))");
+        mysql.update("CREATE TABLE IF NOT EXISTS History (Typ VARCHAR(100), UUID VARCHAR(100), Grund VARCHAR(100), Von VARCHAR(100), Dauer VARCHAR(100), Datum VARCHAR(100), Name VARCHAR(100))");
+        mysql.update("CREATE TABLE IF NOT EXISTS Bans (Spielername VARCHAR(100), UUID VARCHAR(100), Ende VARCHAR(100), Grund VARCHAR(100), Dauer VARCHAR(100), Banner VARCHAR(100) , BanID VARCHAR(100))");
+        mysql.update("CREATE TABLE IF NOT EXISTS Mutes (Spielername VARCHAR(100), UUID VARCHAR(100), Ende VARCHAR(100), Grund VARCHAR(100), Dauer VARCHAR(100), Muter VARCHAR(100))");
+        mysql.update("CREATE TABLE IF NOT EXISTS chatlogs(id VARCHAR(10), uuid VARCHAR(64), messages LONGTEXT);");
     }
 
     public void connectToMongo() {
@@ -99,19 +89,20 @@ public class Bootstrap extends JavaPlugin {
         registerListeners();
         createConfig();
 
+
         //  connectMySQL();
         connectToMongo();
 
         //Reload Tablist after reload
-      /*
+
+
         Bukkit.getOnlinePlayers().forEach(p ->
-         {
+        {
             NameTags.updateTeams();
             NameTags.addToTeam(p);
             NameTags.updateTeams();
         });
 
-         */
 
         //Connect to resilent server
         connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
@@ -139,6 +130,7 @@ public class Bootstrap extends JavaPlugin {
         getCommand("tempmute").setExecutor(new CommandTempMute());
         getCommand("rang").setExecutor(new CommandRang());
         getCommand("vanish").setExecutor(new ExternalCommands());
+        getCommand("rang").setExecutor(new CommandRang());
 
     }
 
@@ -164,10 +156,10 @@ public class Bootstrap extends JavaPlugin {
     }
 
     public void enableSigns() {
-        if(getConfig().getBoolean("LobbyMode") == true) {
-			
-		}
-	}
+        if (getConfig().getBoolean("LobbyMode") == true) {
+
+        }
+    }
 
     public void connectToResilentServer(String hostname, int port) {
         resilentClient = new ResilentClient(hostname, port);

@@ -1,16 +1,14 @@
-package de.fileinputstream.none.api.mongo;
+package de.fileinputstream.none.api.listeners;
 
-
-import com.mongodb.*;
-import de.fileinputstream.none.api.Bootstrap;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.function.Consumer;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerListPingEvent;
 
 /**
  * User: Alexander<br/>
- * Date: 29.01.2018<br/>
- * Time: 16:55<br/>
+ * Date: 02.02.2018<br/>
+ * Time: 21:45<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -42,72 +40,10 @@ import java.util.function.Consumer;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class MongoManager {
-
-    private final String hostname;
-    private final int port;
-
-    private MongoClient client;
-    private DB database;
-
-    private DBCollection playerWorlds;
-    private DBCollection players;
-
-
-    public MongoManager(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
-    }
-
-    public void connect() {
-        this.client = new MongoClient(hostname, port);
-
-
-        this.database = this.client.getDB("MyTraz");
-
-
-        this.playerWorlds = this.database.getCollection("playerWorlds");
-        this.players = this.database.getCollection("Players");
-        this.database.createCollection("Players", null);
-        System.out.println("Backend -> Connected to mongo! Let the mongo begin!");
-
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-
-
-            }
-        }.runTaskAsynchronously(Bootstrap.getInstance());
-
+public class ListenerServerPing implements Listener {
+    @EventHandler
+    public void onServerListPing(ServerListPingEvent event) {
+        event.setMaxPlayers(Bukkit.getOnlinePlayers().size() + 5);
 
     }
-
-    public DBCollection getPlayers() {
-        return players;
-    }
-
-    public DBCollection getPlayerWorlds() {
-        return playerWorlds;
-    }
-
-    public void userExists(String uuid, Consumer<Boolean> consumer) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                while (!Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).hasNext()) {
-                    consumer.accept(false);
-                }
-                DBObject document = Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).next();
-
-                if (document == null) {
-                    consumer.accept(false);
-                } else {
-                    consumer.accept(true);
-                }
-            }
-        }.runTaskAsynchronously(Bootstrap.getInstance());
-    }
-
-
 }

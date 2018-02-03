@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class NameTags {
 
@@ -54,49 +55,54 @@ public class NameTags {
                 e.printStackTrace();
             }
         });
+
         String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-        if (RankManager.getRank(uuid).equalsIgnoreCase("admin".toLowerCase())) {
+        String s = RankManager.getRank(uuid);
+        if (s.equalsIgnoreCase("admin".toLowerCase())) {
             setPlayer(player, "admin");
             player.setPlayerListName("§4§l" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("dev".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("dev".toLowerCase())) {
             setPlayer(player, "dev");
             player.setPlayerListName("§3" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("sup".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("sup".toLowerCase())) {
             setPlayer(player, "sup");
             player.setPlayerListName("§1" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("architekt".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("architekt".toLowerCase())) {
             setPlayer(player, "builder");
             player.setPlayerListName("§2" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("youtuber".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("youtuber".toLowerCase())) {
             setPlayer(player, "youtube");
             player.setPlayerListName("§5" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("premium".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("premium".toLowerCase())) {
             setPlayer(player, "premium");
             player.setPlayerListName("§6" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("spieler".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("spieler".toLowerCase())) {
             setPlayer(player, "spieler");
             player.setPlayerListName("§7" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("mod".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
             setPlayer(player, "mod");
             player.setPlayerListName("§cM" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("bauleitung".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("bauleitung".toLowerCase())) {
             setPlayer(player, "bauleitung");
             player.setPlayerListName("§2§l" + player.getName());
             return;
-        } else if (RankManager.getRank(uuid).equalsIgnoreCase("teamleitung".toLowerCase())) {
+        } else if (s.equalsIgnoreCase("teamleitung".toLowerCase())) {
             setPlayer(player, "teamleitung");
             player.setPlayerListName("§c§l" + player.getName());
             return;
             //§8[§8] §8[§cM§8]§c" + p.getName() + "§7 » "
+
         }
+
+
 
 
     }

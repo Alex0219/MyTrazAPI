@@ -4,7 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.user.MyTrazUser;
-import org.bson.Document;
+
 
 /**
  * User: Alexander<br/>
@@ -44,10 +44,10 @@ import org.bson.Document;
 public class JoinHandler {
 
     public void handleJoin(MyTrazUser user) {
-        DBObject userObject = user.getDocument();
-        BasicDBObject toChange = (BasicDBObject) userObject;
-        Bootstrap.getMongoManager().getPlayers().update(userObject, toChange.append("logins", ((BasicDBObject) userObject).getInt("logins") + 1));
-        user.getPlayer().sendMessage("§8Willkommen auf §cMyTraz.net! §7Bitte beachte, dass wir in der Beta sind und Fehler auftreten können.");
+        // DBObject userObject = user.getDocument();
+        //BasicDBObject toChange = (BasicDBObject) userObject;
+        //Bootstrap.getMongoManager().getPlayers().update(userObject, toChange.append("logins", ((BasicDBObject) userObject).getInt("logins") + 1));
+        //user.getPlayer().sendMessage("§8Willkommen auf §cMyTraz.net! §7Bitte beachte, dass wir in der Beta sind und Fehler auftreten können.");
 
     }
 }

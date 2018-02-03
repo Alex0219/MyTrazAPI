@@ -1,64 +1,79 @@
 package de.fileinputstream.none.api.listeners;
 
-import org.bukkit.craftbukkit.Main;
+import de.fileinputstream.none.api.cache.UUIDFetcher;
+import de.fileinputstream.none.api.rank.RankManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 
-import de.fileinputstream.none.api.Bootstrap;
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.punishment.MuteManager;
-import de.fileinputstream.none.api.rank.RankManager;
-
-import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class ListenerChat implements Listener {
-	
-	@EventHandler
-    public void onChat(AsyncPlayerChatEvent e) {
+
+    String rank = "";
+
+    @EventHandler
+    public void onChat(PlayerChatEvent e) {
         Player p = e.getPlayer();
         String uuid = UUIDFetcher.getUUID(p.getName()).toString();
-        String msg = "%2$s";
+        e.setCancelled(true);
 
-        String rank = "";
-        rank = RankManager.getRank(uuid);
-        Bootstrap.getInstance().getUserCache().addEntry(UUID.fromString(uuid), rank);
-        if (rank.equalsIgnoreCase("mod".toLowerCase())) {
-            e.setFormat("§c" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("architekt".toLowerCase())) {
-            e.setFormat("§2" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("spieler".toLowerCase())) {
-            e.setFormat("§7" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("dev".toLowerCase())) {
-            e.setFormat("§3" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("admin".toLowerCase())) {
-            e.setFormat("§4§l" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("sup".toLowerCase())) {
-            e.setFormat("§1" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("youtuber".toLowerCase())) {
-            e.setFormat("§5" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("premium".toLowerCase())) {
-            e.setFormat("§6" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("bauleitung".toLowerCase())) {
-            e.setFormat("§2§l" + p.getName() + "§7 » " + msg);
-        }
-        if (rank.equalsIgnoreCase("teamleitung".toLowerCase())) {
-            e.setFormat("§c§l" + p.getName() + "§7 » " + msg);
-        }
-        
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                RankManager.getRank(uuid, new Consumer<String>() {
+                    @Override
+                    public void accept(String s) {
+                        String msg = e.getMessage();
+                        rank = s;
+                        if (rank.equalsIgnoreCase("mod")) {
+                            Bukkit.broadcastMessage("§c" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("architekt")) {
+                            Bukkit.broadcastMessage("§2" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("spieler")) {
+                            System.out.println("ist spieler");
+                            Bukkit.broadcastMessage("§7" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("dev")) {
+                            Bukkit.broadcastMessage("§3" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("admin")) {
+                            Bukkit.broadcastMessage("§4§l" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("sup")) {
+                            Bukkit.broadcastMessage("§1" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("youtuber")) {
+                            Bukkit.broadcastMessage("§5" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("premium".toLowerCase())) {
+                            Bukkit.broadcastMessage("§6" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("bauleitung")) {
+                            Bukkit.broadcastMessage("§2§l" + p.getName() + "§7 » " + msg);
+                        }
+                        if (rank.equalsIgnoreCase("teamleitung")) {
+                            Bukkit.broadcastMessage("§c§l" + p.getName() + "§7 » " + msg);
+                        }
+                        System.out.println(s);
+
+                    }
+                });
+            }
+        });
+
+
     }
 
 
+   /*
     @EventHandler
     public void chatFormat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
@@ -85,6 +100,7 @@ public class ListenerChat implements Listener {
             }
         }
     }
+    */
 
 
 }

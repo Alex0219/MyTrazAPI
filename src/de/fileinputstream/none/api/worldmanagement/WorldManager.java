@@ -58,6 +58,7 @@ public class WorldManager {
     }
 
     public void createWorld(MyTrazUser user) {
+
         //WorldCreator wc = new WorldCreator()
         ArrayList<String> worldResidents = new ArrayList<String>();
         String worldID = getNewWorldID();

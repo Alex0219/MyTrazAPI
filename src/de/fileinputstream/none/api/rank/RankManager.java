@@ -1,18 +1,16 @@
 package de.fileinputstream.none.api.rank;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.client.MongoCollection;
+import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.cache.UUIDFetcher;
 import de.fileinputstream.none.api.user.MyTrazUser;
-import org.bson.Document;
 
-
-import de.fileinputstream.none.api.Bootstrap;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 
 public class RankManager {
@@ -20,69 +18,63 @@ public class RankManager {
 
     public static HashMap<String, String> ranks = new HashMap(); //First is UUID, second is Rank
 
-    public static boolean playerExists(String uuid)
-    {
-        try
-        {
-            ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Rank WHERE UUID= '" + uuid + "'");
-            if (rs.next()) {
-                return rs.getString("UUID") != null;
+
+    public static String getRank(String uuid, final Consumer<String> consumer) {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final BasicDBObject found = (BasicDBObject) Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).next();
+                String rank = "";
+                if (found == null) {
+
+                } else {
+                    rank = found.getString("rank");
+                }
+                consumer.accept(rank);
+                executorService.shutdown();
             }
-            return false;
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        return false;
+        });
+
+
+        return null;
     }
 
-    public static void createPlayer(String uuid)
-    {
+    public static String getRank(String uuid) {
+        final BasicDBObject found = (BasicDBObject) Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).next();
+        String rank = "";
+        if (found == null) {
 
-
-        if (!playerExists(uuid)) {
-            Bootstrap.getMysql().update("INSERT INTO Rank(UUID, RANG) VALUES ('" + uuid + "', 'SPIELER');");
-            if(!ranks.containsKey(uuid)) {
-                ranks.put(uuid,"spieler");
-            }
+        } else {
+            rank = found.getString("rank");
+            return rank;
         }
+        return "";
     }
 
-    public static String getRank(String uuid)
-    {
+
+    public static void setRank(String uuid, String rank) {
 
         MyTrazUser user = new MyTrazUser(UUIDFetcher.getName(UUID.fromString(uuid)));
-        if (user.getDocument() != null) {
+        user.getDocument(new Consumer<BasicDBObject>() {
+            @Override
+            public void accept(BasicDBObject basicDBObject) {
+                DBObject before = new BasicDBObject("rank", getRank(uuid));
+                user.getDocument(new Consumer<BasicDBObject>() {
+                    @Override
+                    public void accept(BasicDBObject basicDBObject) {
+                        BasicDBObject after = basicDBObject.append("rank", rank);
+                        Bootstrap.getMongoManager().getPlayers().update(before, after);
+                        System.out.println("Backend -> Updated user rank for: " + uuid + " to rank: " + rank);
+                    }
+                });
 
-        }
 
-        String playerRequest = user.getDocument().get("Rank").toString();
-        System.out.println("Succesfully requested player information and got something back.");
-
-        return playerRequest;
-        }
-
-
-    public static void setRank(String uuid, String rank)
-    {
-        if (playerExists(uuid))
-        {
-            Bootstrap.getMysql().update("UPDATE Rank SET RANG= '" + rank.toString() + "' WHERE UUID= '" + uuid + "';");
-
-        }
-        else
-        {
-            createPlayer(uuid);
-            setRank(uuid, rank);
-        }
+            }
+        });
     }
 
-    public static boolean hasRank(String uuid, String rank) {
-       if(getRank(uuid).equalsIgnoreCase(rank)) {
-           return true;
-       } else {
-           return false;
-       }
-    }
+
 }

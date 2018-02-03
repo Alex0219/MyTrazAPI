@@ -1,23 +1,23 @@
 package de.fileinputstream.none.api.user;
 
+
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.client.FindIterable;
 import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.cache.UUIDFetcher;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 /**
  * User: Alexander<br/>
@@ -61,6 +61,7 @@ public class MyTrazUser {
     Player player;
     List<World> worldList = new ArrayList<World>();
 
+
     public MyTrazUser(String name) {
         this.name = name;
         this.player = Bukkit.getPlayer(name);
@@ -71,9 +72,10 @@ public class MyTrazUser {
         return new File("/BuildEvent/" + getUUID() + ".yml").exists();
     }
 
-    public UUID getUUID() {
+    public String getUUID() {
         //We can do this request because the Fetcher class caches the uuid's for us.
-        return UUIDFetcher.getUUID(this.name);
+        System.out.println(UUIDFetcher.getUUID(this.name).toString());
+        return UUIDFetcher.getUUID(this.name).toString();
     }
 
     public String getName() {
@@ -86,14 +88,7 @@ public class MyTrazUser {
 
     public ArrayList<String> getWorlds() {
 
-        DBCursor playerFind = Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("UUID", getUUID()));
-        DBObject found = playerFind.next();
-        if (found == null) {
-            System.out.println("Backend -> User not found! We do not create the user because there could be an error!");
 
-        } else {
-            return (ArrayList) found.get("Worlds");
-        }
         return null;
     }
 
@@ -101,71 +96,69 @@ public class MyTrazUser {
 
         String uuid = getUUID().toString();
 
-        if (Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).hasNext()) {
-            DBObject found = Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).next();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                Bootstrap.getMongoManager().userExists(uuid, new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) {
+                        if (aBoolean == false) {
+                            List<String> playerWorlds = new ArrayList<String>(); //Player can't have any worlds at the creation so we will leave that null
 
-            if (found == null) {
+                            //Building up the Document
 
-                List<String> playerWorlds = new ArrayList<String>(); //Player can't have any worlds at the creation so we will leave that null
+                            DBObject playerRequest = new BasicDBObject("uuid", uuid)
+                                    .append("name", UUIDFetcher.getName(UUID.fromString(uuid)))
+                                    .append("registerTimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()))
+                                    .append("rank", "spieler")
+                                    .append("worlds", playerWorlds)
+                                    .append("logins", 1);
+                            //And  flush!!!!
 
-                //Building up the Document
 
-                DBObject playerRequest = new BasicDBObject("UUID", uuid)
-                        .append("uuid", uuid)
-                        .append("name", UUIDFetcher.getName(UUID.fromString(uuid)))
-                        .append("registerTimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()))
-                        .append("worlds", playerWorlds)
-                        .append("logins", 1);
-                //And  flush!!!!
-                Bootstrap.getMongoManager().getPlayers().insert(playerRequest);
-                //We print the just created user to see if something went wrong.
-                System.out.println("Backend -> Created user with the following entries: " +
-                        playerRequest.toString());
+                            Bootstrap.getMongoManager().getPlayers().insert(playerRequest);
 
-            } else {
-                System.out.println("Backend -> User already exists. OK.");
-                return;
+
+                            //We print the just created user to see if something went wrong.
+                        } else {
+                            return;
+                        }
+                    }
+                });
             }
-        } else {
-            List<String> playerWorlds = new ArrayList<String>(); //Player can't have any worlds at the creation so we will leave that null
-
-            //Building up the Document
-
-            DBObject playerRequest = new BasicDBObject("UUID", uuid)
-                    .append("uuid", uuid)
-                    .append("name", UUIDFetcher.getName(UUID.fromString(uuid)))
-                    .append("registerTimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()))
-                    .append("worlds", playerWorlds)
-                    .append("logins", 1);
-            //And  flush!!!!
-            Bootstrap.getMongoManager().getPlayers().insert(playerRequest);
-            //We print the just created user to see if something went wrong.
-            System.out.println("Backend -> Created user with the following entries: " +
-                    playerRequest.toString());
-        }
+        });
 
 
     }
 
-    public DBObject getDocument() {
-        DBCursor playerFind = Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("UUID", getUUID()));
-        if (playerFind == null) {
-            if (playerFind.hasNext()) {
-                DBObject found = playerFind.next();
-                if (found == null) {
-                    System.out.println("Backend -> User not found! We do not create the user because there could be an error!");
-                    return null;
-                } else {
-                    return found;
-                }
+    public void getDocument(Consumer<BasicDBObject> consumer) {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                Bootstrap.getMongoManager().userExists(getUUID(), new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) {
+                        if (aBoolean == true) {
+                            DBObject document = Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", getUUID())).next();
+                            consumer.accept((BasicDBObject) document);
+                        } else {
+                            System.out.println("Backend -> I am sad. I couldn't lookup a document for: " + getUUID());
+                        }
+                    }
+                });
             }
-            System.out.println("Backend -> Could not get request user info! Report!");
-            return null;
-        }
-        System.out.println("Backend -> Could not get request user info! Report!");
-        return null;
+        });
+
+
     }
-
-
-
 }
+
+
+
+
+
+
+
+
