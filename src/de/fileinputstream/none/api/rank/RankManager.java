@@ -5,6 +5,7 @@ import com.mongodb.DBObject;
 import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.cache.UUIDFetcher;
 import de.fileinputstream.none.api.user.MyTrazUser;
+import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class RankManager {
         final BasicDBObject found = (BasicDBObject) Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).next();
         String rank = "";
         if (found == null) {
-
+            new MyTrazUser((UUIDFetcher.getName(UUID.fromString(uuid)))).createMyTrazUser();
         } else {
             rank = found.getString("rank");
             return rank;

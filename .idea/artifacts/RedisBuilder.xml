@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RedisBuilder">
+    <output-path>$USER_HOME$/Documents</output-path>
+    <root id="archive" name="RedisBuilder.jar">
+      <element id="module-output" name="RedisBuilder" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jedis-2.4.2.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/RedisBuilder/plugin.yml" />
+    </root>
+  </artifact>
+</component>

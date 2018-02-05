@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.cache.UUIDFetcher;
+import de.fileinputstream.none.api.rank.scoreboard.NameTags;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -118,10 +119,13 @@ public class MyTrazUser {
 
 
                             Bootstrap.getMongoManager().getPlayers().insert(playerRequest);
-
+                            NameTags.addToTeam(player);
+                            NameTags.updateTeams();
 
                             //We print the just created user to see if something went wrong.
                         } else {
+                            NameTags.addToTeam(player);
+                            NameTags.updateTeams();
                             return;
                         }
                     }

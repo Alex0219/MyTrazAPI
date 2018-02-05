@@ -1,19 +1,19 @@
-package de.fileinputstream.none.api.handling;
+package de.fileinputstream.redisbuilder.user;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import de.fileinputstream.none.api.Bootstrap;
-import de.fileinputstream.none.api.user.MyTrazUser;
+import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Random;
-
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * User: Alexander<br/>
- * Date: 29.01.2018<br/>
- * Time: 19:26<br/>
+ * Date: 04.02.2018<br/>
+ * Time: 17:36<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -45,39 +45,61 @@ import java.util.Random;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class JoinHandler {
+public class DBUser {
+    /*
+    Diese Klasse verwaltet den @DBUser, auch bekannt als Spieler.
+    Sämtliche Abfragen werden durch diese Klasse verwaltet.
+     */
 
-    public void handleJoin(MyTrazUser user) {
+    String uuid;
+    String name;
+    Player player;
 
-        user.getPlayer().sendMessage("§8Willkommen auf §cMyTraz.net! §7Bitte beachte, dass wir in der Beta sind und Fehler auftreten können.");
-
-        user.getPlayer().sendMessage("§cDies ist nur eine vorübergehende Lobby, da unsere Hauptlobby noch nicht fertig ist.");
-
-        user.getPlayer().sendTitle("§7§lWillkommen auf", "§l§6MyTraz.net");
-        ActionBar.sendActionBarTime(user.getPlayer(), "§b§7MyTraz ist ein Projekt von §6www.mediolutec.de!", 600);
-        handleBroadcaster(user.getPlayer());
-        user.getPlayer().performCommand("spawn");
+    public DBUser(String uuid, String name) {
+        this.uuid = uuid;
+        this.name = name;
+        if (Bukkit.getPlayer(name) != null) {
+            this.player = Bukkit.getPlayer(uuid);
+        }
     }
 
-    public void handleBroadcaster(Player player) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Bootstrap.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                Random r = new Random();
-                switch (r.nextInt(2)) {
-                    case 1:
-                        player.sendMessage("§c§lMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
-                        break;
-                    case 2:
-                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
-                        break;
-                    case 0:
-                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
-                        break;
+    public String getUuid() {
+        return uuid;
+    }
 
-                }
+    public String getName() {
+        return name;
+    }
 
-            }
-        }, 3500L, 3500L);
+    //Existiert User
+    public boolean userExists() {
+        if (RedisBuilder.getInstance().getJedis().exists("uuid:" + getUuid())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //User wird erstellt
+    public void createUser() {
+
+        List<String> worlds = new ArrayList<String>();
+        List<String> residentWorlds = new ArrayList<String>();
+        String joinedWorld = Arrays.toString(worlds.toArray());
+        String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "name", getName());
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "registertimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "logins", "1");
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "worlds", joinedWorld);
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "residentworlds", joinedResidentWorlds);
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "rank", "spieler");
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "banned", "false");
+        System.out.println("Created user with uuid:" + uuid);
+
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
+

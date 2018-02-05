@@ -5,10 +5,7 @@ import com.blogspot.debukkitsblog.net.Datapackage;
 import com.mongodb.DBCursor;
 import de.fileinputstream.none.api.cache.UserCache;
 import de.fileinputstream.none.api.commands.*;
-import de.fileinputstream.none.api.listeners.ListenerChat;
-import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
-import de.fileinputstream.none.api.listeners.ListenerJoin;
-import de.fileinputstream.none.api.listeners.ListenerWorldChange;
+import de.fileinputstream.none.api.listeners.*;
 import de.fileinputstream.none.api.message.MessageManager;
 import de.fileinputstream.none.api.mongo.MongoManager;
 import de.fileinputstream.none.api.rank.scoreboard.NameTags;
@@ -88,20 +85,14 @@ public class Bootstrap extends JavaPlugin {
         registerCommands();
         registerListeners();
         createConfig();
+        //connect mysql
+        connectMySQL();
 
 
         //  connectMySQL();
         connectToMongo();
 
         //Reload Tablist after reload
-
-
-        Bukkit.getOnlinePlayers().forEach(p ->
-        {
-            NameTags.updateTeams();
-            NameTags.addToTeam(p);
-            NameTags.updateTeams();
-        });
 
 
         //Connect to resilent server
@@ -152,6 +143,7 @@ public class Bootstrap extends JavaPlugin {
         getConfig().addDefault("ServerName", "");
         getConfig().addDefault("MongoIP", "127.0.0.1");
         getConfig().addDefault("MongoPort", "27017");
+
         saveConfig();
     }
 
@@ -179,10 +171,11 @@ public class Bootstrap extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new ListenerChat(), this);
         pm.registerEvents(new ListenerCommandExecutor(), this);
-        //    pm.registerEvents(new ListenerLogin(), this);
+        pm.registerEvents(new ListenerLogin(), this);
         pm.registerEvents(new ListenerJoin(), this);
         pm.registerEvents(new ListenerWorldChange(), this);
         pm.registerEvents(new ExternalCommands(), this);
+        pm.registerEvents(new ListenerBlock(), this);
 
     }
 

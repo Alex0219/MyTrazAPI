@@ -1,15 +1,14 @@
-package de.fileinputstream.none.api.rank.scoreboard;
+package de.fileinputstream.redisbuilder.rank;
 
 
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.rank.RankManager;
+import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.function.Consumer;
+
 
 public class NameTags {
 
@@ -103,8 +102,6 @@ public class NameTags {
         }
 
 
-
-
     }
 
     public static void initScoreboardTeams() {
@@ -122,8 +119,8 @@ public class NameTags {
             init("00007BL", "bauleitung", "§2§l" + suffix, board);
             init("00008Builder", "builder", "§2" + suffix, board);
             init("00009YT", "youtube", "§5" + suffix, board);
-            init("000010Premium", "premium", "§6", board);
-            init("00011Spieler", "spieler", "§7", board);
+            init("00010Premium", "premium", "§6", board);
+            init("0011Spieler", "spieler", "§7", board);
 
         } catch (Exception e) {
             e.printStackTrace();

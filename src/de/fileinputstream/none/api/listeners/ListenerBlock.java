@@ -1,17 +1,17 @@
-package de.fileinputstream.none.api.mongo;
+package de.fileinputstream.none.api.listeners;
 
-
-import com.mongodb.*;
 import de.fileinputstream.none.api.Bootstrap;
-import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.function.Consumer;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * User: Alexander<br/>
- * Date: 29.01.2018<br/>
- * Time: 16:55<br/>
+ * Date: 03.02.2018<br/>
+ * Time: 21:13<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,87 +43,45 @@ import java.util.function.Consumer;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class MongoManager {
+public class ListenerBlock implements Listener {
 
-    private final String hostname;
-    private final int port;
-
-    private MongoClient client;
-    private DB database;
-
-    private DBCollection playerWorlds;
-    private DBCollection players;
-    private DBCollection settings;
-
-
-    public MongoManager(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+            event.setCancelled(true);
+        }
     }
 
-    public void connect() {
-        this.client = new MongoClient(hostname, port);
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+            event.setCancelled(true);
+        }
+    }
 
-
-        this.database = this.client.getDB("MyTraz");
-
-
-        this.playerWorlds = this.database.getCollection("playerWorlds");
-        this.players = this.database.getCollection("Players");
-        this.settings = this.database.getCollection("Settings");
-        this.database.createCollection("Players", null);
-        System.out.println("Backend -> Connected to mongo! Let the mongo begin!");
-
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-
-
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+            event.setCancelled(true);
+            if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                event.setCancelled(true);
             }
-        }.runTaskAsynchronously(Bootstrap.getInstance());
-
-
+        }
     }
 
-    public DBCollection getPlayers() {
-        return players;
+    @EventHandler
+    public void onEntitybyEntityDamage(EntityDamageByEntityEvent event) {
+        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+            event.setCancelled(true);
+        }
     }
 
-    public DBCollection getPlayerWorlds() {
-        return playerWorlds;
-    }
+    @EventHandler
+    public void onEntityDamagebyBlock(EntityDamageEvent event) {
+        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+            event.setCancelled(true);
 
-    public DBCollection getSettings() {
-        return settings;
-    }
-
-    public void userExists(String uuid, Consumer<Boolean> consumer) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                while (!Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).hasNext()) {
-                    consumer.accept(false);
-                }
-                DBObject document = Bootstrap.getMongoManager().getPlayers().find(new BasicDBObject("uuid", uuid)).next();
-
-                if (document == null) {
-                    consumer.accept(false);
-                } else {
-                    consumer.accept(true);
-                }
-            }
-        }.runTaskAsynchronously(Bootstrap.getInstance());
-    }
-
-    public void setSpawn(Location location) {
-        double x = location.getX();
-        double z = location.getZ();
-        double y = location.getY();
-        float yaw = location.getYaw();
-        float pitch = location.getPitch();
-
-
+        }
     }
 
 

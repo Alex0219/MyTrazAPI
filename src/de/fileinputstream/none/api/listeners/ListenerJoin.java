@@ -18,22 +18,16 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.lang.reflect.Field;
+import java.util.Random;
 
 public class ListenerJoin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         new MyTrazUser(event.getPlayer().getName()).createMyTrazUser();
-        // new JoinHandler().handleJoin(new MyTrazUser(event.getPlayer().getName()));
+        new JoinHandler().handleJoin(new MyTrazUser(event.getPlayer().getName()));
+        event.setJoinMessage(null);
         Player player = event.getPlayer();
-        for (int i = 0; i < 150; i++) {
-            player.sendMessage("");
-        }
-
-        NameTags.addToTeam(player);
-        NameTags.updateTeams();
-
-        sendTablistHeaderAndFooter(player, "§7§lMyTraz.net - §6No Limit Modded Minecraft Netzwerk", "§7Unser Teamspeak: §cts.mytraz.net");
     }
     //Set Tablist
 

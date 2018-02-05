@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/None - API.iml" filepath="$PROJECT_DIR$/None - API.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" filepath="$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" />
     </modules>
   </component>
 </project>

@@ -21,11 +21,11 @@ public class ListenerLogin implements Listener {
 	            long end = BanManager.getEnd(uuid);
 	            String Dauer = BanManager.getDauer(uuid);
 	            if ((end > current) || (end == -1L)) {
-	                e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§7Du wurdest §cgebannt. \n\n§aGrund : " +
+                    e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Â§7Du wurdest Â§cgebannt. \n\nÂ§aGrund : " +
 
 	                        BanManager.getReason(uuid) +
 
-	                        "\n§bBanID §e" + BanManager.getBanID(uuid) +
+                            "\nÂ§bBanID Â§e" + BanManager.getBanID(uuid) +
 
 	                        "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : ts.mytraz.net");
 	            } else {
@@ -33,17 +33,17 @@ public class ListenerLogin implements Listener {
 	                e.allow();
 	            }
 	            if ((Bootstrap.getMysql().isConnected()) && (BanManager.isBanned(uuid))) {
-	            	  e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§7Du wurdest §cgebannt. \n\n§aGrund : " +
+                    e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Â§7Du wurdest Â§cgebannt. \n\nÂ§aGrund : " +
 
 	                        BanManager.getReason(uuid) +
 
-	                        "\n§bBanID §e" + BanManager.getBanID(uuid) +
+                            "\nÂ§bBanID Â§e" + BanManager.getBanID(uuid) +
 
 	                        "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : ts.mytraz.net");
 	            } else if(!Bootstrap.getMysql().isConnected()) {
-	                e.disallow(PlayerLoginEvent.Result.KICK_BANNED,"§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
-	                
-	            }
+                    e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Â§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
+
+                }
 	        }
 	    }
 
@@ -54,11 +54,11 @@ public class ListenerLogin implements Listener {
 	                (BanManager.isBanned(uuid))) {
 	            BanManager.unban(uuid);
 	        }    else if(!Bootstrap.getMysql().isConnected()) {
-                e.getPlayer().kickPlayer("§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
+                e.getPlayer().kickPlayer("Â§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
                 
             }
 	        if(!Bootstrap.getMysql().isConnected()) {
-                e.getPlayer().kickPlayer("§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
+                e.getPlayer().kickPlayer("Â§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
                 
             }
 	    }

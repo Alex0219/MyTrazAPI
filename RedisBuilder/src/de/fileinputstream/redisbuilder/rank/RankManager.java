@@ -1,19 +1,17 @@
-package de.fileinputstream.none.api.handling;
+package de.fileinputstream.redisbuilder.rank;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import de.fileinputstream.none.api.Bootstrap;
-import de.fileinputstream.none.api.user.MyTrazUser;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import de.fileinputstream.redisbuilder.RedisBuilder;
+import de.fileinputstream.redisbuilder.user.DBUser;
+import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
 
-import java.util.Random;
-
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * User: Alexander<br/>
- * Date: 29.01.2018<br/>
- * Time: 19:26<br/>
+ * Date: 04.02.2018<br/>
+ * Time: 20:16<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -45,39 +43,28 @@ import java.util.Random;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class JoinHandler {
+public class RankManager {
 
-    public void handleJoin(MyTrazUser user) {
-
-        user.getPlayer().sendMessage("§8Willkommen auf §cMyTraz.net! §7Bitte beachte, dass wir in der Beta sind und Fehler auftreten können.");
-
-        user.getPlayer().sendMessage("§cDies ist nur eine vorübergehende Lobby, da unsere Hauptlobby noch nicht fertig ist.");
-
-        user.getPlayer().sendTitle("§7§lWillkommen auf", "§l§6MyTraz.net");
-        ActionBar.sendActionBarTime(user.getPlayer(), "§b§7MyTraz ist ein Projekt von §6www.mediolutec.de!", 600);
-        handleBroadcaster(user.getPlayer());
-        user.getPlayer().performCommand("spawn");
+    /**
+     * @param uuid
+     * @return @{@link String} Gibt einen String zurück, der den Rang des Spielers enthält.
+     */
+    public static String getRank(String uuid) {
+        DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
+        if (user.userExists()) {
+            return RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "rank");
+        }
+        return "";
     }
 
-    public void handleBroadcaster(Player player) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Bootstrap.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                Random r = new Random();
-                switch (r.nextInt(2)) {
-                    case 1:
-                        player.sendMessage("§c§lMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
-                        break;
-                    case 2:
-                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
-                        break;
-                    case 0:
-                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
-                        break;
+    /**
+     * @param uuid ID des Spielers
+     */
+    public static void setRank(String uuid, String rank) {
+        DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
+        if (user.userExists()) {
+            RedisBuilder.getInstance().getJedis().hset("uuid:" + uuid, "rank", rank);
 
-                }
-
-            }
-        }, 3500L, 3500L);
+        }
     }
 }
