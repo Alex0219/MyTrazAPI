@@ -1,17 +1,20 @@
 package de.fileinputstream.redisbuilder.commands;
 
 import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.user.DBUser;
+import de.fileinputstream.redisbuilder.rank.RankManager;
 import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * User: Alexander<br/>
- * Date: 04.02.2018<br/>
- * Time: 21:09<br/>
+ * Date: 06.02.2018<br/>
+ * Time: 18:29<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,18 +46,35 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandCreateWorld implements CommandExecutor {
+public class CommandBanItem implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            if (!RedisBuilder.getInstance().getWorldManager().playerHasWorld(uuid)) {
-                RedisBuilder.getInstance().getWorldManager().createWorld(new DBUser(uuid, player.getName()));
+            if (RankManager.getRank(UUIDFetcher.getUUID(player.getName()).toString()).equalsIgnoreCase("admin")) {
+                if (args.length == 1) {
+                    try {
+                        int id = Integer.parseInt(args[0]);
+                        RedisBuilder.getInstance().getJedis().hset("banneditem:" + String.valueOf(id), "id", String.valueOf(id));
+                        RedisBuilder.getInstance().getJedis().hset("banneditem:" + String.valueOf(id), "timetamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
+                        RedisBuilder.getInstance().getJedis().hset("banneditem:" + String.valueOf(id), "user", player.getName());
+                        RedisBuilder.getInstance().getJedis().hset("banneditem:" + String.valueOf(id), "reason", "");
+                    } catch (NumberFormatException exception) {
+                        player.sendMessage("§cBackend -> Die angegebene ID ist keine Zahl!");
+                        return true;
+                    }
+
+
+                } else {
+                    System.out.println("§cBackend -> Verwende /banitem <ID>");
+                    return true;
+                }
             } else {
-                player.sendMessage("§cBackend -> Du hast bereits eine Welt.");
+                System.out.println("§cBackend -> Du bist nicht berechtigt.");
+                return true;
             }
         } else {
+            System.out.println("Backend -> Only players can use this command!");
             return true;
         }
         return false;

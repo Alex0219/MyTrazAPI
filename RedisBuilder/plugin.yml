@@ -1,8 +1,12 @@
 name: RedisBuilder
-version: 1.0
 main: de.fileinputstream.redisbuilder.RedisBuilder
+version: 1.0
 author: FileInputStream
 
 commands:
 
     rang:
+
+    createworld:
+
+    tpworld:

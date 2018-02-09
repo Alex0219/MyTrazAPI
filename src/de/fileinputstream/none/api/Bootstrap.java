@@ -2,13 +2,14 @@ package de.fileinputstream.none.api;
 
 
 import com.blogspot.debukkitsblog.net.Datapackage;
-import com.mongodb.DBCursor;
 import de.fileinputstream.none.api.cache.UserCache;
 import de.fileinputstream.none.api.commands.*;
-import de.fileinputstream.none.api.listeners.*;
+import de.fileinputstream.none.api.listeners.ListenerBlock;
+import de.fileinputstream.none.api.listeners.ListenerChat;
+import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
+import de.fileinputstream.none.api.listeners.ListenerLogin;
 import de.fileinputstream.none.api.message.MessageManager;
 import de.fileinputstream.none.api.mongo.MongoManager;
-import de.fileinputstream.none.api.rank.scoreboard.NameTags;
 import de.fileinputstream.none.api.resilentclient.ResilentClient;
 import de.fileinputstream.none.api.sql.MySQL;
 import org.bukkit.Bukkit;
@@ -71,41 +72,19 @@ public class Bootstrap extends JavaPlugin {
         mysql.update("CREATE TABLE IF NOT EXISTS chatlogs(id VARCHAR(10), uuid VARCHAR(64), messages LONGTEXT);");
     }
 
-    public void connectToMongo() {
-        mongoManager = new MongoManager("127.0.0.1", 27017);
-        getMongoManager().connect();
-    }
 
     @Override
     public void onEnable() {
         instance = this;
         userCache = new UserCache();
         serverName = getConfig().getString("ServerName");
-        NameTags.initScoreboardTeams();
+        // NameTags.initScoreboardTeams();
         registerCommands();
         registerListeners();
         createConfig();
         //connect mysql
         connectMySQL();
 
-
-        //  connectMySQL();
-        connectToMongo();
-
-        //Reload Tablist after reload
-
-
-        //Connect to resilent server
-        connectToResilentServer(getConfig().getString("Resilent-Host"), getConfig().getInt("Resilent-Port"));
-
-        DBCursor cursor = getMongoManager().getPlayers().find();
-        try {
-            while (cursor.hasNext()) {
-                System.out.println(cursor.next());
-            }
-        } finally {
-            cursor.close();
-        }
 
 
     }
@@ -119,9 +98,9 @@ public class Bootstrap extends JavaPlugin {
         getCommand("tempban").setExecutor(new CommandTempBan());
         getCommand("unmute").setExecutor(new CommandUnMute());
         getCommand("tempmute").setExecutor(new CommandTempMute());
-        getCommand("rang").setExecutor(new CommandRang());
-        getCommand("vanish").setExecutor(new ExternalCommands());
-        getCommand("rang").setExecutor(new CommandRang());
+        //getCommand("rang").setExecutor(new CommandRang());
+        // getCommand("vanish").setExecutor(new ExternalCommands());
+        //   getCommand("rang").setExecutor(new CommandRang());
 
     }
 
@@ -172,8 +151,7 @@ public class Bootstrap extends JavaPlugin {
         pm.registerEvents(new ListenerChat(), this);
         pm.registerEvents(new ListenerCommandExecutor(), this);
         pm.registerEvents(new ListenerLogin(), this);
-        pm.registerEvents(new ListenerJoin(), this);
-        pm.registerEvents(new ListenerWorldChange(), this);
+        // pm.registerEvents(new ListenerJoin(), this);
         pm.registerEvents(new ExternalCommands(), this);
         pm.registerEvents(new ListenerBlock(), this);
 

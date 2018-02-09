@@ -1,17 +1,15 @@
-package de.fileinputstream.redisbuilder.commands;
+package de.fileinputstream.redisbuilder.perms;
 
 import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.user.DBUser;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import de.fileinputstream.redisbuilder.perms.user.UserPerm;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * User: Alexander<br/>
- * Date: 04.02.2018<br/>
- * Time: 21:09<br/>
+ * Date: 05.02.2018<br/>
+ * Time: 19:23<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,20 +41,31 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandCreateWorld implements CommandExecutor {
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            if (!RedisBuilder.getInstance().getWorldManager().playerHasWorld(uuid)) {
-                RedisBuilder.getInstance().getWorldManager().createWorld(new DBUser(uuid, player.getName()));
-            } else {
-                player.sendMessage("§cBackend -> Du hast bereits eine Welt.");
-            }
-        } else {
-            return true;
+public class PermissionManager {
+
+    ArrayList<UserPerm> permissions;
+
+    public PermissionManager() {
+        this.permissions = new ArrayList<UserPerm>();
+    }
+
+    public void loadPermissions() {
+        String permList = RedisBuilder.getInstance().getJedis().hget("permissions", "permlist");
+        ArrayList<String> tempList = new ArrayList<>(Arrays.asList(permList));
+        System.out.println("Backend -> Loading " + tempList.size() + " permissions.");
+
+
+    }
+
+    public void addPlayerPermission(UserPerm perm) {
+        if (!permissions.contains(perm)) {
+            permissions.add(perm);
         }
-        return false;
+    }
+
+    public void removePlayerPermission(UserPerm perm) {
+        if (permissions.contains(perm)) {
+            permissions.remove(perm);
+        }
     }
 }

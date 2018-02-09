@@ -3,10 +3,9 @@ package de.fileinputstream.redisbuilder.rank;
 import de.fileinputstream.redisbuilder.RedisBuilder;
 import de.fileinputstream.redisbuilder.user.DBUser;
 import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * User: Alexander<br/>
@@ -64,6 +63,49 @@ public class RankManager {
         DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
         if (user.userExists()) {
             RedisBuilder.getInstance().getJedis().hset("uuid:" + uuid, "rank", rank);
+
+        }
+    }
+
+    /**
+     * Set's a players's playerlist name if no 1.8 tablist is available.
+     *
+     * @param player
+     */
+    public void setScoreboardAlternative(Player player) {
+        String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+
+        String s = RankManager.getRank(uuid).substring(0);
+        if (s.equalsIgnoreCase("admin".toLowerCase())) {
+            player.setPlayerListName("§4" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("dev".toLowerCase())) {
+            player.setPlayerListName("§3" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("sup".toLowerCase())) {
+            player.setPlayerListName("§1" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("architekt".toLowerCase())) {
+            player.setPlayerListName("§2" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("youtuber".toLowerCase())) {
+            player.setPlayerListName("§5" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("premium".toLowerCase())) {
+            player.setPlayerListName("§6" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("spieler".toLowerCase())) {
+            player.setPlayerListName("§7" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
+            player.setPlayerListName("§cM" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("bauleitung".toLowerCase())) {
+            player.setPlayerListName("§2" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("teamleitung".toLowerCase())) {
+            player.setPlayerListName("§c" + player.getName());
+            return;
 
         }
     }

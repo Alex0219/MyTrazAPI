@@ -1,9 +1,13 @@
 package de.fileinputstream.redisbuilder;
 
+import de.fileinputstream.redisbuilder.commands.CommandCreateWorld;
 import de.fileinputstream.redisbuilder.commands.CommandRang;
+import de.fileinputstream.redisbuilder.commands.CommandTPWorld;
 import de.fileinputstream.redisbuilder.handler.JoinHandler;
 import de.fileinputstream.redisbuilder.handler.ListenerChat;
+import de.fileinputstream.redisbuilder.mod.ModdedJoinHandler;
 import de.fileinputstream.redisbuilder.rank.NameTags;
+import de.fileinputstream.redisbuilder.world.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,8 +49,13 @@ import redis.clients.jedis.Jedis;
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
 public class RedisBuilder extends JavaPlugin {
+    /**
+     * Willkommen in der Hauptklasse des NyTraz SourceCodes.
+     * Hier werden alle Dinge geladen, die für die Verwendung dieses Plugins notwendig sind.
+     */
     public static RedisBuilder instance;
     Jedis jedis;
+    WorldManager worldManager;
 
     public static RedisBuilder getInstance() {
         return instance;
@@ -55,25 +64,42 @@ public class RedisBuilder extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        worldManager = new WorldManager();
         buildRedis();
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new JoinHandler(), this);
+        //   pm.registerEvents(new JoinHandler(), this);
         pm.registerEvents(new ListenerChat(), this);
         getCommand("rang").setExecutor(new CommandRang());
+        getCommand("createworld").setExecutor(new CommandCreateWorld());
+        getCommand("tpworld").setExecutor(new CommandTPWorld());
+        getConfig().options().copyDefaults(true);
+        getConfig().addDefault("ServerType", "Lobby");
+        saveConfig();
+        if (scoreboardAvailable()) {
+            NameTags.initScoreboardTeams();
+            pm.registerEvents(new JoinHandler(), this);
+            System.out.println("Backend -> Using normal scoreboard method.");
 
-        NameTags.initScoreboardTeams();
-        Bukkit.getOnlinePlayers().forEach(players -> {
-            NameTags.updateTeams();
-        });
+        } else if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
+            System.out.println("Backend -> Registering more listeners for modded.");
+            Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
+            System.out.println("Backend -> Using alternative scoreboard method.");
+
+        }
+
 
     }
 
     @Override
     public void onDisable() {
         instance = null;
+        //Disconnect from redis.
         getJedis().disconnect();
     }
 
+    /**
+     * Erzeugt die {@link Jedis} Instanz. Diese Instanzierung verbindet automatisch mit der redis Datenbank.
+     */
     public void buildRedis() {
         jedis = new Jedis("127.0.0.1", 6379);
         System.out.println("Backend -> Connected to redis.");
@@ -81,7 +107,31 @@ public class RedisBuilder extends JavaPlugin {
 
     }
 
+    /**
+     * @return @{@link Jedis} Gibt die Jedis Instanz zurück.
+     */
     public Jedis getJedis() {
         return jedis;
+    }
+
+    /**
+     * @return {@link WorldManager}
+     */
+    public WorldManager getWorldManager() {
+        return worldManager;
+    }
+
+    /**
+     * Checks if the normal scoreboard method is available.
+     *
+     * @return {@link Boolean}
+     */
+    public boolean scoreboardAvailable() {
+        if (Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].contains("1.8")) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

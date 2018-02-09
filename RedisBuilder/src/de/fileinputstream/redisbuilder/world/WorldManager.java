@@ -4,13 +4,13 @@ import de.fileinputstream.redisbuilder.RedisBuilder;
 import de.fileinputstream.redisbuilder.user.DBUser;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: Alexander<br/>
@@ -57,30 +57,34 @@ public class WorldManager {
     }
 
     /**
+     * Erstellt eine Welt für einen Benutzer. Hier wird überprüft, ob der Benutzer schon eine Welt hat.
+     * Nach 30 Millisekunden wir der Spieler dann in seine Welt teleportiert.
+     *
      * @param {@link DBUser} Der Benutzer in der Datenbank, der die Welt erhalten soll.
-     * @apiNote
      */
     public void createWorld(DBUser user) {
 
         //WorldCreator wc = new WorldCreator()
         ArrayList<String> worldResidents = new ArrayList<String>();
         String worldID = getNewWorldID();
-        Bukkit.createWorld(new WorldCreator(getNewWorldID()));
-        user.getPlayer().sendMessage("§aDeine Welt " + "§c" + worldID + " §awird nun erstellt. Wenn die Erstellung abgeschlossen ist, wirst du automatisch in deine Welt teleportiert.");
+        Bukkit.createWorld(new WorldCreator(worldID));
+        Bukkit.getPlayer(user.getName()).sendMessage("§aDeine Welt " + "§c" + worldID + " §awird nun erstellt. Wenn die Erstellung abgeschlossen ist, wirst du automatisch in deine Welt teleportiert.");
 
         RedisBuilder.getInstance().getJedis().hset("world:" + worldID, "timestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
         RedisBuilder.getInstance().getJedis().hset("world:" + worldID, "owner", user.getName());
         RedisBuilder.getInstance().getJedis().hset("world:" + worldID, "residents", Arrays.toString(worldResidents.toArray()));
 
-        Bukkit.getScheduler().runTaskLater(RedisBuilder.getInstance(), new BukkitRunnable() {
-            @Override
-            public void run() {
-                //Teleport the player to the spawn location
-                user.getPlayer().teleport(Bukkit.getWorld(worldID).getSpawnLocation());
+        List<String> worlds = new ArrayList<String>();
+        if (!worlds.contains(worldID)) {
+            worlds.add(worldID);
+        }
+        String joinedWorld = Arrays.toString(worlds.toArray());
 
-            }
-        }, 30);
-
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + user.getUuid(), "worlds", joinedWorld);
+        //Teleport the player to the spawn location
+        Bukkit.getPlayer(user.getName()).teleport(Bukkit.getWorld(worldID).getSpawnLocation());
+        Bukkit.getWorld(worldID).setAutoSave(true);
+        Bukkit.getWorld(worldID).save();
     }
 
     /**
@@ -121,7 +125,7 @@ public class WorldManager {
     public void addResident(String worldID, String uuid) {
         if (worldExists(worldID)) {
             String residents = RedisBuilder.getInstance().getJedis().hget("world:" + worldID, "residents");
-            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents.split(",")));
+            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents));
             if (!worldResidents.contains(uuid)) {
                 worldResidents.add(uuid);
                 RedisBuilder.getInstance().getJedis().hset("world:" + worldID, "residents", Arrays.toString(worldResidents.toArray()));
@@ -137,7 +141,7 @@ public class WorldManager {
     public ArrayList<String> getWorldResidents(String worldID) {
         if (worldExists(worldID)) {
             String residents = RedisBuilder.getInstance().getJedis().hget("world:" + worldID, "residents");
-            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents.split(",")));
+            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents));
             return worldResidents;
         } else {
             System.out.println("Backend -> Could not find user world: " + worldID);
@@ -146,14 +150,28 @@ public class WorldManager {
 
     }
 
+    /**
+     * @param uuid
+     * @return {@link boolean} Überprüft, ob ein Spieler eine Welt besitzt.
+     * Dabei ist es egal, wieviele Welten der User hat.
+     */
     public boolean playerHasWorld(String uuid) {
         String worldString = RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
-        ArrayList<String> playerWorlds = new ArrayList<String>(Arrays.asList(worldString.split(",")));
-        if (playerWorlds.isEmpty()) {
+        ArrayList<String> playerWorlds = new ArrayList<String>(Arrays.asList(worldString));
+        System.out.println(playerWorlds.toString());
+        if (playerWorlds.toString().replace("[", "").replace("]", "").equalsIgnoreCase("")) {
+            System.out.println("Backend -> Player hasn't got any worlds.");
             return false;
         } else {
             return true;
         }
+    }
+
+    public boolean hasWorld(String uuid) {
+        if (RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "hasworld").equalsIgnoreCase("true")) {
+            return true;
+        }
+        return false;
     }
 
 

@@ -1,22 +1,18 @@
 package de.fileinputstream.none.api.listeners;
 
+import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.rank.RankManager;
-import org.bukkit.Bukkit;
+import de.fileinputstream.none.api.punishment.MuteManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ListenerChat implements Listener {
 
     String rank = "";
 
-    @EventHandler
+  /*  @EventHandler
     public void onChat(PlayerChatEvent e) {
         Player p = e.getPlayer();
         String uuid = UUIDFetcher.getUUID(p.getName()).toString();
@@ -71,9 +67,10 @@ public class ListenerChat implements Listener {
 
 
     }
+    */
 
 
-   /*
+
     @EventHandler
     public void chatFormat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
@@ -100,7 +97,6 @@ public class ListenerChat implements Listener {
             }
         }
     }
-    */
 
 
 }

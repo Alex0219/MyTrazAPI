@@ -46,9 +46,11 @@ import java.util.List;
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
 public class DBUser {
-    /*
-    Diese Klasse verwaltet den @DBUser, auch bekannt als Spieler.
-    Sämtliche Abfragen werden durch diese Klasse verwaltet.
+    /**
+     * Diese Klasse verwaltet den @DBUser, auch bekannt als Spieler.
+     * Sämtliche Abfragen werden durch diese Klasse verwaltet.
+     * Auch der Spieler wird in dieser Klasse erstellt.
+     * Auch der {@link Player} wird in dieser Klasse instanziert.
      */
 
     String uuid;
@@ -82,7 +84,6 @@ public class DBUser {
 
     //User wird erstellt
     public void createUser() {
-
         List<String> worlds = new ArrayList<String>();
         List<String> residentWorlds = new ArrayList<String>();
         String joinedWorld = Arrays.toString(worlds.toArray());
@@ -94,6 +95,7 @@ public class DBUser {
         RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "residentworlds", joinedResidentWorlds);
         RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "rank", "spieler");
         RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "banned", "false");
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "hasworld", "false");
         System.out.println("Created user with uuid:" + uuid);
 
     }
@@ -101,5 +103,30 @@ public class DBUser {
     public Player getPlayer() {
         return player;
     }
+
+    public void addOnTime(long time) {
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "ontime", "");
+    }
+
+    public void addOnTime() {
+
+    }
+
+    public String getWorld() {
+        System.out.println("This method get's called");
+        if (RedisBuilder.getInstance().getWorldManager().playerHasWorld(getUuid())) {
+            String worldString = RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
+            System.out.println(worldString);
+            ArrayList<String> playerWorlds = new ArrayList<String>(Arrays.asList(worldString));
+            String world = playerWorlds.get(0).replace("[", "").replace("]", "");
+
+            return world;
+
+
+        }
+        return "";
+    }
+
+
 }
 

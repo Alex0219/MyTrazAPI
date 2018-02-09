@@ -1,11 +1,22 @@
 package de.fileinputstream.redisbuilder.handler;
 
+import de.fileinputstream.redisbuilder.RedisBuilder;
 import de.fileinputstream.redisbuilder.rank.NameTags;
 import de.fileinputstream.redisbuilder.user.DBUser;
 import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.lang.reflect.Field;
+import java.util.Random;
 
 /**
  * User: Alexander<br/>
@@ -44,25 +55,99 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class JoinHandler implements Listener {
 
+    /**
+     * Diese Klasse ist für den Spieler Join zuständig. Das {@link PlayerJoinEvent} wird nach dem {@link org.bukkit.event.player.AsyncPlayerPreLoginEvent} aufgerufen.
+     * Hier finden die meisten Abfragen statt, die redis dann in den Memory-Cache lädt.
+     * Debug Nachrichten sind hier wichtig, da hier viel schieflaufen kann, falls redis nicht verbunden ist.
+     *
+     * @param {@link PlayerJoinEvent} {@link Listener}
+     */
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+
         String name = event.getPlayer().getName();
         String uuid = UUIDFetcher.getUUID(name).toString();
-
+        event.setJoinMessage(null);
         System.out.println(uuid.toString());
         System.out.println(name);
         DBUser dbUser = new DBUser(uuid.toString(), name);
         System.out.println(dbUser.toString());
+        long millisNow = System.currentTimeMillis();
+
         if (!dbUser.userExists()) {
             dbUser.createUser();
             NameTags.addToTeam(event.getPlayer());
             NameTags.updateTeams();
+            String millis = String.valueOf(System.currentTimeMillis() - millisNow);
+            System.out.println("Backend -> Player Join took " + millis + " milliseconds");
+            handleBroadcaster(Bukkit.getPlayer(name));
+            Bukkit.getPlayer(name).chat("/spawn");
         } else {
             NameTags.addToTeam(event.getPlayer());
             NameTags.updateTeams();
             System.out.println("Backend -> User already exists!");
+            String millis = String.valueOf(System.currentTimeMillis() - millisNow);
+            System.out.println("Backend -> Player Join took " + millis + " milliseconds");
+            handleBroadcaster(Bukkit.getPlayer(name));
+            Bukkit.getPlayer(name).chat("/spawn");
         }
 
 
     }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        event.setQuitMessage(null);
+    }
+
+    public void handleBroadcaster(Player player) {
+        player.setHealthScale(20);
+        player.setHealthScale(20);
+        player.sendMessage("§8Willkommen auf §cMyTraz.net! §7Bitte beachte, dass wir in der Beta sind und Fehler auftreten können.");
+
+        player.sendMessage("§cDies ist nur eine vorübergehende Lobby, da unsere Hauptlobby noch nicht fertig ist.");
+
+        player.sendTitle("§7§lWillkommen auf", "§l§6MyTraz.net");
+        player.playSound(player.getLocation(), Sound.LEVEL_UP, 20F, 2F);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(RedisBuilder.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                Random r = new Random();
+                switch (r.nextInt(2)) {
+                    case 1:
+                        player.sendMessage("§c§lMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
+                        break;
+                    case 2:
+                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
+                        break;
+                    case 0:
+                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
+                        break;
+
+                }
+
+            }
+        }, 3500L, 3500L);
+    }
+
+    public void sendTablistHeaderAndFooter(Player p, String header, String footer) {
+        if (header == null) header = "";
+        if (footer == null) footer = "";
+
+        IChatBaseComponent tabHeader = IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + header + "\"}");
+        IChatBaseComponent tabFooter = IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + footer + "\"}");
+
+        PacketPlayOutPlayerListHeaderFooter headerPacket = new PacketPlayOutPlayerListHeaderFooter(tabHeader);
+        try {
+            Field field = headerPacket.getClass().getDeclaredField("b");
+            field.setAccessible(true);
+            field.set(headerPacket, tabFooter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(headerPacket);
+        }
+    }
+
 }

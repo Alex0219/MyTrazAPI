@@ -1,5 +1,8 @@
 package de.fileinputstream.redisbuilder.uuid;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -10,10 +13,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mojang.util.UUIDTypeAdapter;
 
 
 public class UUIDFetcher {
