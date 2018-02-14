@@ -1,17 +1,13 @@
 package de.fileinputstream.none.api.punishment;
 
+import de.fileinputstream.none.api.Bootstrap;
+import org.bukkit.Bukkit;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import org.bukkit.Bukkit;
-
-import com.blogspot.debukkitsblog.net.Datapackage;
-
-
-import de.fileinputstream.none.api.Bootstrap;
 
 public class BanManager {
 	
@@ -32,7 +28,6 @@ public class BanManager {
             end = currentTime + millis;
         }
         Bootstrap.getMysql().update("INSERT INTO Bans (Spielername, UUID, Ende, Grund, Dauer, Banner, BanID) VALUES ('" + Player + "','" + UUID + "','" + end + "','" + Reason + "','" + Dauer + "','" + operator + "','" + BanID + "')");
-        Bootstrap.getResilentClient().sendMessage(new Datapackage("KickBanned", Player,Reason, "permanent",BanID));
         if (Bukkit.getPlayer(Playername) != null) {
             Bukkit.getPlayer(Playername).kickPlayer("§7Du wurdest gebannt. \n\n§aGrund : " +
 

@@ -1,19 +1,16 @@
-package de.fileinputstream.redisbuilder.user;
+package de.fileinputstream.redisbuilder.founain;
 
 import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * User: Alexander<br/>
- * Date: 04.02.2018<br/>
- * Time: 17:36<br/>
+ * Date: 13.02.2018<br/>
+ * Time: 21:05<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -45,70 +42,32 @@ import java.util.List;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class DBUser {
-    /**
-     * Diese Klasse verwaltet den @DBUser, auch bekannt als Spieler.
-     * Sämtliche Abfragen werden durch diese Klasse verwaltet.
-     * Auch der Spieler wird in dieser Klasse erstellt.
-     * Auch der {@link Player} wird in dieser Klasse instanziert.
-     */
+public class Fountain {
 
-    String uuid;
-    String name;
-    Player player;
+    Location location = new Location(Bukkit.getWorld("VLobby"), -369, 114, 198);
 
-    public DBUser(String uuid, String name) {
-        this.uuid = uuid;
-        this.name = name;
-        if (Bukkit.getPlayer(name) != null) {
-            this.player = Bukkit.getPlayer(uuid);
-        }
-    }
+    public void run() {
+        new BukkitRunnable() {
+            public void run() {
 
-    public String getUuid() {
-        return uuid;
-    }
+                try {
 
-    public String getName() {
-        return name;
-    }
+                    FallingBlock block = Bukkit.getWorld("VLobby").spawnFallingBlock(location, Material.WATER, (byte) 4);
+                    float x = (float) (Math.random() / 12);
+                    float y = (float) 0.7;
+                    float z = (float) Math.random() / 12;
 
-    //Existiert User
-    public boolean userExists() {
-        if (RedisBuilder.getInstance().getJedis().exists("uuid:" + getUuid())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+                    if (Math.random() > 0.5) x = x - (x * 2);
+                    if (Math.random() > 0.5) z = z - (z * 2);
 
-    //User wird erstellt
-    public void createUser() {
-        List<String> worlds = new ArrayList<String>();
-        List<String> residentWorlds = new ArrayList<String>();
-        String joinedWorld = Arrays.toString(worlds.toArray());
-        String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "name", getName());
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "registertimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "logins", "1");
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "rank", "spieler");
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "banned", "false");
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "hasworld", "false");
-        System.out.println("Created user with uuid:" + uuid);
-
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void addOnTime(long time) {
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "ontime", "");
-    }
-
-    public void addOnTime() {
-
+                    block.setVelocity(new org.bukkit.util.Vector(x, y, z));
+                    block.setDropItem(false);
+                } catch (NullPointerException ex) {
+                    this.cancel();
+                    // Doesn't matter. It's just that you may get ONE stack trace whenm removing the fountain
+                }
+            }
+        }.runTaskTimer(RedisBuilder.getInstance(), 3L, 3L);
     }
 
 }
-

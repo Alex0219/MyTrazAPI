@@ -50,9 +50,10 @@ public class PermissionManager {
     }
 
     public void loadPermissions() {
+        System.out.println("Loading permissions");
         String permList = RedisBuilder.getInstance().getJedis().hget("permissions", "permlist");
         ArrayList<String> tempList = new ArrayList<>(Arrays.asList(permList));
-        System.out.println("Backend -> Loading " + tempList.size() + " permissions.");
+        System.out.println("Backend -> Loaded " + tempList.size() + " permissions.");
 
 
     }

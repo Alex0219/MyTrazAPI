@@ -1,10 +1,10 @@
-package de.fileinputstream.redisbuilder.commands;
+package de.fileinputstream.mytraz.worldmanagement.commands;
 
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.rank.RankManager;
-import de.fileinputstream.redisbuilder.user.DBUser;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 
 /**
  * User: Alexander<br/>
- * Date: 07.02.2018<br/>
- * Time: 19:02<br/>
+ * Date: 13.02.2018<br/>
+ * Time: 19:55<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -45,44 +45,26 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandTPWorld implements CommandExecutor {
+public class CommandSetWorldSpawn implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            String rank = RankManager.getRank(UUIDFetcher.getUUID(player.getName()).toString());
-            DBUser user = new DBUser(uuid, player.getName());
-            if (args.length == 0) {
-                if (RedisBuilder.getInstance().getWorldManager().playerHasWorld(uuid)) {
-                    String world = user.getWorld();
-                    System.out.println(world);
-                    player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
+            if (Bootstrap.getInstance().getWorldManager().playerHasWorld(uuid)) {
+                World world = Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid));
+                if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
+                    Location location = player.getLocation();
+                    world.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                    player.sendMessage("Backend -> Du hast den Spawnpunkt für deine Welt gesetzt!");
                 } else {
-                    player.sendMessage("§cBackend -> Du besitzt keine Welt und du bist kein Mitbewohner einer Welt.");
+                    player.sendMessage("§cBackend -> Diese Welt gehört dir nicht!");
                     return true;
                 }
-            } else if (args.length == 1) {
-                if (user.getWorld().equalsIgnoreCase(args[0])) {
-                    player.teleport(Bukkit.getWorld(args[0]).getSpawnLocation());
-                } else if (user.getWorld().equalsIgnoreCase("")) {
-                    player.sendMessage("§cBackend -> Diese Welt existiert nicht.");
-                    return true;
-                } else {
-                    if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
-                        player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
-                    }
-                    player.sendMessage("Du darfst dich nicht in diese Welt teleportieren.");
-                    return true;
-                }
-
 
             } else {
-                player.sendMessage("§cBackend -> Bitte verwende /tpworld oder /tpworld <ID>");
+                player.sendMessage("§cBackend -> Du hast noch keine Welt!");
             }
-
-        } else {
-            return true;
         }
         return false;
     }

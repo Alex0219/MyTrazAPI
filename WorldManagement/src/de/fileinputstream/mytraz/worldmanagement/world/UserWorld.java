@@ -1,14 +1,11 @@
-package de.fileinputstream.redisbuilder.commands;
+package de.fileinputstream.mytraz.worldmanagement.world;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import java.util.List;
 
 /**
  * User: Alexander<br/>
  * Date: 04.02.2018<br/>
- * Time: 21:46<br/>
+ * Time: 21:09<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -40,15 +37,29 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandWorldInfo implements CommandExecutor {
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+public class UserWorld {
 
-        } else {
-            sender.sendMessage("Backend -> Nur Spieler können diesen Befehö ausführen.");
-        }
-        return false;
+    String id;
+    String owner;
+    List<String> residents;
+
+    public UserWorld(String id, String owner, List<String> residents) {
+        this.id = id;
+        this.owner = owner;
+        this.residents = residents;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public List<String> getResidents() {
+        return residents;
+    }
+
+
 }

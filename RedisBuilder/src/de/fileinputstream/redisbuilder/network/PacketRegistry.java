@@ -1,18 +1,14 @@
-package de.fileinputstream.redisbuilder.mod;
+package de.fileinputstream.redisbuilder.network;
 
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.rank.RankManager;
-import de.fileinputstream.redisbuilder.user.DBUser;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+
+import java.util.Map;
 
 /**
  * User: Alexander<br/>
- * Date: 06.02.2018<br/>
- * Time: 19:58<br/>
+ * Date: 14.02.2018<br/>
+ * Time: 15:42<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -44,23 +40,36 @@ import org.bukkit.event.player.PlayerJoinEvent;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class ModdedJoinHandler implements Listener {
+public class PacketRegistry {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onModdedJoin(PlayerJoinEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
-            event.setJoinMessage(null);
-            String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
-            DBUser user = new DBUser(uuid, event.getPlayer().getName());
-            if (!user.userExists()) {
-                user.createUser();
-                new RankManager().setScoreboardAlternative(event.getPlayer());
-                RedisBuilder.getInstance().getJedis().select(RedisBuilder.getInstance().getConfig().getInt("Redis_DB"));
-            }
-            new RankManager().setScoreboardAlternative(event.getPlayer());
+    private static Map<Integer, Class<? extends Packet>> packets;
 
 
-        }
-
+    public PacketRegistry() {
+        //packets.put(0, Packet.class);
     }
+
+    public static Packet getInstanceById(int id) {
+        try {
+            return packets.containsKey(Integer.valueOf(id)) ? (Packet) ((Class) packets.get(Integer.valueOf(id))).newInstance() : null;
+        } catch (IllegalAccessException | InstantiationException var2) {
+            var2.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void sendPacket(Channel channel, Packet packet) {
+        final DataSerializer data = new DataSerializer(Unpooled.buffer());
+        data.writeInt(PacketRegistry.packets.entrySet().stream().filter(entry -> packet.getClass().equals(entry.getValue())).map(entry -> entry.getKey()).findFirst().get());
+        packet.write(data);
+        channel.writeAndFlush((Object) data);
+    }
+
+    public static void handlePacket(Channel sender, DataSerializer data) {
+        Packet packet = getInstanceById(data.readInt());
+        packet.setSender(sender);
+        packet.read(data);
+        packet.handle();
+    }
+
 }

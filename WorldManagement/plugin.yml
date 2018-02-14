@@ -1,0 +1,13 @@
+name: WorldManagement
+main: de.fileinputstream.mytraz.worldmanagement.Bootstrap
+version: 1.0
+description: world management
+author: FileInputStream
+
+commands:
+
+    tpworld:
+
+    createworld:
+
+

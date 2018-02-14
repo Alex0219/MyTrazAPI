@@ -49,6 +49,7 @@ public class RankManager {
      * @return @{@link String} Gibt einen String zurück, der den Rang des Spielers enthält.
      */
     public static String getRank(String uuid) {
+        RedisBuilder.getInstance().getJedis().select(0);
         DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
         if (user.userExists()) {
             return RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "rank");
@@ -60,6 +61,7 @@ public class RankManager {
      * @param uuid ID des Spielers
      */
     public static void setRank(String uuid, String rank) {
+        RedisBuilder.getInstance().getJedis().select(0);
         DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
         if (user.userExists()) {
             RedisBuilder.getInstance().getJedis().hset("uuid:" + uuid, "rank", rank);

@@ -1,8 +1,8 @@
-package de.fileinputstream.redisbuilder.commands;
+package de.fileinputstream.mytraz.worldmanagement.commands;
 
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.user.DBUser;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 
 /**
  * User: Alexander<br/>
- * Date: 04.02.2018<br/>
- * Time: 21:09<br/>
+ * Date: 13.02.2018<br/>
+ * Time: 19:53<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,19 +43,44 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandCreateWorld implements CommandExecutor {
+public class CommandRemoveResident implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            if (!RedisBuilder.getInstance().getWorldManager().playerHasWorld(uuid)) {
-                RedisBuilder.getInstance().getWorldManager().createWorld(new DBUser(uuid, player.getName()));
+            if (args.length == 1) {
+                String targetName = args[0];
+                String targetUUID = UUIDFetcher.getUUID(targetName).toString();
+                String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+                if (Bootstrap.getInstance().getWorldManager().playerHasWorld(uuid)) {
+                    String worldID = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
+                    if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(targetUUID, worldID)) {
+                        Bootstrap.getInstance().getWorldManager().removeResident(worldID, targetUUID);
+                        player.sendMessage("§cBackend -> Du hast den Spieler §a" + targetName + " §caus deiner Welt entfernt.");
+                        if (Bukkit.getPlayer(targetName) != null) {
+
+                            Player target = Bukkit.getPlayer(targetName);
+                            if (target.getWorld().getName().equalsIgnoreCase(Bootstrap.getInstance().getWorldManager().getWorld(uuid))) {
+                                target.sendMessage("§cBackend -> §a" + player.getName() + " §chat dich aus seiner Welt geworfen!");
+                                target.sendMessage("§cBackend -> §cDu wirst nun an den Spawn teleportiert.");
+                                target.teleport(Bukkit.getWorld(Bootstrap.getInstance().getSpawnWorld()).getSpawnLocation());
+
+                            }
+                        }
+                    } else {
+                        player.sendMessage("§cBackend -> Dieser Spieler ist nicht in deiner Welt eingetragen.");
+                        return true;
+                    }
+                } else {
+                    player.sendMessage("§CBackend -> Du hast noch keine Welt.");
+                    return true;
+                }
+
             } else {
-                player.sendMessage("§cBackend -> Du hast bereits eine Welt.");
+                player.sendMessage("§cBackend -> Verwende /removeresident <Name>");
+                return true;
             }
-        } else {
-            return true;
+
         }
         return false;
     }

@@ -1,19 +1,16 @@
-package de.fileinputstream.redisbuilder.user;
+package de.fileinputstream.mytraz.worldmanagement.commands;
 
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import org.bukkit.Bukkit;
+import de.fileinputstream.redisbuilder.rank.RankManager;
+import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * User: Alexander<br/>
  * Date: 04.02.2018<br/>
- * Time: 17:36<br/>
+ * Time: 21:46<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -45,70 +42,26 @@ import java.util.List;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class DBUser {
-    /**
-     * Diese Klasse verwaltet den @DBUser, auch bekannt als Spieler.
-     * Sämtliche Abfragen werden durch diese Klasse verwaltet.
-     * Auch der Spieler wird in dieser Klasse erstellt.
-     * Auch der {@link Player} wird in dieser Klasse instanziert.
-     */
+public class CommandWorldInfo implements CommandExecutor {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+            String rank = RankManager.getRank(uuid);
+            if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
+                if (args.length == 1) {
+                    // String world = Bukkit.getWorld()
+                } else {
+                    player.sendMessage("§cBackend -> Verwende /worldinfo <Weltname>");
+                    return true;
+                }
+            } else {
 
-    String uuid;
-    String name;
-    Player player;
-
-    public DBUser(String uuid, String name) {
-        this.uuid = uuid;
-        this.name = name;
-        if (Bukkit.getPlayer(name) != null) {
-            this.player = Bukkit.getPlayer(uuid);
-        }
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    //Existiert User
-    public boolean userExists() {
-        if (RedisBuilder.getInstance().getJedis().exists("uuid:" + getUuid())) {
-            return true;
+            }
         } else {
-            return false;
+            sender.sendMessage("Backend -> Nur Spieler können diesen Befehö ausführen.");
         }
+        return false;
     }
-
-    //User wird erstellt
-    public void createUser() {
-        List<String> worlds = new ArrayList<String>();
-        List<String> residentWorlds = new ArrayList<String>();
-        String joinedWorld = Arrays.toString(worlds.toArray());
-        String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "name", getName());
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "registertimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "logins", "1");
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "rank", "spieler");
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "banned", "false");
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "hasworld", "false");
-        System.out.println("Created user with uuid:" + uuid);
-
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void addOnTime(long time) {
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "ontime", "");
-    }
-
-    public void addOnTime() {
-
-    }
-
 }
-

@@ -1,17 +1,15 @@
-package de.fileinputstream.none.api.listeners;
+package de.fileinputstream.mytraz.worldmanagement;
 
-import de.fileinputstream.none.api.Bootstrap;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import de.fileinputstream.mytraz.worldmanagement.commands.CommandCreateWorld;
+import de.fileinputstream.mytraz.worldmanagement.commands.CommandTPWorld;
+import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import redis.clients.jedis.Jedis;
 
 /**
  * User: Alexander<br/>
- * Date: 03.02.2018<br/>
- * Time: 21:13<br/>
+ * Date: 10.02.2018<br/>
+ * Time: 19:33<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,46 +41,48 @@ import org.bukkit.event.entity.EntityDamageEvent;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class ListenerBlock implements Listener {
+public class Bootstrap extends JavaPlugin {
 
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
-            event.setCancelled(true);
-        }
+    static Bootstrap instance;
+    Jedis jedis;
+    WorldManager worldManager;
+    String spawnWorld;
+
+    public static Bootstrap getInstance() {
+        return instance;
     }
 
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
-        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
-            event.setCancelled(true);
-        }
+    @Override
+    public void onEnable() {
+        instance = this;
+        getConfig().options().copyDefaults(true);
+        getConfig().addDefault("Redis-Host", "127.0.0.1");
+        getConfig().addDefault("Redis-Port", "777");
+        getConfig().addDefault("SpawnWorld", "world");
+        saveConfig();
+        spawnWorld = getConfig().getString("SpawnWorld");
+        worldManager = new WorldManager();
+        jedis = new Jedis(getConfig().getString("Redis-Host"), getConfig().getInt("Redis-Port"));
+        jedis.connect();
+
+        getCommand("tpworld").setExecutor(new CommandCreateWorld());
+        getCommand("createworld").setExecutor(new CommandTPWorld());
     }
 
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
-            event.setCancelled(true);
-            if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                event.setCancelled(true);
-            }
-        }
+    @Override
+    public void onDisable() {
+        instance = null;
     }
 
-    @EventHandler
-    public void onEntitybyEntityDamage(EntityDamageByEntityEvent event) {
-        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
-            event.setCancelled(true);
-        }
+    public Jedis getJedis() {
+        return jedis;
     }
 
-    @EventHandler
-    public void onEntityDamagebyBlock(EntityDamageEvent event) {
-        if (Bootstrap.getInstance().getConfig().getBoolean("LobbyMode") == true) {
-            event.setCancelled(true);
-
-        }
+    public WorldManager getWorldManager() {
+        return worldManager;
     }
 
-
+    public String getSpawnWorld() {
+        return spawnWorld;
+    }
 }

@@ -1,13 +1,12 @@
 package de.fileinputstream.redisbuilder;
 
-import de.fileinputstream.redisbuilder.commands.CommandCreateWorld;
+import de.fileinputstream.redisbuilder.commands.CommandAddHologram;
 import de.fileinputstream.redisbuilder.commands.CommandRang;
-import de.fileinputstream.redisbuilder.commands.CommandTPWorld;
 import de.fileinputstream.redisbuilder.handler.JoinHandler;
+import de.fileinputstream.redisbuilder.handler.ListenerBlock;
 import de.fileinputstream.redisbuilder.handler.ListenerChat;
 import de.fileinputstream.redisbuilder.mod.ModdedJoinHandler;
 import de.fileinputstream.redisbuilder.rank.NameTags;
-import de.fileinputstream.redisbuilder.world.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,7 +54,7 @@ public class RedisBuilder extends JavaPlugin {
      */
     public static RedisBuilder instance;
     Jedis jedis;
-    WorldManager worldManager;
+
 
     public static RedisBuilder getInstance() {
         return instance;
@@ -64,27 +63,30 @@ public class RedisBuilder extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        worldManager = new WorldManager();
+
+
         buildRedis();
         PluginManager pm = Bukkit.getPluginManager();
         //   pm.registerEvents(new JoinHandler(), this);
         pm.registerEvents(new ListenerChat(), this);
         getCommand("rang").setExecutor(new CommandRang());
-        getCommand("createworld").setExecutor(new CommandCreateWorld());
-        getCommand("tpworld").setExecutor(new CommandTPWorld());
+        getCommand("addhologram").setExecutor(new CommandAddHologram());
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("ServerType", "Lobby");
+        getConfig().addDefault("Redis-DB", 0);
         saveConfig();
-        if (scoreboardAvailable()) {
-            NameTags.initScoreboardTeams();
-            pm.registerEvents(new JoinHandler(), this);
-            System.out.println("Backend -> Using normal scoreboard method.");
 
-        } else if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
+
+        if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
             System.out.println("Backend -> Registering more listeners for modded.");
             Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
             System.out.println("Backend -> Using alternative scoreboard method.");
 
+        } else if (getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
+            NameTags.initScoreboardTeams();
+            pm.registerEvents(new JoinHandler(), this);
+            pm.registerEvents(new ListenerBlock(), this);
+            System.out.println("Backend -> Using normal scoreboard method.");
         }
 
 
@@ -103,7 +105,7 @@ public class RedisBuilder extends JavaPlugin {
     public void buildRedis() {
         jedis = new Jedis("127.0.0.1", 6379);
         System.out.println("Backend -> Connected to redis.");
-
+        jedis.select(0);
 
     }
 
@@ -114,12 +116,6 @@ public class RedisBuilder extends JavaPlugin {
         return jedis;
     }
 
-    /**
-     * @return {@link WorldManager}
-     */
-    public WorldManager getWorldManager() {
-        return worldManager;
-    }
 
     /**
      * Checks if the normal scoreboard method is available.
@@ -130,6 +126,9 @@ public class RedisBuilder extends JavaPlugin {
         if (Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].contains("1.8")) {
             return true;
         } else {
+            if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
+                return false;
+            }
             return false;
         }
 

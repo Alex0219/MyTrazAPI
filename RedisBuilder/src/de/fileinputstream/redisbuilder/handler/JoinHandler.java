@@ -83,6 +83,7 @@ public class JoinHandler implements Listener {
             System.out.println("Backend -> Player Join took " + millis + " milliseconds");
             handleBroadcaster(Bukkit.getPlayer(name));
             Bukkit.getPlayer(name).chat("/spawn");
+            Bukkit.getPlayer(name).sendMessage("§cDie ersten 40 Spieler bekommen bei 85 Stunden §clLifetime Premium §7kostenlos");
         } else {
             NameTags.addToTeam(event.getPlayer());
             NameTags.updateTeams();
@@ -91,6 +92,7 @@ public class JoinHandler implements Listener {
             System.out.println("Backend -> Player Join took " + millis + " milliseconds");
             handleBroadcaster(Bukkit.getPlayer(name));
             Bukkit.getPlayer(name).chat("/spawn");
+            Bukkit.getPlayer(name).sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
         }
 
 
@@ -103,11 +105,11 @@ public class JoinHandler implements Listener {
 
     public void handleBroadcaster(Player player) {
         player.setHealthScale(20);
-        player.setHealthScale(20);
-        player.sendMessage("§8Willkommen auf §cMyTraz.net! §7Bitte beachte, dass wir in der Beta sind und Fehler auftreten können.");
-
-        player.sendMessage("§cDies ist nur eine vorübergehende Lobby, da unsere Hauptlobby noch nicht fertig ist.");
-
+        player.setFoodLevel(20);
+        player.sendMessage("§8Willkommen auf §4MyTraz.net! Bitte beachte, das wir uns derweil in der Beta Phase befinden. Wir können daher nicht ausschließen, das Fehler auftreten werden.");
+        player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("§4Wichtig: §aDa wir uns mit der Hauptlobby noch in der Bauphase befinden , ist dies nur eine vorübergehende Lobby.");
+        player.sendMessage("§7--------------------------------------------------");
         player.sendTitle("§7§lWillkommen auf", "§l§6MyTraz.net");
         player.playSound(player.getLocation(), Sound.LEVEL_UP, 20F, 2F);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(RedisBuilder.getInstance(), new Runnable() {
@@ -116,19 +118,19 @@ public class JoinHandler implements Listener {
                 Random r = new Random();
                 switch (r.nextInt(2)) {
                     case 1:
-                        player.sendMessage("§c§lMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
+                        player.sendMessage("§cMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
                         break;
                     case 2:
-                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
+                        player.sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
                         break;
                     case 0:
-                        player.sendMessage("§c§lDie ersten 40 Spieler bekommen bei 85 Stunden §c§lLifetime Premium §7§lkostenlos");
+                        player.sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
                         break;
 
                 }
 
             }
-        }, 3500L, 3500L);
+        }, 2500L, 2500L);
     }
 
     public void sendTablistHeaderAndFooter(Player p, String header, String footer) {

@@ -4,7 +4,6 @@ package de.fileinputstream.none.api;
 import com.blogspot.debukkitsblog.net.Datapackage;
 import de.fileinputstream.none.api.cache.UserCache;
 import de.fileinputstream.none.api.commands.*;
-import de.fileinputstream.none.api.listeners.ListenerBlock;
 import de.fileinputstream.none.api.listeners.ListenerChat;
 import de.fileinputstream.none.api.listeners.ListenerCommandExecutor;
 import de.fileinputstream.none.api.listeners.ListenerLogin;
@@ -153,7 +152,7 @@ public class Bootstrap extends JavaPlugin {
         pm.registerEvents(new ListenerLogin(), this);
         // pm.registerEvents(new ListenerJoin(), this);
         pm.registerEvents(new ExternalCommands(), this);
-        pm.registerEvents(new ListenerBlock(), this);
+
 
     }
 

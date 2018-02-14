@@ -1,18 +1,11 @@
-package de.fileinputstream.redisbuilder.mod;
+package de.fileinputstream.redisbuilder.network;
 
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.rank.RankManager;
-import de.fileinputstream.redisbuilder.user.DBUser;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import io.netty.channel.Channel;
 
 /**
  * User: Alexander<br/>
- * Date: 06.02.2018<br/>
- * Time: 19:58<br/>
+ * Date: 14.02.2018<br/>
+ * Time: 15:37<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -44,23 +37,23 @@ import org.bukkit.event.player.PlayerJoinEvent;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class ModdedJoinHandler implements Listener {
+public abstract class Packet {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onModdedJoin(PlayerJoinEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
-            event.setJoinMessage(null);
-            String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
-            DBUser user = new DBUser(uuid, event.getPlayer().getName());
-            if (!user.userExists()) {
-                user.createUser();
-                new RankManager().setScoreboardAlternative(event.getPlayer());
-                RedisBuilder.getInstance().getJedis().select(RedisBuilder.getInstance().getConfig().getInt("Redis_DB"));
-            }
-            new RankManager().setScoreboardAlternative(event.getPlayer());
+    private Channel sender;
 
+    public abstract void read(DataSerializer dataSerializer);
 
-        }
+    public abstract void write(DataSerializer dataSerializer);
 
+    public void handle() {
+
+    }
+
+    public Channel getSender() {
+        return sender;
+    }
+
+    public void setSender(Channel sender) {
+        this.sender = sender;
     }
 }
