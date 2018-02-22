@@ -54,9 +54,9 @@ public class CommandAcceptinvite implements CommandExecutor {
                 String worldID = Bootstrap.getInstance().getWorldManager().worldInvites.get(uuid);
                 Bootstrap.getInstance().getWorldManager().addResident(worldID, uuid);
                 System.out.println("Backend -> Du hast die Einladung erfolgreich angenommen!");
+                Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
                 Bukkit.createWorld(new WorldCreator(worldID));
                 player.teleport(Bukkit.getWorld(worldID).getSpawnLocation());
-
             } else {
                 player.sendMessage("§cBackend -> Du wurdest von niemandem in eine Welt eingeladen.");
                 return true;

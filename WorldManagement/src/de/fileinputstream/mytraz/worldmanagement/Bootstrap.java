@@ -1,8 +1,9 @@
 package de.fileinputstream.mytraz.worldmanagement;
 
-import de.fileinputstream.mytraz.worldmanagement.commands.CommandCreateWorld;
-import de.fileinputstream.mytraz.worldmanagement.commands.CommandTPWorld;
+import de.fileinputstream.mytraz.worldmanagement.commands.*;
+import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
 import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
@@ -47,6 +48,7 @@ public class Bootstrap extends JavaPlugin {
     Jedis jedis;
     WorldManager worldManager;
     String spawnWorld;
+    String prefix = "§7«▌§cMyTraz§7▌»";
 
     public static Bootstrap getInstance() {
         return instance;
@@ -56,17 +58,24 @@ public class Bootstrap extends JavaPlugin {
     public void onEnable() {
         instance = this;
         getConfig().options().copyDefaults(true);
-        getConfig().addDefault("Redis-Host", "127.0.0.1");
-        getConfig().addDefault("Redis-Port", "777");
+        getConfig().addDefault("DB", "1");
         getConfig().addDefault("SpawnWorld", "world");
         saveConfig();
+
         spawnWorld = getConfig().getString("SpawnWorld");
         worldManager = new WorldManager();
-        jedis = new Jedis(getConfig().getString("Redis-Host"), getConfig().getInt("Redis-Port"));
+        jedis = new Jedis("127.0.0.1", 6379);
         jedis.connect();
+        System.out.println("Connected to redis!");
 
-        getCommand("tpworld").setExecutor(new CommandCreateWorld());
-        getCommand("createworld").setExecutor(new CommandTPWorld());
+        getCommand("tpworld").setExecutor(new CommandTPWorld());
+        getCommand("createworld").setExecutor(new CommandCreateWorld());
+        getCommand("addresident").setExecutor(new CommandAddResident());
+        getCommand("removeresident").setExecutor(new CommandRemoveResident());
+        getCommand("acceptinvite").setExecutor(new CommandAcceptinvite());
+        getCommand("newworldspawn").setExecutor(new CommandNewWorldSpawn());
+        getCommand("worldinfo").setExecutor(new CommandWorldInfo());
+        Bukkit.getPluginManager().registerEvents(new ListenerConnect(), this);
     }
 
     @Override
@@ -84,5 +93,9 @@ public class Bootstrap extends JavaPlugin {
 
     public String getSpawnWorld() {
         return spawnWorld;
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 }

@@ -5,10 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * User: Alexander<br/>
@@ -84,10 +81,7 @@ public class DBUser {
 
     //User wird erstellt
     public void createUser() {
-        List<String> worlds = new ArrayList<String>();
-        List<String> residentWorlds = new ArrayList<String>();
-        String joinedWorld = Arrays.toString(worlds.toArray());
-        String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
+
         RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "name", getName());
         RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "registertimestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
         RedisBuilder.getInstance().getJedis().hset("uuid:" + getUuid(), "logins", "1");

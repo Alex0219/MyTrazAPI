@@ -100,7 +100,7 @@ public class RankManager {
             player.setPlayerListName("§7" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
-            player.setPlayerListName("§cM" + player.getName());
+            player.setPlayerListName("§c" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("bauleitung".toLowerCase())) {
             player.setPlayerListName("§2" + player.getName());

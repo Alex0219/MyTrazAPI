@@ -7,6 +7,7 @@ import de.fileinputstream.redisbuilder.handler.ListenerBlock;
 import de.fileinputstream.redisbuilder.handler.ListenerChat;
 import de.fileinputstream.redisbuilder.mod.ModdedJoinHandler;
 import de.fileinputstream.redisbuilder.rank.NameTags;
+import de.fileinputstream.redisbuilder.user.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -53,6 +54,7 @@ public class RedisBuilder extends JavaPlugin {
      * Hier werden alle Dinge geladen, die für die Verwendung dieses Plugins notwendig sind.
      */
     public static RedisBuilder instance;
+    public static WorldManager worldManager;
     Jedis jedis;
 
 
@@ -60,36 +62,8 @@ public class RedisBuilder extends JavaPlugin {
         return instance;
     }
 
-    @Override
-    public void onEnable() {
-        instance = this;
-
-
-        buildRedis();
-        PluginManager pm = Bukkit.getPluginManager();
-        //   pm.registerEvents(new JoinHandler(), this);
-        pm.registerEvents(new ListenerChat(), this);
-        getCommand("rang").setExecutor(new CommandRang());
-        getCommand("addhologram").setExecutor(new CommandAddHologram());
-        getConfig().options().copyDefaults(true);
-        getConfig().addDefault("ServerType", "Lobby");
-        getConfig().addDefault("Redis-DB", 0);
-        saveConfig();
-
-
-        if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
-            System.out.println("Backend -> Registering more listeners for modded.");
-            Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
-            System.out.println("Backend -> Using alternative scoreboard method.");
-
-        } else if (getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
-            NameTags.initScoreboardTeams();
-            pm.registerEvents(new JoinHandler(), this);
-            pm.registerEvents(new ListenerBlock(), this);
-            System.out.println("Backend -> Using normal scoreboard method.");
-        }
-
-
+    public static WorldManager getWorldManager() {
+        return worldManager;
     }
 
     @Override
@@ -116,6 +90,37 @@ public class RedisBuilder extends JavaPlugin {
         return jedis;
     }
 
+    @Override
+    public void onEnable() {
+        instance = this;
+
+        buildRedis();
+        worldManager = new WorldManager();
+        PluginManager pm = Bukkit.getPluginManager();
+        //   pm.registerEvents(new JoinHandler(), this);
+        pm.registerEvents(new ListenerChat(), this);
+        getCommand("rang").setExecutor(new CommandRang());
+        getCommand("addhologram").setExecutor(new CommandAddHologram());
+        getConfig().options().copyDefaults(true);
+        getConfig().addDefault("ServerType", "Lobby");
+        getConfig().addDefault("Redis-DB", 0);
+        saveConfig();
+
+
+        if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
+            System.out.println("Backend -> Registering more listeners for modded.");
+            Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
+            System.out.println("Backend -> Using alternative scoreboard method.");
+
+        } else if (getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
+            NameTags.initScoreboardTeams();
+            pm.registerEvents(new JoinHandler(), this);
+            pm.registerEvents(new ListenerBlock(), this);
+            System.out.println("Backend -> Using normal scoreboard method.");
+        }
+
+
+    }
 
     /**
      * Checks if the normal scoreboard method is available.

@@ -1,9 +1,14 @@
 package de.fileinputstream.mytraz.worldmanagement.world;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -65,23 +70,24 @@ public class WorldManager {
         List<String> worlds = new ArrayList<String>();
         List<String> residentWorlds = new ArrayList<String>();
 
-        String joinedWorld = Arrays.toString(worlds.toArray());
+
         String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
         ArrayList<String> worldResidents = new ArrayList<String>();
         String worldID = getNewWorldID();
         if (!worlds.contains(worldID)) {
             worlds.add(worldID);
         }
+        String joinedWorld = Arrays.toString(worlds.toArray());
         Bukkit.createWorld(new WorldCreator(worldID));
         Bukkit.getPlayer(name).sendMessage("§aDeine Welt " + "§c" + worldID + " §awird nun erstellt. Wenn die Erstellung abgeschlossen ist, wirst du automatisch in deine Welt teleportiert.");
         Bootstrap.getInstance().getJedis().hset("world:" + worldID, "timestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
         Bootstrap.getInstance().getJedis().hset("world:" + worldID, "owner", name);
-        Bootstrap.getInstance().getJedis().hset("world:" + worldID, "residents", Arrays.toString(worldResidents.toArray()));
-
-
+        RedisBuilder.getInstance().getJedis().hset("uuid:" + uuid, "worlds", joinedWorld);
+        Bootstrap.getInstance().getWorldManager().addResident(worldID, uuid);
         //Teleport the player to the spawn location
         Bukkit.getPlayer(name).teleport(Bukkit.getWorld(worldID).getSpawnLocation());
         Bukkit.getWorld(worldID).setAutoSave(true);
+        Bukkit.getWorld(worldID).setSpawnLocation(Bukkit.getWorld(worldID).getSpawnLocation().getBlockX(), Bukkit.getWorld(worldID).getSpawnLocation().getBlockY() + 6, Bukkit.getWorld(worldID).getSpawnLocation().getBlockZ());
         Bukkit.getWorld(worldID).save();
     }
 
@@ -119,19 +125,27 @@ public class WorldManager {
 
     /**
      * Fügt einen Spieler zu einer Welt hinzu, sofern er noch nicht eingetragen ist.
+     *
      * @param worldID WeltenID
      * @param uuid    ID des Spielers
      */
     public void addResident(String worldID, String uuid) {
 
         if (worldExists(worldID)) {
-            String residents = Bootstrap.getInstance().getJedis().hget("world:" + worldID, "residents");
-            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents));
-            if (!worldResidents.contains(uuid)) {
-                worldResidents.add(uuid);
-                Bootstrap.getInstance().getJedis().hset("world:" + worldID, "residents", Arrays.toString(worldResidents.toArray()));
-                System.out.println("Backend -> Added resident:" + uuid + " to world id:" + worldID);
+            ArrayList<String> residents = getWorldResidents(worldID);
+            if (!residents.contains(uuid)) {
+                residents.add(uuid);
+                FileConfiguration cfg = YamlConfiguration.loadConfiguration(getWorldResidentsFile(worldID));
+                cfg.set("Residents", residents);
+                try {
+                    cfg.save(getWorldResidentsFile(worldID));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+
+            System.out.println("Backend -> Added resident:" + uuid + " to world id:" + worldID);
         }
     }
 
@@ -143,13 +157,19 @@ public class WorldManager {
      */
     public void removeResident(String worldID, String uuid) {
         if (worldExists(worldID)) {
-            String residents = Bootstrap.getInstance().getJedis().hget("world:" + worldID, "residents");
-            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents));
-            if (worldResidents.contains(uuid)) {
-                worldResidents.remove(uuid);
-                Bootstrap.getInstance().getJedis().hset("world:" + worldID, "residents", Arrays.toString(worldResidents.toArray()));
-                System.out.println("Backend -> Removed resident:" + uuid + " from world id:" + worldID);
+            ArrayList<String> residents = getWorldResidents(worldID);
+            if (residents.contains(uuid)) {
+                residents.remove(uuid);
             }
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(getWorldResidentsFile(worldID));
+            cfg.set("Residents", residents);
+            try {
+                cfg.save(getWorldResidentsFile(worldID));
+                System.out.println("Backend -> Removed resident:" + uuid + " from world id:" + worldID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -160,9 +180,18 @@ public class WorldManager {
     public ArrayList<String> getWorldResidents(String worldID) {
 
         if (worldExists(worldID)) {
-            String residents = Bootstrap.getInstance().getJedis().hget("world:" + worldID, "residents");
-            ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents));
-            return worldResidents;
+            File file = new File("plugins/WorldManagement/worlds", worldID + ".yml");
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                    getWorldResidents(worldID);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+
+            return (ArrayList<String>) cfg.getStringList("Residents");
         } else {
             System.out.println("Backend -> Could not find user world: " + worldID);
             return null;
@@ -170,53 +199,21 @@ public class WorldManager {
 
     }
 
-    /**
-     * @param uuid
-     * @return {@link boolean} Überprüft, ob ein Spieler eine Welt besitzt.
-     * Dabei ist es egal, wieviele Welten der User hat.
-     */
-    public boolean playerHasWorld(String uuid) {
-
-        String worldString = Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
-        ArrayList<String> playerWorlds = new ArrayList<String>(Arrays.asList(worldString));
-        System.out.println(playerWorlds.toString());
-        if (playerWorlds.toString().replace("[", "").replace("]", "").equalsIgnoreCase("")) {
-            System.out.println("Backend -> Player hasn't got any worlds.");
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     public boolean isResidentInWorld(String uuid, String world) {
-        String residents = Bootstrap.getInstance().getJedis().hget("world:" + world, "residents");
-        ArrayList<String> worldResidents = new ArrayList<String>(Arrays.asList(residents));
-        if (worldResidents.contains(uuid)) {
-            return true;
-        } else {
-            return false;
-        }
+        return getWorldResidents(world).contains(uuid);
     }
 
-    public boolean hasWorld(String uuid) {
-
-        if (Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "hasworld").equalsIgnoreCase("true")) {
-            return true;
+    public File getWorldResidentsFile(String world) {
+        File file = new File("plugins/WorldManagement/worlds", world + ".yml");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return false;
-    }
-
-    public String getWorld(String uuid) {
-        Bootstrap.getInstance().getJedis().select(Bootstrap.getInstance().getConfig().getInt("Redis-DB"));
-        if (Bootstrap.getInstance().getWorldManager().playerHasWorld(uuid)) {
-            String worldString = Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
-            System.out.println(worldString);
-            ArrayList<String> playerWorlds = new ArrayList(Arrays.asList(new String[]{worldString}));
-            String world = ((String) playerWorlds.get(0)).replace("[", "").replace("]", "");
-
-            return world;
-        }
-        return "";
+        return file;
     }
 
 

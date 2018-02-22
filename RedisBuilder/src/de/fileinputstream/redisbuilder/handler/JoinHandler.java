@@ -7,6 +7,7 @@ import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -14,8 +15,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -74,7 +78,19 @@ public class JoinHandler implements Listener {
         DBUser dbUser = new DBUser(uuid.toString(), name);
         System.out.println(dbUser.toString());
         long millisNow = System.currentTimeMillis();
-
+        ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
+        BookMeta bm = (BookMeta) book.getItemMeta();
+        bm.setAuthor("§aFileInputStream");
+        bm.setTitle("§cMyTraz Tutorial");
+        ArrayList<String> pages = new ArrayList<String>();
+// Typo?
+        pages.add("§4Befehle: ");
+        pages.add("§c/createworld - Erstellt dir eine Welt");
+        bm.setPages(pages);
+// Lets fix the typo
+        bm.setPage(0, "Using fire");
+        book.setItemMeta(bm);
+        event.getPlayer().getInventory().setItem(0, book);
         if (!dbUser.userExists()) {
             dbUser.createUser();
             NameTags.addToTeam(event.getPlayer());
@@ -150,6 +166,10 @@ public class JoinHandler implements Listener {
         } finally {
             ((CraftPlayer) p).getHandle().playerConnection.sendPacket(headerPacket);
         }
+    }
+
+    public void setLobbyItems() {
+
     }
 
 }

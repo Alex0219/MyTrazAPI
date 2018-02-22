@@ -2,6 +2,7 @@ package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
+import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -53,45 +54,47 @@ public class CommandAddResident implements CommandExecutor {
 
                 String uuid = UUIDFetcher.getUUID(player.getName()).toString();
                 String targetUUID = UUIDFetcher.getUUID(args[0]).toString();
-                String worldID = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
-                if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+
+                if (RedisBuilder.getInstance().getWorldManager().hasWorld(uuid)) {
+                    String worldID = RedisBuilder.getInstance().getWorldManager().getWorld(uuid);
                     if (!Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, worldID)) {
                         if (!Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(targetUUID)) {
                             if (Bukkit.getPlayer(args[0]) != null) {
                                 if (!Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(targetUUID)) {
-                                    player.sendMessage("§cDu hast §a" + args[0] + " §cin deine Welt eingeladen.");
-                                    player.sendMessage("§cBackend -> Diese Einladung läuft automatisch nach 5 Minuten ab.");
-                                    Bukkit.getPlayer(args[0]).sendMessage("§cBackend -> §aDu wurdest von §a" + player.getName() + " §cin seine Welt eingeladen.");
-                                    Bukkit.getPlayer(args[0]).sendMessage("§cBackend -> Du kannst diese Einladung mit /acceptinvite akzeptieren.");
-                                    Bukkit.getPlayer(args[0]).sendMessage("§cBackend -> Diese Einladung läuft automatisch nach 5 Minuten ab.");
+                                    player.sendMessage("§7«▌§cMyTraz§7▌» Du hast §a" + args[0] + " §cin deine Welt eingeladen.");
+                                    player.sendMessage("§7«▌§cMyTraz§7▌» Diese Einladung läuft automatisch nach 5 Minuten ab.");
+                                    Bukkit.getPlayer(args[0]).sendMessage("§7«▌§cMyTraz§7▌» §aDu wurdest von §a" + player.getName() + " §cin seine Welt eingeladen.");
+                                    Bukkit.getPlayer(args[0]).sendMessage("§7«▌§cMyTraz§7▌» Du kannst diese Einladung mit /acceptinvite akzeptieren.");
+                                    Bukkit.getPlayer(args[0]).sendMessage("§7«▌§cMyTraz§7▌» Diese Einladung läuft automatisch nach 5 Minuten ab.");
                                     Bootstrap.getInstance().getWorldManager().worldInvites.put(targetUUID, worldID);
+                                    scheduleInviteTask(args[0], targetUUID);
                                 } else {
-                                    player.sendMessage("§cBackend -> Dieser Spieler wurde bereits in eine Welt eingeladen.");
-                                    player.sendMessage("§cBackend -> Bitte warte noch, bis der Spieler die Einladung der anderen Welt angenommen hat.");
+                                    player.sendMessage("§7«▌§cMyTraz§7▌» Dieser Spieler wurde bereits in eine Welt eingeladen.");
+                                    player.sendMessage("§7«▌§cMyTraz§7▌» Bitte warte noch, bis der Spieler die Einladung der anderen Welt angenommen hat.");
                                     return true;
                                 }
 
                             } else {
-                                player.sendMessage("§cBackend -> Dieser Spieler ist nicht online!");
+                                player.sendMessage("§7«▌§cMyTraz§7▌» Dieser Spieler ist nicht online!");
                                 return true;
                             }
                         } else {
-                            player.sendMessage("§cBackend -> Du hast diesen Spieler bereits in deine Welt eingeladen.");
+                            player.sendMessage("§7«▌§cMyTraz§7▌» Du hast diesen Spieler bereits in deine Welt eingeladen.");
                             return true;
                         }
 
                     } else {
-                        player.sendMessage("§cBackend -> Dieser Spieler ist bereits Mitbewohner deiner Welt.");
+                        player.sendMessage("§7«▌§cMyTraz§7▌» Dieser Spieler ist bereits Mitbewohner deiner Welt.");
                         return true;
                     }
                 } else {
-                    player.sendMessage("§cBackend -> Du besitzt noch keine Welt. Erstelle dir eine mit: §a/createworld§c!");
+                    player.sendMessage("§7«▌§cMyTraz§7▌» Du besitzt noch keine Welt. Erstelle dir eine mit: §a/createworld§c!");
                     return true;
                 }
 
 
             } else {
-                player.sendMessage("§cBackend -> Verwende /addresident <Spielername>");
+                player.sendMessage("§7«▌§cMyTraz§7▌» Verwende /addresident <Spielername>");
                 return true;
             }
         } else {
@@ -105,7 +108,7 @@ public class CommandAddResident implements CommandExecutor {
             @Override
             public void run() {
                 Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
-                Bukkit.getPlayer(name).sendMessage("§cBackend -> Deine Einladung ist abgelaufen.");
+                Bukkit.getPlayer(name).sendMessage("§7«▌§cMyTraz§7▌» Deine Einladung ist abgelaufen.");
 
             }
         }, 300000);

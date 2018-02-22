@@ -4,6 +4,7 @@ import de.fileinputstream.redisbuilder.RedisBuilder;
 import de.fileinputstream.redisbuilder.rank.RankManager;
 import de.fileinputstream.redisbuilder.user.DBUser;
 import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -55,12 +56,14 @@ public class ModdedJoinHandler implements Listener {
             if (!user.userExists()) {
                 user.createUser();
                 new RankManager().setScoreboardAlternative(event.getPlayer());
+                Bukkit.getPlayer(event.getPlayer().getName()).chat("/spawn");
                 RedisBuilder.getInstance().getJedis().select(RedisBuilder.getInstance().getConfig().getInt("Redis_DB"));
             }
             new RankManager().setScoreboardAlternative(event.getPlayer());
-
+            Bukkit.getPlayer(event.getPlayer().getName()).chat("/spawn");
 
         }
 
     }
+
 }

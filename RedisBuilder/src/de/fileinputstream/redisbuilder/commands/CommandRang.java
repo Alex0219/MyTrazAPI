@@ -23,6 +23,7 @@ public class CommandRang implements CommandExecutor {
                     if (args[1].equalsIgnoreCase("Admin".toLowerCase()) || args[1].equalsIgnoreCase("Dev".toLowerCase()) || args[1].equalsIgnoreCase("Mod".toLowerCase()) || args[1].equalsIgnoreCase("Sup".toLowerCase()) || args[1].equalsIgnoreCase("Architekt".toLowerCase()) || args[1].equalsIgnoreCase("YouTuber") || args[1].equalsIgnoreCase("Premium".toLowerCase()) || args[1].equalsIgnoreCase("Spieler".toLowerCase()) || args[1].equalsIgnoreCase("Bauleitung".toLowerCase()) || args[1].equalsIgnoreCase("Premiumplus".toLowerCase()) || args[1].equalsIgnoreCase("Teamleitung".toLowerCase())) {
                         String rank = args[1];
                         RankManager.setRank(UUIDFetcher.getUUID(args[0]).toString(), rank);
+                        System.out.println(UUIDFetcher.getUUID(args[0]).toString());
                         p.sendMessage("§7---------------------------------------------------");
                         p.sendMessage("§cSystem §7● §aDer Rang wurde zu §c" + args[1] + " gesetzt.");
                         p.sendMessage("§7---------------------------------------------------");

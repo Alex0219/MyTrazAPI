@@ -2,6 +2,7 @@ package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
+import de.fileinputstream.redisbuilder.RedisBuilder;
 import de.fileinputstream.redisbuilder.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
@@ -57,36 +58,37 @@ public class CommandTPWorld implements CommandExecutor {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
             String rank = RankManager.getRank(UUIDFetcher.getUUID(player.getName()).toString());
-
-
             if (args.length == 0) {
-                if (Bootstrap.getInstance().getWorldManager().playerHasWorld(uuid)) {
+                if (RedisBuilder.getInstance().getWorldManager().hasWorld(uuid)) {
                     String world = getWorld(uuid);
                     System.out.println(world);
                     new WorldCreator(world).createWorld();
                     player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
                 } else {
-                    player.sendMessage("§cBackend -> Du besitzt keine Welt und du bist kein Mitbewohner einer Welt.");
+                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Du besitzt keine Welt.");
                     return true;
                 }
             } else if (args.length == 1) {
                 if (getWorld(uuid).equalsIgnoreCase(args[0])) {
                     player.teleport(Bukkit.getWorld(args[0]).getSpawnLocation());
                 } else if (getWorld(uuid).equalsIgnoreCase("")) {
-                    player.sendMessage("§cBackend -> Diese Welt existiert nicht.");
+                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Diese Welt existiert nicht.");
                     return true;
                 } else {
                     if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
                         player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
                         return true;
+                    } else if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, args[0])) {
+                        new WorldCreator(args[0]).createWorld();
+                        player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
                     }
-                    player.sendMessage("§cBackend -> Du darfst dich nicht in diese Welt teleportieren.");
+                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Du darfst dich nicht in diese Welt teleportieren.");
                     return true;
                 }
 
 
             } else {
-                player.sendMessage("§cBackend -> Bitte verwende /tpworld oder /tpworld <ID>");
+                player.sendMessage("§c§7«▌§cMyTraz§7▌» Bitte verwende /tpworld oder /tpworld <ID>");
             }
 
         } else {
@@ -98,8 +100,8 @@ public class CommandTPWorld implements CommandExecutor {
     public String getWorld(String uuid) {
         System.out.println("This method get's called");
 
-        if (Bootstrap.getInstance().getWorldManager().playerHasWorld(uuid)) {
-            String worldString = Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
+        if (RedisBuilder.getInstance().getWorldManager().hasWorld(uuid)) {
+            String worldString = RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
             System.out.println(worldString);
             ArrayList<String> playerWorlds = new ArrayList<String>(Arrays.asList(worldString));
             String world = playerWorlds.get(0).replace("[", "").replace("]", "");

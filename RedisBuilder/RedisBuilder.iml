@@ -8,7 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jedis-2.4.2" level="project" />
-    <orderEntry type="library" name="spigot-api-1.8.8-R0.1-SNAPSHOT-latest-shaded" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -19,5 +18,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="gson-2.8.0" level="project" />
+    <orderEntry type="library" name="spigot-latest" level="project" />
   </component>
 </module>
