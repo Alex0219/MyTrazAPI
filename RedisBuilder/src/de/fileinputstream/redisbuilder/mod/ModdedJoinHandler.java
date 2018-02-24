@@ -50,7 +50,7 @@ public class ModdedJoinHandler implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onModdedJoin(PlayerJoinEvent event) {
         if (RedisBuilder.getInstance().getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
-            event.setJoinMessage(null);
+            //event.setJoinMessage(null);
             String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
             DBUser user = new DBUser(uuid, event.getPlayer().getName());
             if (!user.userExists()) {

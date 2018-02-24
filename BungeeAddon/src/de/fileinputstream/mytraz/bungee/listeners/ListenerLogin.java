@@ -1,12 +1,11 @@
-package de.fileinpustream.mytraz.report;
+package de.fileinputstream.mytraz.bungee.listeners;
 
-import de.fileinpustream.mytraz.report.manager.ReportManager;
-import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.Listener;
 
 /**
  * User: Alexander<br/>
- * Date: 17.02.2018<br/>
- * Time: 17:23<br/>
+ * Date: 24.02.2018<br/>
+ * Time: 11:59<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -38,30 +37,7 @@ import net.md_5.bungee.api.plugin.Plugin;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class Bootstrap extends Plugin {
+public class ListenerLogin implements Listener {
 
-
-    public static Bootstrap instance;
-
-    public ReportManager reportManager;
-
-    public static Bootstrap getInstance() {
-        return instance;
-    }
-
-    @Override
-    public void onEnable() {
-        instance = this;
-        reportManager = new ReportManager();
-    }
-
-    @Override
-    public void onDisable() {
-        instance = null;
-    }
-
-    public ReportManager getReportManager() {
-        return reportManager;
-    }
 
 }

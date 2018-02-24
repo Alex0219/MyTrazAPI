@@ -1,7 +1,5 @@
 package de.fileinpustream.mytraz.report.commands;
 
-import de.fileinpustream.mytraz.report.Bootstrap;
-import de.fileinpustream.mytraz.report.enums.ReportReason;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -56,24 +54,24 @@ public class CommandReport extends Command {
             //report <Player> <Reason>
             String playerName = args[0];
             String reason = args[1];
-            if (args.length == 2) {
+            if (args.length > 1) {
+                String msg = "";
+                for (int i = 0; i < args.length; i++) {
+                    msg = msg + args[i] + " ";
+                }
 
                 if (BungeeCord.getInstance().getPlayer(playerName) != null) {
-                    if (ReportReason.fromString(reason) != null) {
 
-                    } else {
-                        player.sendMessage(Bootstrap.getInstance().getPrefix() + " §cBitte verwende einen validen Reportgrund aus dieser Liste: §eKILLAURA,ANTIKNOCKBACK");
-                    }
                 } else {
-                    player.sendMessage(Bootstrap.getInstance().getPrefix() + " §cDer Spieler §e" + args[0] + " §cist nicht online!");
+                    player.sendMessage("§7«§4cREPORT§7» §cDer Spieler §e" + args[0] + " §cist nicht online!");
                     return;
                 }
             } else {
-                player.sendMessage(Bootstrap.getInstance().getPrefix() + " §cVerwende /report <Spieler> <Grund>");
+                player.sendMessage("§7«§4cREPORT§7» §cVerwende /report <Spieler> <Grund>");
                 return;
             }
         }
-        BungeeCord.getInstance().getLogger().log(Level.WARNING, "DU bist kein Spieler!");
+        BungeeCord.getInstance().getLogger().log(Level.WARNING, "Du bist kein Spieler!");
         return;
     }
 }

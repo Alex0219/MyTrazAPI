@@ -13,6 +13,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * User: Alexander<br/>
@@ -58,9 +60,8 @@ public class CommandWorlds implements CommandExecutor {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
             String world = RedisBuilder.getWorldManager().getWorld(uuid);
-
+            ExecutorService service = Executors.newCachedThreadPool();
             worlds = Bootstrap.getInstance().getWorldManager().getResidentWorlds(uuid);
-
 
             if (worlds.isEmpty()) {
                 player.sendMessage("§7«▌§cMyTraz§7▌» §cDu bist noch kein Mitbewohner einer Welt.");

@@ -95,7 +95,7 @@ public class WorldManager {
      * @return {@link String} Gibt einen String zurück, der als WeltenID verwendet wird.
      */
     public String getNewWorldID() {
-        return "#" + randomString(7);
+        return "#" + randomString(13);
     }
 
     //Random string for world id

@@ -1,21 +1,19 @@
 package de.fileinputstream.none.api.anticheat.npc;
 
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.anticheat.modules.KillAura;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import net.minecraft.server.v1_8_R3.Packet;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Alexander on 23.07.2017.
@@ -59,10 +57,10 @@ public class PacketReader {
                 if (npc.getEntityID() == id && this.getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
                     npc.animation(this.player, 1);
                     PacketReader.detected.add(this.player);
-                    Bukkit.getScheduler().runTaskLater((Plugin) Bootstrap.getInstance(), (Runnable)new Runnable() {
+                    Bukkit.getScheduler().runTaskLater(Bootstrap.getInstance(), new Runnable() {
                         @Override
                         public void run() {
-                            PacketReader.this.player.kickPlayer("§7Bitte deaktiviere §cKillAura");
+                            PacketReader.this.player.kickPlayer("Â§7Bitte deaktiviere Â§cKillAura");
                     
                         }
                     }, 5L);

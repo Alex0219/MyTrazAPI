@@ -55,7 +55,7 @@ public class CommandSetPvP implements CommandExecutor {
                 if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
                     if (player.getWorld().getPVP()) {
                         player.getWorld().setPVP(false);
-                        player.sendMessage("§7«▌§cMyTraz§7▌» Du hast PVP für deine Welt deaktiviert.!");
+                        player.sendMessage("§7«▌§cMyTraz§7▌» Du hast PVP für deine Welt deaktiviert!");
                         return true;
                     }
                     player.getWorld().setPVP(true);

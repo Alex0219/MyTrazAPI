@@ -79,7 +79,6 @@ public class RedisBuilder extends JavaPlugin {
     public void buildRedis() {
         jedis = new Jedis("127.0.0.1", 6379);
         System.out.println("Backend -> Connected to redis.");
-        jedis.select(0);
 
     }
 

@@ -33,7 +33,7 @@ public class BanManager {
 
                     "\n§bBanID §e" + getBanID(UUID) +
 
-                    "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : ts.melonenpvp.de");
+                    "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : mytraz.net");
         }
     }
 

@@ -50,8 +50,13 @@ import java.util.Arrays;
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
 public class CommandTPWorld implements CommandExecutor {
+
+    public CommandTPWorld() {
+        System.out.println("Gets called");
+    }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
@@ -60,8 +65,14 @@ public class CommandTPWorld implements CommandExecutor {
                 if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
                     String world = getWorld(uuid);
                     System.out.println(world);
-                    new WorldCreator(world).createWorld();
-                    player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
+                    if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(world).exists()) {
+                        new WorldCreator(world).createWorld();
+                        player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
+                    } else {
+                        player.sendMessage("§c§7«▌§cMyTraz§7▌» §cDiese Welt existiert nicht!");
+                        return true;
+                    }
+
                 } else {
                     player.sendMessage("§c§7«▌§cMyTraz§7▌» Du besitzt keine Welt.");
                     return true;
@@ -77,8 +88,14 @@ public class CommandTPWorld implements CommandExecutor {
                         player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
                         return true;
                     } else if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, args[0])) {
-                        new WorldCreator(args[0]).createWorld();
-                        player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
+                        if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(args[0]).exists()) {
+                            new WorldCreator(args[0]).createWorld();
+                            player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
+                        } else {
+                            player.sendMessage("§c§7«▌§cMyTraz§7▌» §cDiese Welt existiert nicht!");
+                            return true;
+                        }
+
                     }
                     player.sendMessage("§c§7«▌§cMyTraz§7▌» Du darfst dich nicht in diese Welt teleportieren.");
                     return true;
@@ -90,6 +107,7 @@ public class CommandTPWorld implements CommandExecutor {
             }
 
         } else {
+            System.out.println("Not a player!");
             return true;
         }
         return false;

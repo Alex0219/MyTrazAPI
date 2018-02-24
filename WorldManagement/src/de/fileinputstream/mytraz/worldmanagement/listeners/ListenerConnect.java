@@ -4,6 +4,7 @@ import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import de.fileinputstream.redisbuilder.RedisBuilder;
+import de.fileinputstream.redisbuilder.rank.RankManager;
 import net.minecraft.server.v1_12_R1.IChatBaseComponent;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
@@ -15,9 +16,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.lang.reflect.Field;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * User: Alexander<br/>
@@ -82,11 +88,53 @@ public class ListenerConnect implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        String rank = RankManager.getRank(UUIDFetcher.getUUID(event.getPlayer().getName()).toString());
+        if (!rank.equalsIgnoreCase("spieler") || !rank.equalsIgnoreCase("premium")) {
+            event.setJoinMessage("§8§l[Team] §r§c" + event.getPlayer().getName() + " §7ist dem Server beigetreten.");
+        }
+        event.setJoinMessage("§c" + event.getPlayer().getName() + " §7ist dem Server beigetreten.");
         Player player = event.getPlayer();
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(16);
         NameTags.addToTeam(player);
         NameTags.updateTeams();
         sendTablist(player, "§4§lMyTraz.NET - §aSurvival", "§cTeamspeak: MyTraz.NET");
+        Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), new Runnable() {
+
+            @Override
+            public void run() {
+                SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ",
+                        Locale.GERMAN);
+                DateFormatSymbols dfs = df.getDateFormatSymbols();
+                String[] swd = {"", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
+                String[] swm = {"", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August,", "September", "Oktober", "November", "Dezember"};
+                dfs.setShortWeekdays(swd);
+                dfs.setShortMonths(swm);
+                df.setDateFormatSymbols(dfs);
+                String datum = df.format(new Date());
+                if (player != null) {
+                    new ListenerConnect().sendTablist(player, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+                }
+
+            }
+        }, 0, 0);
+
+        player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("§cWillkommen auf Survival! Gebe /tutorial ein, um die Hilfeseite aufzurufen.");
+        player.sendMessage("§7--------------------------------------------------");
+
+
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        event.setQuitMessage("§c" + event.getPlayer().getName() + " §7hat den Server verlassen.");
+        Player player = event.getPlayer();
+        String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+        if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
+            String world = RedisBuilder.getWorldManager().getWorld(uuid);
+            Bukkit.unloadWorld(world, true);
+            System.out.println("Backend -> Unloading world from player: " + player.getName() + "(uuid:" + uuid + ").");
+        }
     }
 
     public void sendTablist(Player p, String header, String footer) {
@@ -111,7 +159,6 @@ public class ListenerConnect implements Listener {
 
     @EventHandler
     public void onPerfomCommand(PlayerCommandPreprocessEvent e) {
-
         String msg = e.getMessage();
         if ((msg.equalsIgnoreCase("/plugins")) || (msg.equalsIgnoreCase("/pl")) || (msg.startsWith("/bukkit:plugins")) || (msg.startsWith("/bukkit:pl")) || ((msg.startsWith("/bukkit:ver") | msg.startsWith("/bukkit:version"))) || (msg.startsWith("/ver")) || (msg.startsWith("/version")) || (msg.startsWith("/?")) || (msg.equalsIgnoreCase("/help")) || (msg.startsWith("/bukkit:?")) || (msg.equalsIgnoreCase("/bukkit:?")) || (msg.equalsIgnoreCase("/bukkit:help")) || (msg.equalsIgnoreCase("/icanhasbukkit")) || (msg.equalsIgnoreCase("/me")) || (msg.startsWith("/minecraft:me"))) {
             if (!e.getPlayer().hasPermission("api.bypass")) {
@@ -119,6 +166,7 @@ public class ListenerConnect implements Listener {
                 e.getPlayer().sendMessage("Unknown command. Type \"help\" for help.");
             } else {
             }
+
         }
     }
 }

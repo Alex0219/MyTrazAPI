@@ -1,32 +1,31 @@
 name: WorldManagement
 main: de.fileinputstream.mytraz.worldmanagement.Bootstrap
 version: 1.0
-description: world management
+description: MyTraz World Management
 author: FileInputStream
 
 commands:
-
     tpworld:
-
+        aliases: [world]
     createworld:
-
     removeresident:
-
+        aliases: [deny,kickplayer,remove]
     addresident:
-
+        aliases: [invite,addplayer,add]
     acceptinvite:
-
+        aliases: [join,accept]
     newworldspawn:
-
+        aliases: [setspawn,setworldspawn]
     worldinfo:
-
+        aliases: [info]
     worlds:
-
+        aliases: [listworlds]
     setpvp:
-
+        aliases: [pvp,togglepvp]
     tutorial:
-
-
-
-
-
+        aliases: [help,tut]
+    gm:
+        aliases: [gamemode,gmode]
+    vanish:
+       aliases: [v]
+    fly:

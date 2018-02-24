@@ -51,7 +51,10 @@ public class CommandCreateWorld implements CommandExecutor {
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
 
             if (!Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "hasworld").equalsIgnoreCase("true")) {
+
                 Bootstrap.getInstance().getWorldManager().createWorld(name, uuid);
+
+
                 Bootstrap.getInstance().getJedis().hset("uuid:" + uuid, "hasworld", "true");
             } else {
                 player.sendMessage("§7«▌§cMyTraz§7▌» Du hast bereits eine Welt.");

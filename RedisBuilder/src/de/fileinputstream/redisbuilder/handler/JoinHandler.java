@@ -68,6 +68,9 @@ public class JoinHandler implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
 
+        if (RedisBuilder.getInstance().getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
+            event.setJoinMessage(null);
+        }
         ExecutorService service = Executors.newFixedThreadPool(30);
         service.execute(() -> {
             String name = event.getPlayer().getName();
@@ -77,6 +80,7 @@ public class JoinHandler implements Listener {
             System.out.println(name);
             DBUser dbUser = new DBUser(uuid.toString(), name);
             System.out.println(dbUser.toString());
+
             long millisNow = System.currentTimeMillis();
 
             if (!dbUser.userExists()) {
@@ -105,7 +109,9 @@ public class JoinHandler implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        event.setQuitMessage(null);
+        if (RedisBuilder.getInstance().getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
+            event.setQuitMessage(null);
+        }
     }
 
     public void handleBroadcaster(Player player) {
@@ -115,6 +121,13 @@ public class JoinHandler implements Listener {
         player.sendMessage("§7--------------------------------------------------");
         player.sendMessage("§4Wichtig: §aDa wir uns mit der Hauptlobby noch in der Bauphase befinden , ist dies nur eine vorübergehende Lobby.");
         player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("§cUm zu dem Survival Server zu gelangen, musst zu in das Portalhaus gehen und dort das Portal 'Survival' betreten.");
+        player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("§cWir bieten im Moment nur Survival an, die MiniGames und Modded sind bald verüfgbar.");
+        player.sendMessage("§7--------------------------------------------------");
+
         player.sendTitle("§7§lWillkommen auf", "§l§6MyTraz.net");
         player.playSound(player.getLocation(), Sound.LEVEL_UP, 20F, 2F);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(RedisBuilder.getInstance(), new Runnable() {

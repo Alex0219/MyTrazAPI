@@ -60,7 +60,7 @@ public class AFKMover {
                                 if (!AFKMover.AFK.containsKey(clients.getUniqueIdentifier())) {
                                     AFKMover.AFK.put(clients.getUniqueIdentifier(), Long.valueOf(System.currentTimeMillis()));
                                 } else {
-                                    long current = ((Long) AFKMover.AFK.get(clients.getUniqueIdentifier())).longValue();
+                                    long current = AFKMover.AFK.get(clients.getUniqueIdentifier()).longValue();
                                     if (System.currentTimeMillis() - current >= AFKMover.Away) {
                                         if (clients.isInServerGroup(39)) {
                                             System.out.println("Is in server group 39");
@@ -85,7 +85,7 @@ public class AFKMover {
                                 AFKMover.AFK.remove(clients.getUniqueIdentifier());
                             }
                             if ((AFKMover.Moved.containsKey(clients.getUniqueIdentifier())) &&
-                                    (((Boolean) AFKMover.Moved.get(clients.getUniqueIdentifier())).booleanValue())) {
+                                    (AFKMover.Moved.get(clients.getUniqueIdentifier()).booleanValue())) {
                                 int channel = AFKMover.Channel.get(clients.getUniqueIdentifier()).intValue();
                                 if (channel == 35 || channel == 36 || channel == 37 || channel == 38 || channel == 39 || channel == 24 || channel == 25 || channel == 26) {
                                     if (!clients.isInServerGroup(202)) {
@@ -94,17 +94,14 @@ public class AFKMover {
                                         AFKMover.AFK.remove(clients.getUniqueIdentifier());
 
                                     } else {
-                                        Bootstrap.api.moveClient(clients.getId(), ((Integer) AFKMover.Channel.get(clients.getUniqueIdentifier())).intValue());
+                                        Bootstrap.api.moveClient(clients.getId(), AFKMover.Channel.get(clients.getUniqueIdentifier()).intValue());
                                         AFKMover.Moved.remove(clients.getUniqueIdentifier());
                                         AFKMover.Channel.remove(clients.getUniqueIdentifier());
-                                        AFKMover.AFK.remove(clients.getUniqueIdentifier());
                                     }
-
                                 } else {
-                                    Bootstrap.api.moveClient(clients.getId(), ((Integer) AFKMover.Channel.get(clients.getUniqueIdentifier())).intValue());
+                                    Bootstrap.api.moveClient(clients.getId(), AFKMover.Channel.get(clients.getUniqueIdentifier()).intValue());
                                     AFKMover.Moved.remove(clients.getUniqueIdentifier());
                                     AFKMover.Channel.remove(clients.getUniqueIdentifier());
-                                    AFKMover.AFK.remove(clients.getUniqueIdentifier());
                                 }
 
                             }

@@ -26,7 +26,7 @@ public class ListenerLogin implements Listener {
 
                         "\n§bBanID §e" + BanManager.getBanID(uuid) +
 
-                        "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : ts.mytraz.net");
+                        "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : mytraz.net");
             } else {
                 BanManager.unban(uuid);
                 e.allow();
@@ -38,7 +38,7 @@ public class ListenerLogin implements Listener {
 
                         "\n§bBanID §e" + BanManager.getBanID(uuid) +
 
-                        "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : ts.mytraz.net");
+                        "\nDu kannst im Teamspeak einen Entbannungsantrag stellen : mytraz.net");
             } else if (!Bootstrap.getMysql().isConnected()) {
                 e.disallow(PlayerLoginEvent.Result.KICK_BANNED, "§cEin Fehler ist aufgetreten. Bitte melden: Fehlercode: MYSQL_CON_CLOSED");
 

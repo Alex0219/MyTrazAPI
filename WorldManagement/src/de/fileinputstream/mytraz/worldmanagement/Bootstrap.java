@@ -8,6 +8,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * User: Alexander<br/>
  * Date: 10.02.2018<br/>
@@ -56,20 +61,59 @@ public class Bootstrap extends JavaPlugin {
     }
 
     @Override
+    public void onLoad() {
+
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
+
+        worldManager = new WorldManager();
+
+        Bukkit.getPluginManager().registerEvents(new ListenerConnect(), this);
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("DB", "1");
         getConfig().addDefault("SpawnWorld", "world");
         saveConfig();
-
-        spawnWorld = getConfig().getString("SpawnWorld");
-        worldManager = new WorldManager();
         jedis = new Jedis("127.0.0.1", 6379);
         jedis.connect();
         System.out.println("Connected to redis!");
-        NameTags.initScoreboardTeams();
 
+        spawnWorld = getConfig().getString("SpawnWorld");
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), new Runnable() {
+
+                @Override
+                public void run() {
+                    SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ",
+                            Locale.GERMAN);
+                    DateFormatSymbols dfs = df.getDateFormatSymbols();
+                    String[] swd = {"", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
+                    String[] swm = {"", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August,", "September", "Oktober", "November", "Dezember"};
+                    dfs.setShortWeekdays(swd);
+                    dfs.setShortMonths(swm);
+                    df.setDateFormatSymbols(dfs);
+                    String datum = df.format(new Date());
+                    if (p != null) {
+                        new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+                    }
+
+                }
+            }, 1, 1);
+        });
+
+
+        NameTags.initScoreboardTeams();
+        loadCommands();
+    }
+
+    @Override
+    public void onDisable() {
+        instance = null;
+    }
+
+    public void loadCommands() {
         getCommand("tpworld").setExecutor(new CommandTPWorld());
         getCommand("createworld").setExecutor(new CommandCreateWorld());
         getCommand("addresident").setExecutor(new CommandAddResident());
@@ -80,12 +124,9 @@ public class Bootstrap extends JavaPlugin {
         getCommand("worlds").setExecutor(new CommandWorlds());
         getCommand("setpvp").setExecutor(new CommandSetPvP());
         getCommand("tutorial").setExecutor(new CommandTutorial());
-        Bukkit.getPluginManager().registerEvents(new ListenerConnect(), this);
-    }
-
-    @Override
-    public void onDisable() {
-        instance = null;
+        getCommand("gm").setExecutor(new CommandGM());
+        getCommand("v").setExecutor(new CommandVanish());
+        getCommand("vanish").setExecutor(new CommandVanish());
     }
 
     public Jedis getJedis() {

@@ -83,9 +83,6 @@ public class Bootstrap extends JavaPlugin {
         createConfig();
         //connect mysql
         connectMySQL();
-
-
-
     }
 
     public void registerCommands() {
