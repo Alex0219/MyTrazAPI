@@ -170,8 +170,6 @@ public class JoinHandler implements Listener {
         }
     }
 
-    public void setLobbyItems() {
 
-    }
 
 }

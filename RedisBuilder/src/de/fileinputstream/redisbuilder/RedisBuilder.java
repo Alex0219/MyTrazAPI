@@ -1,6 +1,5 @@
 package de.fileinputstream.redisbuilder;
 
-import de.fileinputstream.redisbuilder.commands.CommandAddHologram;
 import de.fileinputstream.redisbuilder.commands.CommandRang;
 import de.fileinputstream.redisbuilder.handler.JoinHandler;
 import de.fileinputstream.redisbuilder.handler.ListenerBlock;
@@ -99,7 +98,6 @@ public class RedisBuilder extends JavaPlugin {
         //   pm.registerEvents(new JoinHandler(), this);
         pm.registerEvents(new ListenerChat(), this);
         getCommand("rang").setExecutor(new CommandRang());
-        getCommand("addhologram").setExecutor(new CommandAddHologram());
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("ServerType", "Lobby");
         getConfig().addDefault("Redis-DB", 0);
