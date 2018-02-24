@@ -52,21 +52,21 @@ public class ListenerBlock implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
             if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 event.setCancelled(true);
@@ -76,14 +76,14 @@ public class ListenerBlock implements Listener {
 
     @EventHandler
     public void onEntitybyEntityDamage(EntityDamageByEntityEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onEntityDamagebyBlock(EntityDamageEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
 
         }
@@ -91,7 +91,7 @@ public class ListenerBlock implements Listener {
 
     @EventHandler
     public void onEat(FoodLevelChangeEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
 
         }
@@ -99,14 +99,12 @@ public class ListenerBlock implements Listener {
 
     @EventHandler
     public void onMobSpawn(EntitySpawnEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             org.bukkit.entity.Entity entity = event.getEntity();
             if (!(entity instanceof ArmorStand)) {
                 event.setCancelled(true);
                 entity.remove();
 
-            } else {
-                return;
             }
         }
 
@@ -115,7 +113,7 @@ public class ListenerBlock implements Listener {
 
     @EventHandler
     public void onRain(WeatherChangeEvent event) {
-        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode") == true) {
+        if (RedisBuilder.getInstance().getConfig().getBoolean("LobbyMode")) {
             event.setCancelled(true);
         }
     }

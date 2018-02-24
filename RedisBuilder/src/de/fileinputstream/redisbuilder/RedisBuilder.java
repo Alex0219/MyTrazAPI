@@ -1,7 +1,6 @@
 package de.fileinputstream.redisbuilder;
 
 import de.fileinputstream.redisbuilder.commands.CommandRang;
-import de.fileinputstream.redisbuilder.handler.JoinHandler;
 import de.fileinputstream.redisbuilder.handler.ListenerBlock;
 import de.fileinputstream.redisbuilder.handler.ListenerChat;
 import de.fileinputstream.redisbuilder.mod.ModdedJoinHandler;
@@ -111,7 +110,6 @@ public class RedisBuilder extends JavaPlugin {
 
         } else if (getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
             NameTags.initScoreboardTeams();
-            pm.registerEvents(new JoinHandler(), this);
             pm.registerEvents(new ListenerBlock(), this);
             System.out.println("Backend -> Using normal scoreboard method.");
         }

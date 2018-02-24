@@ -1,6 +1,6 @@
 name: NoneAPI
 version: 1.0
-main: de.fileinputstream.none.api.Bootstrap
+main: Bootstrap
 author: FileInputStream
 
 commands:
