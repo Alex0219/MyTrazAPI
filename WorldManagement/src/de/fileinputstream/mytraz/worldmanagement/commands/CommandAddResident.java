@@ -55,9 +55,9 @@ public class CommandAddResident implements CommandExecutor {
                 String uuid = UUIDFetcher.getUUID(player.getName()).toString();
                 String targetUUID = UUIDFetcher.getUUID(args[0]).toString();
 
-                if (RedisBuilder.getInstance().getWorldManager().hasWorld(uuid)) {
-                    String worldID = RedisBuilder.getInstance().getWorldManager().getWorld(uuid);
-                    if (!Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, worldID)) {
+                if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
+                    String worldID = RedisBuilder.getWorldManager().getWorld(uuid);
+                    if (!Bootstrap.getInstance().getWorldManager().isResidentInWorld(targetUUID, worldID)) {
                         if (!Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(targetUUID)) {
                             if (Bukkit.getPlayer(args[0]) != null) {
                                 if (!Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(targetUUID)) {

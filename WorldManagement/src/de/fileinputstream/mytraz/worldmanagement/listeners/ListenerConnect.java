@@ -1,12 +1,23 @@
 package de.fileinputstream.mytraz.worldmanagement.listeners;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
+import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
+import de.fileinputstream.redisbuilder.RedisBuilder;
+import net.minecraft.server.v1_12_R1.IChatBaseComponent;
+import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+
+import java.lang.reflect.Field;
 
 /**
  * User: Alexander<br/>
@@ -47,19 +58,68 @@ public class ListenerConnect implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        Bukkit.getPlayer(event.getPlayer().getName()).chat("/tpworld");
+
+        Bukkit.broadcastMessage("§7«▌§cMyTraz§7▌» §c" + event.getPlayer().getName() + " §7ist §cgestorben!");
+        String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
+        if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
+            event.setRespawnLocation(Bukkit.getWorld(RedisBuilder.getWorldManager().getWorld(uuid)).getSpawnLocation());
+        } else {
+            event.setRespawnLocation(Bukkit.getWorld(Bootstrap.getInstance().getConfig().getString("SpawnWorld")).getSpawnLocation());
+        }
+
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         if (event.getEntity() instanceof Player) {
+            Player player = event.getEntity();
+            event.setDeathMessage(null);
             event.getEntity().spigot().respawn();
+
+
         }
 
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(16);
+        NameTags.addToTeam(player);
+        NameTags.updateTeams();
+        sendTablist(player, "§4§lMyTraz.NET - §aSurvival", "§cTeamspeak: MyTraz.NET");
+    }
 
+    public void sendTablist(Player p, String header, String footer) {
+        IChatBaseComponent tabheader = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + header + "\"}");
+        IChatBaseComponent tabfooter = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + footer + "\"}");
+        PacketPlayOutPlayerListHeaderFooter tablist = new PacketPlayOutPlayerListHeaderFooter();
+        try {
+            Field headerField = tablist.getClass().getDeclaredField("a");
+            headerField.setAccessible(true);
+            headerField.set(tablist, tabheader);
+            headerField.setAccessible(!headerField.isAccessible());
+            Field footerField = tablist.getClass().getDeclaredField("b");
+            footerField.setAccessible(true);
+            footerField.set(tablist, tabfooter);
+            footerField.setAccessible(!footerField.isAccessible());
+        } catch (Exception var11) {
+            var11.printStackTrace();
+        } finally {
+            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(tablist);
+        }
+    }
+
+    @EventHandler
+    public void onPerfomCommand(PlayerCommandPreprocessEvent e) {
+
+        String msg = e.getMessage();
+        if ((msg.equalsIgnoreCase("/plugins")) || (msg.equalsIgnoreCase("/pl")) || (msg.startsWith("/bukkit:plugins")) || (msg.startsWith("/bukkit:pl")) || ((msg.startsWith("/bukkit:ver") | msg.startsWith("/bukkit:version"))) || (msg.startsWith("/ver")) || (msg.startsWith("/version")) || (msg.startsWith("/?")) || (msg.equalsIgnoreCase("/help")) || (msg.startsWith("/bukkit:?")) || (msg.equalsIgnoreCase("/bukkit:?")) || (msg.equalsIgnoreCase("/bukkit:help")) || (msg.equalsIgnoreCase("/icanhasbukkit")) || (msg.equalsIgnoreCase("/me")) || (msg.startsWith("/minecraft:me"))) {
+            if (!e.getPlayer().hasPermission("api.bypass")) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage("Unknown command. Type \"help\" for help.");
+            } else {
+            }
+        }
     }
 }

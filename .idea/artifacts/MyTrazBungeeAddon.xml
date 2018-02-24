@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MyTrazBungeeAddon">
+    <output-path>$USER_HOME$/Documents</output-path>
+    <root id="archive" name="MyTrazBungeeAddon.jar">
+      <element id="module-output" name="BungeeAddon" />
+      <element id="file-copy" path="$PROJECT_DIR$/BungeeAddon/plugin.yml" />
+    </root>
+  </artifact>
+</component>

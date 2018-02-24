@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/BungeeAddon/BungeeAddon.iml" filepath="$PROJECT_DIR$/BungeeAddon/BungeeAddon.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyTraz - Report/MyTraz - Report.iml" filepath="$PROJECT_DIR$/MyTraz - Report/MyTraz - Report.iml" />
       <module fileurl="file://$PROJECT_DIR$/None - API.iml" filepath="$PROJECT_DIR$/None - API.iml" />
       <module fileurl="file://$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" filepath="$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" />

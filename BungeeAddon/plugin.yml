@@ -1,0 +1,4 @@
+name: BungeeAddon
+version: 1.0
+main: de.fileinputstream.mytraz.bungee.Bootstrap
+author: FileInputStream

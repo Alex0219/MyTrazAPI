@@ -50,10 +50,9 @@ import java.util.*;
  */
 public class WorldManager {
 
-    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    static SecureRandom rnd = new SecureRandom();
-
     public HashMap<String, String> worldInvites = new HashMap<String, String>();
+    String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    SecureRandom rnd = new SecureRandom();
 
     public WorldManager() {
 
@@ -114,11 +113,7 @@ public class WorldManager {
      */
     public boolean worldExists(String worldID) {
 
-        if (Bootstrap.getInstance().getJedis().exists("world:" + worldID)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Bootstrap.getInstance().getJedis().exists("world:" + worldID);
     }
 
     //Weltenbewohner wird hinzugefügt
@@ -137,6 +132,7 @@ public class WorldManager {
                 residents.add(uuid);
                 FileConfiguration cfg = YamlConfiguration.loadConfiguration(getWorldResidentsFile(worldID));
                 cfg.set("Residents", residents);
+
                 try {
                     cfg.save(getWorldResidentsFile(worldID));
                 } catch (IOException e) {
@@ -214,6 +210,52 @@ public class WorldManager {
             }
         }
         return file;
+    }
+
+    public File getPlayerWorldFile(String uuid) {
+        File file = new File("plugins/WorldManagement/worlds", uuid + ".yml");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
+    }
+
+    /**
+     * Gibt die Welten des angegeben Users zurück.
+     *
+     * @param uuid
+     * @return List<String>
+     */
+    public List<String> getResidentWorlds(String uuid) {
+        File folder = new File("plugins/WorldManagement/worlds/");
+        File[] files = folder.listFiles();
+        List<String> worldsResidents = new ArrayList<>();
+        for (File file : files) {
+            System.out.println(file.getName());
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+            List<String> worlds = cfg.getStringList("Residents");
+            if (worlds.contains(uuid)) {
+                worldsResidents.add(file.getName().replace(".yml", ""));
+            } else {
+                continue;
+            }
+
+
+        }
+        return worldsResidents;
+
+    }
+
+    public String getOwnerFromWorld(String worldID) {
+        if (worldExists(worldID)) {
+            String owner = Bootstrap.getInstance().getJedis().hget("world:" + worldID, "owner");
+            return owner;
+        }
+        return "";
     }
 
 

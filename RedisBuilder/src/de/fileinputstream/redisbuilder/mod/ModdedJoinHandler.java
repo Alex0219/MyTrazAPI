@@ -59,7 +59,7 @@ public class ModdedJoinHandler implements Listener {
                 Bukkit.getPlayer(event.getPlayer().getName()).chat("/spawn");
                 RedisBuilder.getInstance().getJedis().select(RedisBuilder.getInstance().getConfig().getInt("Redis_DB"));
             }
-            new RankManager().setScoreboardAlternative(event.getPlayer());
+            //new RankManager().setScoreboardAlternative(event.getPlayer());
             Bukkit.getPlayer(event.getPlayer().getName()).chat("/spawn");
 
         }

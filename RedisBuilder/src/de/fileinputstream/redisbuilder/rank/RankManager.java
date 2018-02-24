@@ -80,35 +80,48 @@ public class RankManager {
         String s = RankManager.getRank(uuid).substring(0);
         if (s.equalsIgnoreCase("admin".toLowerCase())) {
             player.setPlayerListName("§4" + player.getName());
+            player.setCustomName("§4" + player.getName());
+            player.setCustomNameVisible(true);
             return;
         } else if (s.equalsIgnoreCase("dev".toLowerCase())) {
             player.setPlayerListName("§3" + player.getName());
+            player.setCustomName("§3" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("sup".toLowerCase())) {
             player.setPlayerListName("§1" + player.getName());
+            player.setCustomName("§1" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("architekt".toLowerCase())) {
             player.setPlayerListName("§2" + player.getName());
+            player.setCustomName("§2" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("youtuber".toLowerCase())) {
             player.setPlayerListName("§5" + player.getName());
+            player.setCustomName("§5" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("premium".toLowerCase())) {
             player.setPlayerListName("§6" + player.getName());
+            player.setCustomName("§6" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("spieler".toLowerCase())) {
             player.setPlayerListName("§7" + player.getName());
+            player.setCustomName("§7" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
             player.setPlayerListName("§c" + player.getName());
+            player.setCustomName("§c" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("bauleitung".toLowerCase())) {
             player.setPlayerListName("§2" + player.getName());
+            player.setCustomName("§2" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("teamleitung".toLowerCase())) {
             player.setPlayerListName("§c" + player.getName());
+            player.setCustomName("§c" + player.getName());
             return;
 
         }
     }
+
+
 }

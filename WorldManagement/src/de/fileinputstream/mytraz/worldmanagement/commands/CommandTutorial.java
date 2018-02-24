@@ -1,9 +1,5 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
-import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
-import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import org.bukkit.Bukkit;
-import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,8 +7,8 @@ import org.bukkit.entity.Player;
 
 /**
  * User: Alexander<br/>
- * Date: 13.02.2018<br/>
- * Time: 17:48<br/>
+ * Date: 23.02.2018<br/>
+ * Time: 23:54<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -44,25 +40,22 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandAcceptinvite implements CommandExecutor {
+public class CommandTutorial implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            if (Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(uuid)) {
-                String worldID = Bootstrap.getInstance().getWorldManager().worldInvites.get(uuid);
-                Bootstrap.getInstance().getWorldManager().addResident(worldID, uuid);
-                System.out.println("§7«▌§cMyTraz§7▌» Du hast die Einladung erfolgreich angenommen!");
-                Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
-                Bukkit.createWorld(new WorldCreator(worldID));
-                player.teleport(Bukkit.getWorld(worldID).getSpawnLocation());
-            } else {
-                player.sendMessage("§c§7«▌§cMyTraz§7▌» Du wurdest von niemandem in eine Welt eingeladen.");
-                return true;
-            }
-        } else {
-            return true;
+            player.sendMessage("§7===================§cMyTraz.net | Hilfe§7===================");
+            player.sendMessage("§7Auflistung der Befehle:");
+            player.sendMessage("§7/createworld - Erstellt dir deine eigene Welt.");
+            player.sendMessage("§7/addresident - <Name> - Schickt dem angegebenen Spieler eine Einladung zu deiner Welt.");
+            player.sendMessage("§7/acceptinvite - Nimmt die aktuelle Anfrage von einem User an.");
+            player.sendMessage("§7/removeresident - <Name> Entfernt einen Spieler aus deiner Welt und kickt ihn direkt, sonfern er online ist.");
+            player.sendMessage("§7/newworldspawn - Setzt den Weltenspawn an der aktuellen Position.");
+            player.sendMessage("§7/tpworld oder /tpworld <Weltenname> - Teleportiert dich in eine Welt. Mit einer ID angehängt kannst du in Welten gelangen, in denen du Bewohner bist.");
+            player.sendMessage("§7/setpvp - Aktiviert oder deaktiviert PvP in deiner Welt.");
+            player.sendMessage("§7/worlds - Zeigt dir alle Welten an, in denen du bereits Mitbewohner bist.");
+            player.sendMessage("§7===================§cMyTraz.net | Hilfe§7===================");
         }
         return false;
     }

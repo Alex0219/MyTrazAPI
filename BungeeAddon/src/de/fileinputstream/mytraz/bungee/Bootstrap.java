@@ -1,17 +1,13 @@
-package de.fileinputstream.mytraz.worldmanagement;
+package de.fileinputstream.mytraz.bungee;
 
-import de.fileinputstream.mytraz.worldmanagement.commands.*;
-import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
-import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
-import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-import redis.clients.jedis.Jedis;
+import de.fileinputstream.mytraz.bungee.commands.CommandHub;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.plugin.Plugin;
 
 /**
  * User: Alexander<br/>
- * Date: 10.02.2018<br/>
- * Time: 19:33<br/>
+ * Date: 24.02.2018<br/>
+ * Time: 00:35<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,64 +39,15 @@ import redis.clients.jedis.Jedis;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class Bootstrap extends JavaPlugin {
-
-    static Bootstrap instance;
-    Jedis jedis;
-    WorldManager worldManager;
-    String spawnWorld;
-    String prefix = "§7«▌§cMyTraz§7▌»";
-
-    public static Bootstrap getInstance() {
-        return instance;
-    }
+public class Bootstrap extends Plugin {
 
     @Override
     public void onEnable() {
-        instance = this;
-        getConfig().options().copyDefaults(true);
-        getConfig().addDefault("DB", "1");
-        getConfig().addDefault("SpawnWorld", "world");
-        saveConfig();
-
-        spawnWorld = getConfig().getString("SpawnWorld");
-        worldManager = new WorldManager();
-        jedis = new Jedis("127.0.0.1", 6379);
-        jedis.connect();
-        System.out.println("Connected to redis!");
-        NameTags.initScoreboardTeams();
-
-        getCommand("tpworld").setExecutor(new CommandTPWorld());
-        getCommand("createworld").setExecutor(new CommandCreateWorld());
-        getCommand("addresident").setExecutor(new CommandAddResident());
-        getCommand("removeresident").setExecutor(new CommandRemoveResident());
-        getCommand("acceptinvite").setExecutor(new CommandAcceptinvite());
-        getCommand("newworldspawn").setExecutor(new CommandNewWorldSpawn());
-        getCommand("worldinfo").setExecutor(new CommandWorldInfo());
-        getCommand("worlds").setExecutor(new CommandWorlds());
-        getCommand("setpvp").setExecutor(new CommandSetPvP());
-        getCommand("tutorial").setExecutor(new CommandTutorial());
-        Bukkit.getPluginManager().registerEvents(new ListenerConnect(), this);
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandHub("hub"));
     }
 
     @Override
     public void onDisable() {
-        instance = null;
-    }
 
-    public Jedis getJedis() {
-        return jedis;
-    }
-
-    public WorldManager getWorldManager() {
-        return worldManager;
-    }
-
-    public String getSpawnWorld() {
-        return spawnWorld;
-    }
-
-    public String getPrefix() {
-        return prefix;
     }
 }

@@ -78,11 +78,7 @@ public class WorldManager {
      */
     public boolean worldExists(String worldID) {
 
-        if (RedisBuilder.getInstance().getJedis().exists("world:" + worldID)) {
-            return true;
-        } else {
-            return false;
-        }
+        return RedisBuilder.getInstance().getJedis().exists("world:" + worldID);
     }
 
 
@@ -94,10 +90,7 @@ public class WorldManager {
 
     public boolean hasWorld(String uuid) {
 
-        if (RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "hasworld").equalsIgnoreCase("true")) {
-            return true;
-        }
-        return false;
+        return RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "hasworld").equalsIgnoreCase("true");
     }
 
     public String getWorld(String uuid) {
@@ -105,10 +98,12 @@ public class WorldManager {
         if (hasWorld(uuid)) {
             String worldString = RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
             System.out.println(worldString);
-            ArrayList<String> playerWorlds = new ArrayList(Arrays.asList(new String[]{worldString}));
-            String world = ((String) playerWorlds.get(0)).replace("[", "").replace("]", "");
+            ArrayList<String> playerWorlds = new ArrayList(Arrays.asList(worldString));
+            String world = playerWorlds.get(0).replace("[", "").replace("]", "");
             return world;
         }
         return "";
     }
+
+
 }
