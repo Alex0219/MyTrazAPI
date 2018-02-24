@@ -50,7 +50,9 @@ import java.util.*;
  */
 public class WorldManager {
 
-    public HashMap<String, String> worldInvites = new HashMap<String, String>();
+    public HashMap<String,
+            String> worldInvites = new HashMap<String,
+            String>();
     String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     SecureRandom rnd = new SecureRandom();
 
@@ -68,7 +70,6 @@ public class WorldManager {
         //WorldCreator wc = new WorldCreator()
         List<String> worlds = new ArrayList<String>();
         List<String> residentWorlds = new ArrayList<String>();
-
 
         String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
         ArrayList<String> worldResidents = new ArrayList<String>();
@@ -140,7 +141,6 @@ public class WorldManager {
                 }
             }
 
-
             System.out.println("Backend -> Added resident:" + uuid + " to world id:" + worldID);
         }
     }
@@ -195,7 +195,6 @@ public class WorldManager {
 
     }
 
-
     public boolean isResidentInWorld(String uuid, String world) {
         return getWorldResidents(world).contains(uuid);
     }
@@ -244,7 +243,6 @@ public class WorldManager {
                 continue;
             }
 
-
         }
         return worldsResidents;
 
@@ -257,6 +255,5 @@ public class WorldManager {
         }
         return "";
     }
-
 
 }

@@ -1,21 +1,18 @@
 package de.fileinputstream.none.api.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.Main;
-import org.bukkit.entity.Player;
-
 import de.fileinputstream.none.api.Bootstrap;
 import de.fileinputstream.none.api.cache.UUIDFetcher;
 import de.fileinputstream.none.api.punishment.HistoryManager;
 import de.fileinputstream.none.api.punishment.MuteManager;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 public class CommandMute implements CommandExecutor {
-	
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
             if (p.hasPermission("ban.mute")) {
@@ -32,13 +29,7 @@ public class CommandMute implements CommandExecutor {
                         for (int i = 1; i < args.length; i++) {
                             reason = reason + args[i] + " ";
                         }
-                   /*
-                    *      if (PermissionsEx.getUser(Player).has("ban.noban") && ((!sender.hasPermission("ban.banall")))) {
-                    *         sender.sendMessage("§cSystem §7● §7Du darfst kein §cTeammitglied §7muten!");
-                            return true;
-                        }
-                    */
-                         
+
                         MuteManager.mute(uuid, playername, reason, -1L, "p", p.getName());
                         HistoryManager.addHistoryEntry("Mute", uuid, reason, p.getName(), "permanent", playername);
 
@@ -68,7 +59,7 @@ public class CommandMute implements CommandExecutor {
                         reason2 = reason2 + args[j] + " ";
                     }
                     MuteManager.mute(uuid, playername2, reason2, -1L, "p", "CONSOLE");
-                    HistoryManager.addHistoryEntry("Mute",uuid, reason2, "CONSOLE", "permanent", playername2);
+                    HistoryManager.addHistoryEntry("Mute", uuid, reason2, "CONSOLE", "permanent", playername2);
 
                     sender.sendMessage("§cSystem §7● §7Du hast den Spieler §c" + playername2 + " §7gemutet");
                     return true;
@@ -80,5 +71,4 @@ public class CommandMute implements CommandExecutor {
         }
         return true;
     }
-
 }

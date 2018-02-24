@@ -31,7 +31,7 @@ public class CommandRang implements CommandExecutor {
                             Player victim = Bukkit.getPlayer(args[0]);
                             victim.kickPlayer("§aDein Rang wurde aktualisiert!");
                         }
-                        
+
                     } else {
                         p.sendMessage("§cBackend -> §cDieser Rang existiert nicht.");
 

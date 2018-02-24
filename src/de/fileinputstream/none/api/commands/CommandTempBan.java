@@ -1,22 +1,20 @@
 package de.fileinputstream.none.api.commands;
 
-import java.util.List;
-
-import org.bukkit.Bukkit;
+import de.fileinputstream.none.api.cache.UUIDFetcher;
+import de.fileinputstream.none.api.punishment.BanManager;
+import de.fileinputstream.none.api.punishment.HistoryManager;
+import de.fileinputstream.none.api.time.BanUnit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.punishment.BanManager;
-import de.fileinputstream.none.api.punishment.HistoryManager;
-import de.fileinputstream.none.api.time.BanUnit;
+import java.util.List;
 
 public class CommandTempBan implements CommandExecutor {
 
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             if ((sender instanceof ConsoleCommandSender)) {
                 if (args.length >= 4) {
@@ -46,15 +44,15 @@ public class CommandTempBan implements CommandExecutor {
                     for (int i = 3; i < args.length; i++) {
                         reason = reason + args[i] + " ";
                     }
-      
-                    
+
+
                     List<String> unitList = BanUnit.getUnitsAsString();
                     if (unitList.contains(unit.toLowerCase())) {
                         BanUnit un = BanUnit.getUnits(unit);
                         long seconds = value * un.getToSecond();
                         String Dauer = value + " " + un.getName();
                         BanManager.ban(uuid, playername, reason, seconds, Dauer, "CONSOLE", BanManager.createbanID("abcdefghijklmnopqrstuvwxyz", 7));
-                        HistoryManager.addHistoryEntry("TempBan", uuid, reason, "CONSOLE", Dauer,playername);
+                        HistoryManager.addHistoryEntry("TempBan", uuid, reason, "CONSOLE", Dauer, playername);
 
                         sender.sendMessage("§cSystem §7● §7Du hast den Spieler §c" + playername + " §7gebannt.");
                         return true;
@@ -101,7 +99,7 @@ public class CommandTempBan implements CommandExecutor {
         for (int j = 3; j < args.length; j++) {
             reason2 = reason2 + args[j] + " ";
         }
-      
+
         List<String> unitList2 = BanUnit.getUnitsAsString();
         if (unitList2.contains(unit2.toLowerCase())) {
             BanUnit un2 = BanUnit.getUnits(unit2);

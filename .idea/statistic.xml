@@ -4,6 +4,9 @@
     <option name="excludedDirectories">
       <list>
         <option value="$PROJECT_DIR$/src/com" />
+        <option value="$PROJECT_DIR$/Teamspeak3Module/src/com" />
+        <option value="$PROJECT_DIR$/src/com" />
+        <option value="$PROJECT_DIR$/Teamspeak3Module/src/com/github/theholywaffle/teamspeak3" />
       </list>
     </option>
   </component>

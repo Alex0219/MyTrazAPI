@@ -1,5 +1,10 @@
 package de.fileinputstream.none.api.commands;
 
+import com.blogspot.debukkitsblog.net.Datapackage;
+import de.fileinputstream.none.api.Bootstrap;
+import de.fileinputstream.none.api.cache.UUIDFetcher;
+import de.fileinputstream.none.api.punishment.BanManager;
+import de.fileinputstream.none.api.punishment.HistoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,16 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import com.blogspot.debukkitsblog.net.Datapackage;
+public class CommandBan implements CommandExecutor {
 
-import de.fileinputstream.none.api.Bootstrap;
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.punishment.BanManager;
-import de.fileinputstream.none.api.punishment.HistoryManager;
-
-public class CommandBan implements CommandExecutor  {
-	
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
             if (p.hasPermission("ban.ban")) {
@@ -41,10 +39,10 @@ public class CommandBan implements CommandExecutor  {
                             return true;
                         }
             */
-                   
+
                         BanManager.ban(uuid, Player, reason, -1L, "p", p.getName(), BanManager.createbanID("abcdefghijklmnopqrstuvwxyz", 12));
                         HistoryManager.addHistoryEntry("Ban", uuid, reason, p.getName(), "permanent", Player);
-                      
+
                         sender.sendMessage(" §cSystem §7● §7Du hast den Spieler §c" + Player + " §7gebannt!");
                         return true;
                     }
@@ -76,7 +74,7 @@ public class CommandBan implements CommandExecutor  {
                     HistoryManager.addHistoryEntry("Ban", uuid, reason2, "CONSOLE", "permanent", playername2);
                     Bootstrap.getResilentClient().sendMessage(new Datapackage("KickBanned", playername2));
                     sender.sendMessage(" §cSystem §7● §7Du hast den Spieler §c" + playername2 + " §7gebannt!");
-                    
+
                     return true;
                 }
                 if (Bukkit.getOfflinePlayer(playername2).isBanned()) {

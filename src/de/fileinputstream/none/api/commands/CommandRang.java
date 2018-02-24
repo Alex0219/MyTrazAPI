@@ -1,20 +1,17 @@
 package de.fileinputstream.none.api.commands;
 
-import org.bukkit.Bukkit;
+import de.fileinputstream.none.api.cache.UUIDFetcher;
+import de.fileinputstream.none.api.rank.RankManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.fileinputstream.none.api.cache.UUIDFetcher;
-import de.fileinputstream.none.api.rank.RankManager;
-
-import java.util.UUID;
 import java.util.function.Consumer;
 
 public class CommandRang implements CommandExecutor {
 
-	@Override
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;

@@ -76,7 +76,6 @@ public class ListenerConnect implements Listener {
             event.setDeathMessage(null);
             event.getEntity().spigot().respawn();
 
-
         }
 
     }

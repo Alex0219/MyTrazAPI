@@ -10,19 +10,15 @@ import java.util.List;
 import java.util.Random;
 
 public class BanManager {
-	
-	public static void ban(String UUID, String Playername, String Reason, long seconds, String Dauer, String operator, String BanID)
-    {
+
+    public static void ban(String UUID, String Playername, String Reason, long seconds, String Dauer, String operator, String BanID) {
         long end = 0L;
         Playername = Playername.toLowerCase();
 
         String Player = Bukkit.getOfflinePlayer(Playername).getName();
-        if (seconds == -1L)
-        {
+        if (seconds == -1L) {
             end = -1L;
-        }
-        else
-        {
+        } else {
             long currentTime = System.currentTimeMillis();
             long millis = seconds * 1000L;
             end = currentTime + millis;
@@ -41,109 +37,83 @@ public class BanManager {
         }
     }
 
-    public static void unban(String UUID)
-    {
-    	Bootstrap.getMysql().update("DELETE FROM Bans WHERE UUID='" + UUID + "'");
+    public static void unban(String UUID) {
+        Bootstrap.getMysql().update("DELETE FROM Bans WHERE UUID='" + UUID + "'");
     }
 
-    public static boolean isBanned(String UUID)
-    {
+    public static boolean isBanned(String UUID) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT Ende FROM Bans WHERE UUID='" + UUID + "'");
-        try
-        {
+        try {
             return rs.next();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public static String getReason(String UUID)
-    {
-        ResultSet rs =Bootstrap.getMysql().query("SELECT * FROM Bans WHERE UUID='" + UUID + "'");
-        try
-        {
+    public static String getReason(String UUID) {
+        ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans WHERE UUID='" + UUID + "'");
+        try {
             if (rs.next()) {
                 return rs.getString("Grund");
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    public static String getDauer(String UUID)
-    {
+    public static String getDauer(String UUID) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT Dauer FROM Bans WHERE UUID='" + UUID + "'");
-        try
-        {
+        try {
             if (rs.next()) {
                 return rs.getString("Dauer");
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    public static long getEnd(String UUID)
-    {
+    public static long getEnd(String UUID) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans WHERE UUID='" + UUID + "'");
-        try
-        {
+        try {
             if (rs.next()) {
                 return rs.getLong("Ende");
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0L;
     }
 
-    public static List<String> getBannedPlayers()
-    {
+    public static List<String> getBannedPlayers() {
         List<String> list = new ArrayList();
         ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans");
-        try
-        {
+        try {
             while (rs.next()) {
                 list.add(rs.getString("Spielername"));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
     }
 
-    public static String getBanner(String UUID)
-    {
+    public static String getBanner(String UUID) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans WHERE UUID='" + UUID + "'");
-        try
-        {
+        try {
             if (rs.next()) {
                 return rs.getString("Banner");
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
             Bukkit.getConsoleSender().sendMessage("§cFehler beim Lesen der Datenbank");
         }
         return "null";
     }
 
-    public static String getRemainingTime(String UUID)
-    {
+    public static String getRemainingTime(String UUID) {
         long current = System.currentTimeMillis();
         long end = getEnd(UUID);
         if (end == -1L) {
@@ -155,54 +125,41 @@ public class BanManager {
         long hours = 0L;
         long days = 0L;
         long weeks = 0L;
-        while (millies > 1000L)
-        {
+        while (millies > 1000L) {
             millies -= 1000L;
             seconds += 1L;
         }
-        while (seconds > 60L)
-        {
+        while (seconds > 60L) {
             seconds -= 60L;
             minutes += 1L;
         }
-        while (minutes > 60L)
-        {
+        while (minutes > 60L) {
             minutes -= 60L;
             hours += 1L;
         }
-        while (hours > 24L)
-        {
+        while (hours > 24L) {
             hours -= 24L;
             days += 1L;
         }
-        while (days > 7L)
-        {
+        while (days > 7L) {
             days -= 7L;
             weeks += 1L;
         }
         return "§e" + weeks + " Woche(n) " + days + " Tag(e) " + hours + " Stunde(n) " + minutes + " Minute(n) " + seconds + " Sekunde(n) ";
     }
 
-    public String getUUID(String Playername)
-    {
-        return Bukkit.getOfflinePlayer(Playername).getUniqueId().toString();
-    }
-
-    public static String getBanID(String UUID)
-    {
+    public static String getBanID(String UUID) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans WHERE UUID='" + UUID + "'");
-        try
-        {
+        try {
             if (rs.next()) {
                 return rs.getString("BanID");
             }
+        } catch (SQLException localSQLException) {
         }
-        catch (SQLException localSQLException) {}
         return "null";
     }
 
-    public static String createbanID(String chars, int length)
-    {
+    public static String createbanID(String chars, int length) {
         Random rand = new Random();
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < length; i++) {
@@ -211,29 +168,29 @@ public class BanManager {
         return buf.toString();
     }
 
-    public static String getReasonFromBanID(String banid)
-    {
+    public static String getReasonFromBanID(String banid) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans WHERE BanID='" + banid + "'");
-        try
-        {
+        try {
             if (rs.next()) {
                 return rs.getString("Grund");
             }
+        } catch (SQLException localSQLException) {
         }
-        catch (SQLException localSQLException) {}
         return null;
     }
 
-    public static String getDauerFromBanID(String banid)
-    {
+    public static String getDauerFromBanID(String banid) {
         ResultSet rs = Bootstrap.getMysql().query("SELECT * FROM Bans WHERE BanID='" + banid + "'");
-        try
-        {
+        try {
             if (rs.next()) {
                 return rs.getString("Dauer");
             }
+        } catch (SQLException localSQLException) {
         }
-        catch (SQLException localSQLException) {}
         return null;
+    }
+
+    public String getUUID(String Playername) {
+        return Bukkit.getOfflinePlayer(Playername).getUniqueId().toString();
     }
 }
