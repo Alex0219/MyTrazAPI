@@ -11,6 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -79,14 +80,25 @@ public class CommandTPWorld implements CommandExecutor {
                 }
             } else if (args.length == 1) {
                 if (getWorld(uuid).equalsIgnoreCase(args[0])) {
-                    player.teleport(Bukkit.getWorld(args[0]).getSpawnLocation());
-                } else if (getWorld(uuid).equalsIgnoreCase("")) {
-                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Diese Welt existiert nicht.");
-                    return true;
+                    if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
+
+
+                    }
+
+
                 } else {
                     if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
-                        player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
-                        return true;
+                        File file = new File(Bukkit.getServer().getWorldContainer(), args[0]);
+
+                        if (file.exists()) {
+                            new WorldCreator(args[0]).createWorld();
+                            player.teleport(Bukkit.getWorld(args[0]).getSpawnLocation());
+                            return true;
+                        } else {
+                            player.sendMessage("§c§7«▌§cMyTraz§7▌» §cDiese Welt existiert nicht!");
+                            return true;
+                        }
+
                     } else if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, args[0])) {
                         if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(args[0]).exists()) {
                             new WorldCreator(args[0]).createWorld();
@@ -96,9 +108,11 @@ public class CommandTPWorld implements CommandExecutor {
                             return true;
                         }
 
+                    } else {
+                        player.sendMessage("§c§7«▌§cMyTraz§7▌» Du darfst dich nicht in diese Welt teleportieren.");
+                        return true;
                     }
-                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Du darfst dich nicht in diese Welt teleportieren.");
-                    return true;
+
                 }
 
 

@@ -1,6 +1,6 @@
 name: NoneAPI
 version: 1.0
-main: Bootstrap
+main: de.fileinputstream.mytraz.api.Bootstrap
 author: FileInputStream
 
 commands:

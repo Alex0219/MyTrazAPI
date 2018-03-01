@@ -73,7 +73,7 @@ public class WorldManager {
 
         String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
         ArrayList<String> worldResidents = new ArrayList<String>();
-        String worldID = getNewWorldID();
+        String worldID = UUID.randomUUID().toString();
         if (!worlds.contains(worldID)) {
             worlds.add(worldID);
         }

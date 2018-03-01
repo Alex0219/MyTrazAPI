@@ -1,6 +1,11 @@
 package de.fileinputstream.mytraz.worldmanagement.world;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * User: Alexander<br/>
@@ -40,6 +45,23 @@ import org.bukkit.Location;
 public class WarpManager {
 
     public void setWarp(String name, Location location) {
+        if (!warpExists(name)) {
+            File file = new File("plugins/WorldManagement/warps", name + ".yml");
+            try {
+                file.createNewFile();
+                FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+                cfg.set("X", location.getX());
+                cfg.set("Y", location.getY());
+                cfg.set("Z", location.getZ());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+
+    }
+
+    public boolean warpExists(String name) {
+        return new File("plugins/WorldManagement/warps", name + ".yml").exists();
     }
 }

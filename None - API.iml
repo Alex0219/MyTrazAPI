@@ -37,5 +37,6 @@
     <orderEntry type="library" name="mongo-java-driver-3.6.1" level="project" />
     <orderEntry type="library" name="BungeeCord" level="project" />
     <orderEntry type="library" name="spigot-latest" level="project" />
+    <orderEntry type="module" module-name="RedisBuilder" />
   </component>
 </module>

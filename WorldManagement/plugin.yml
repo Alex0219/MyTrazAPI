@@ -15,7 +15,7 @@ commands:
     acceptinvite:
         aliases: [join,accept]
     newworldspawn:
-        aliases: [setspawn,setworldspawn]
+
     worldinfo:
         aliases: [info]
     worlds:
@@ -28,4 +28,14 @@ commands:
         aliases: [gamemode,gmode]
     vanish:
        aliases: [v]
+    ontime:
+       aliases: [spielzeit,playtime,ichbinzudoof]
     fly:
+
+    setwarp:
+
+    warp:
+
+    delwarp:
+
+    schafmodus:

@@ -1,8 +1,13 @@
 package de.fileinputstream.mytraz.bungee;
 
+import de.fileinputstream.mytraz.bungee.api.TeamSpeakAPI;
 import de.fileinputstream.mytraz.bungee.commands.CommandHub;
+import de.fileinputstream.mytraz.bungee.commands.CommandTS;
+import de.fileinputstream.mytraz.bungee.sql.MySQL;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.plugin.Plugin;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * User: Alexander<br/>
@@ -41,13 +46,38 @@ import net.md_5.bungee.api.plugin.Plugin;
  */
 public class Bootstrap extends Plugin {
 
+    public static Bootstrap instance;
+    MySQL mysql;
+
+    public static Bootstrap getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
+        instance = this;
+        mysql = new MySQL();
+        TeamSpeakAPI.connect();
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandHub("hub"));
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandTS("ts"));
+        MySQL.connect();
+        scheduleUpdateTask();
     }
 
     @Override
     public void onDisable() {
+        instance = null;
+    }
 
+    public void scheduleUpdateTask() {
+        BungeeCord.getInstance().getScheduler().schedule(getInstance(), () -> {
+            if (!MySQL.isConnected()) {
+                MySQL.connect();
+            }
+        }, 40, TimeUnit.SECONDS);
+    }
+
+    public MySQL getMysql() {
+        return mysql;
     }
 }

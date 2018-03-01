@@ -55,23 +55,21 @@ public class AFKMover {
                 for (Client clients : Bootstrap.api.getClients()) {
                     if (!clients.isServerQueryClient()) {
                         if ((clients.isAway()) || (clients.isInputMuted()) || (clients.isOutputMuted())) {
-                            System.out.println("Method get's called! is away");
                             if (!AFKMover.Moved.containsKey(clients.getUniqueIdentifier())) {
                                 if (!AFKMover.AFK.containsKey(clients.getUniqueIdentifier())) {
                                     AFKMover.AFK.put(clients.getUniqueIdentifier(), Long.valueOf(System.currentTimeMillis()));
+                                }
+                                if (clients.isInServerGroup(39)) {
+                                    return;
                                 } else {
                                     long current = AFKMover.AFK.get(clients.getUniqueIdentifier()).longValue();
                                     if (System.currentTimeMillis() - current >= AFKMover.Away) {
-                                        if (clients.isInServerGroup(39)) {
-                                            System.out.println("Is in server group 39");
-                                            return;
-                                        }
                                         AFKMover.Moved.put(clients.getUniqueIdentifier(), Boolean.valueOf(true));
                                         AFKMover.Channel.put(clients.getUniqueIdentifier(), Integer.valueOf(clients.getChannelId()));
                                         AFKMover.AFK.remove(clients.getUniqueIdentifier());
-                                        System.out.println("Try to move!");
-                                        Bootstrap.api.sendPrivateMessage(clients.getId(), "Du wurdest in den AFK Channel verschoben.");
-                                        if (clients.isInServerGroup(202)) {
+                                        Bootstrap.api.sendPrivateMessage(clients.getId(), "Du wurdest in den AFK Channel verschoben");
+
+                                        if (clients.isInServerGroup(209)) {
                                             Bootstrap.api.moveClient(clients.getId(), 40);
                                         } else {
                                             Bootstrap.api.moveClient(clients.getId(), 71);
@@ -86,24 +84,8 @@ public class AFKMover {
                             }
                             if ((AFKMover.Moved.containsKey(clients.getUniqueIdentifier())) &&
                                     (AFKMover.Moved.get(clients.getUniqueIdentifier()).booleanValue())) {
-                                int channel = AFKMover.Channel.get(clients.getUniqueIdentifier()).intValue();
-                                if (channel == 35 || channel == 36 || channel == 37 || channel == 38 || channel == 39 || channel == 24 || channel == 25 || channel == 26) {
-                                    if (!clients.isInServerGroup(202)) {
-                                        AFKMover.Moved.remove(clients.getUniqueIdentifier());
-                                        AFKMover.Channel.remove(clients.getUniqueIdentifier());
-                                        AFKMover.AFK.remove(clients.getUniqueIdentifier());
-
-                                    } else {
-                                        Bootstrap.api.moveClient(clients.getId(), AFKMover.Channel.get(clients.getUniqueIdentifier()).intValue());
-                                        AFKMover.Moved.remove(clients.getUniqueIdentifier());
-                                        AFKMover.Channel.remove(clients.getUniqueIdentifier());
-                                    }
-                                } else {
-                                    Bootstrap.api.moveClient(clients.getId(), AFKMover.Channel.get(clients.getUniqueIdentifier()).intValue());
-                                    AFKMover.Moved.remove(clients.getUniqueIdentifier());
-                                    AFKMover.Channel.remove(clients.getUniqueIdentifier());
-                                }
-
+                                AFKMover.Moved.remove(clients.getUniqueIdentifier());
+                                AFKMover.Channel.remove(clients.getUniqueIdentifier());
                             }
                         }
                     }
@@ -112,4 +94,6 @@ public class AFKMover {
         }, 1000L, 5000L);
     }
 }
+
+
 

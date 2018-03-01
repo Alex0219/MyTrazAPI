@@ -3,6 +3,7 @@ package de.fileinputstream.mytraz.api.commands;
 import de.fileinputstream.mytraz.api.Bootstrap;
 import de.fileinputstream.mytraz.api.cache.UUIDFetcher;
 import de.fileinputstream.mytraz.api.time.MuteUnit;
+import de.fileinputstream.redisbuilder.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -71,6 +72,11 @@ public class CommandTempMute implements CommandExecutor {
                 String playername2 = args[0];
                 if (Bootstrap.getInstance().getMysql().isConnected()) {
                     playername2 = playername2.toLowerCase();
+                    String rank = RankManager.getRank(UUIDFetcher.getUUID(p.getName()).toString());
+                    if (!rank.equalsIgnoreCase("admin") && RankManager.getRank(UUIDFetcher.getUUID(playername2).toString()).equalsIgnoreCase("admin")) {
+                        sender.sendMessage("§cSystem §7● §7Du darfst diesen Spieler nicht bannen");
+                        return true;
+                    }
                     String Player2 = Bukkit.getOfflinePlayer(playername2).getName();
                     if (Bootstrap.getInstance().getMuteManager().isMuted(UUIDFetcher.getUUID(playername2).toString())) {
                         sender.sendMessage("§cSystem §7● §7Dieser Spieler ist bereits gemutet.");

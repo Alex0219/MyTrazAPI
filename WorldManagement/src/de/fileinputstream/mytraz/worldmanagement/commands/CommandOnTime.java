@@ -1,9 +1,15 @@
-package de.fileinputstream.mytraz.ts3module;
+package de.fileinputstream.mytraz.worldmanagement.commands;
+
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * User: Alexander<br/>
- * Date: 20.02.2018<br/>
- * Time: 18:30<br/>
+ * Date: 25.02.2018<br/>
+ * Time: 19:58<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -35,17 +41,13 @@ package de.fileinputstream.mytraz.ts3module;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class VerifyManager {
-
-    public VerifyManager() {
-
+public class CommandOnTime implements CommandExecutor {
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (commandSender instanceof Player) {
+            commandSender.sendMessage("§7Deine Spielzeit: §c" + Bootstrap.getInstance().getOntimeTracker().getOnlinetime((Player) commandSender)
+            );
+        }
+        return false;
     }
-
-    public void verifyUser(String uniqueID) {
-
-    }
-
-    //  public boolean isVerified(String uniqueID) {
-
-    //}
 }

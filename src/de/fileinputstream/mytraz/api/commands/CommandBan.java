@@ -3,6 +3,7 @@ package de.fileinputstream.mytraz.api.commands;
 
 import de.fileinputstream.mytraz.api.Bootstrap;
 import de.fileinputstream.mytraz.api.cache.UUIDFetcher;
+import de.fileinputstream.redisbuilder.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,6 +23,11 @@ public class CommandBan implements CommandExecutor {
                         playername = playername.toLowerCase();
 
                         String uuid = UUIDFetcher.getUUID(playername).toString();
+                        String rank = RankManager.getRank(UUIDFetcher.getUUID(p.getName()).toString());
+                        if (!rank.equalsIgnoreCase("admin") && RankManager.getRank(uuid).equalsIgnoreCase("admin")) {
+                            sender.sendMessage("§cSystem §7● §7Du darfst diesen Spieler nicht bannen");
+                            return true;
+                        }
                         String Player = Bukkit.getOfflinePlayer(playername).getName();
                         if (Bootstrap.getInstance().getBanManager().isBanned(uuid)) {
                             sender.sendMessage("§cSystem §7● §7Dieser Spieler ist bereits §cgebannt");

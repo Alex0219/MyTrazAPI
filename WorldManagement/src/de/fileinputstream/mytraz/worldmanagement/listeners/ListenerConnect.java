@@ -115,6 +115,8 @@ public class ListenerConnect implements Listener {
                     new ListenerConnect().sendTablist(player, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
                 }
 
+
+
             }
         }, 0, 0);
 
@@ -169,4 +171,5 @@ public class ListenerConnect implements Listener {
 
         }
     }
+
 }

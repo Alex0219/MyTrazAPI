@@ -4,6 +4,7 @@
     <root id="archive" name="MyTrazBungeeAddon.jar">
       <element id="module-output" name="BungeeAddon" />
       <element id="file-copy" path="$PROJECT_DIR$/BungeeAddon/plugin.yml" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/apache-maven-3.5.0/lib/slf4j-api-1.7.22.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

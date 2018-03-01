@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/None - API.iml" filepath="$PROJECT_DIR$/None - API.iml" />
       <module fileurl="file://$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" filepath="$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" />
       <module fileurl="file://$PROJECT_DIR$/Teamspeak3Module/Teamspeak3Module.iml" filepath="$PROJECT_DIR$/Teamspeak3Module/Teamspeak3Module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WorldBackup/WorldBackup.iml" filepath="$PROJECT_DIR$/WorldBackup/WorldBackup.iml" />
       <module fileurl="file://$PROJECT_DIR$/WorldManagement/WorldManagement.iml" filepath="$PROJECT_DIR$/WorldManagement/WorldManagement.iml" />
     </modules>
   </component>

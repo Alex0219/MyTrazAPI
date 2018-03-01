@@ -2,6 +2,7 @@ package de.fileinputstream.mytraz.worldmanagement;
 
 import de.fileinputstream.mytraz.worldmanagement.commands.*;
 import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
+import de.fileinputstream.mytraz.worldmanagement.tracker.OntimeTracker;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
 import org.bukkit.Bukkit;
@@ -12,6 +13,7 @@ import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 
 /**
  * User: Alexander<br/>
@@ -54,6 +56,7 @@ public class Bootstrap extends JavaPlugin {
     Jedis jedis;
     WorldManager worldManager;
     String spawnWorld;
+    OntimeTracker ontimeTracker;
     String prefix = "§7«▌§cMyTraz§7▌»";
 
     public static Bootstrap getInstance() {
@@ -76,11 +79,15 @@ public class Bootstrap extends JavaPlugin {
         getConfig().addDefault("DB", "1");
         getConfig().addDefault("SpawnWorld", "world");
         saveConfig();
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         jedis = new Jedis("127.0.0.1", 6379);
         jedis.connect();
         System.out.println("Connected to redis!");
 
+
         spawnWorld = getConfig().getString("SpawnWorld");
+        ontimeTracker = new OntimeTracker();
+        ontimeTracker.startCounter();
         Bukkit.getOnlinePlayers().forEach(p -> {
             Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), new Runnable() {
 
@@ -95,10 +102,7 @@ public class Bootstrap extends JavaPlugin {
                     dfs.setShortMonths(swm);
                     df.setDateFormatSymbols(dfs);
                     String datum = df.format(new Date());
-                    if (p != null) {
-                        new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-                    }
-
+                    new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
                 }
             }, 1, 1);
         });
@@ -127,6 +131,11 @@ public class Bootstrap extends JavaPlugin {
         getCommand("gm").setExecutor(new CommandGM());
         getCommand("v").setExecutor(new CommandVanish());
         getCommand("vanish").setExecutor(new CommandVanish());
+        getCommand("ontime").setExecutor(new CommandOnTime());
+        getCommand("warp").setExecutor(new CommandWarp());
+        getCommand("setwarp").setExecutor(new CommandSetWarp());
+        getCommand("delwarp").setExecutor(new CommandDelWarp());
+        getCommand("schafmodus").setExecutor(new CommandSchafModus());
     }
 
     public Jedis getJedis() {
@@ -143,5 +152,9 @@ public class Bootstrap extends JavaPlugin {
 
     public String getPrefix() {
         return prefix;
+    }
+
+    public OntimeTracker getOntimeTracker() {
+        return ontimeTracker;
     }
 }
