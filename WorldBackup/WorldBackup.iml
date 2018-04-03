@@ -7,5 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jedis-2.9.0" level="project" />
+    <orderEntry type="library" name="BungeeCord" level="project" />
+    <orderEntry type="library" name="jedis-2.9.0" level="application" />
+    <orderEntry type="library" name="spigot-1.12.2-R0.1-SNAPSHOT-b1613" level="project" />
   </component>
 </module>

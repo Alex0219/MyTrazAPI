@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +25,9 @@ public class CommandWarp implements CommandExecutor {
     private static File path = new File("plugins//WorldManagement//Warps");
     private static File[] files = path.listFiles();
 
+
+    public final ExecutorService service = Executors.newCachedThreadPool();
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof ConsoleCommandSender) {
@@ -31,22 +36,25 @@ public class CommandWarp implements CommandExecutor {
             Player player = (Player) sender;
             if (args.length == 0) {
 
+                service.execute(() -> {
 
-                List<String> results = new ArrayList<String>();
+                    List<String> results = new ArrayList<String>();
 
 
-                File[] files = new File("plugins//WorldManagement//Warps").listFiles();
-//If this pathname does not denote a directory, then listFiles() returns null.
+                    File[] files = new File("plugins//WorldManagement//Warps").listFiles();
+                    //If this pathname does not denote a directory, then listFiles() returns null.
 
-                for (File file : files) {
-                    if (file.isFile()) {
-                        results.add(file.getName());
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            results.add(file.getName());
+                        }
                     }
-                }
 
 
-                String separator = "§7,";  // separator here is your ","
-                player.sendMessage("§cWarp §7● Es gibt Momentan folgende Warppunkte: : §6" + Stream.of(results.toString()).collect(Collectors.joining(", ")).replace("[", "").replace("]", ""));
+                    String separator = "§7,"; // separator here is your ","
+                    player.sendMessage("§cWarp §7● Es gibt Momentan folgende Warppunkte: : §6" + Stream.of(results.toString()).collect(Collectors.joining(", ")).replace("[", "").replace("]", ""));
+                });
+
 
             } else if (args.length == 1) {
                 File path = new File("plugins//WorldManagement//Warps//" + args[0]);

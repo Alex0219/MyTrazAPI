@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * User: Alexander<br/>
@@ -53,6 +55,7 @@ public class WorldManager {
     public HashMap<String,
             String> worldInvites = new HashMap<String,
             String>();
+    ExecutorService service = Executors.newCachedThreadPool();
     String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     SecureRandom rnd = new SecureRandom();
 
@@ -154,9 +157,7 @@ public class WorldManager {
     public void removeResident(String worldID, String uuid) {
         if (worldExists(worldID)) {
             ArrayList<String> residents = getWorldResidents(worldID);
-            if (residents.contains(uuid)) {
-                residents.remove(uuid);
-            }
+            residents.remove(uuid);
             FileConfiguration cfg = YamlConfiguration.loadConfiguration(getWorldResidentsFile(worldID));
             cfg.set("Residents", residents);
             try {
@@ -248,6 +249,12 @@ public class WorldManager {
 
     }
 
+    /**
+     * Gibt den Weltenbesitzer
+     *
+     * @param worldID
+     * @return
+     */
     public String getOwnerFromWorld(String worldID) {
         if (worldExists(worldID)) {
             String owner = Bootstrap.getInstance().getJedis().hget("world:" + worldID, "owner");

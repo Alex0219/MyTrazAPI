@@ -88,7 +88,7 @@ public class NameTags {
             return;
         } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
             setPlayer(player, "mod");
-            player.setPlayerListName("§cM" + player.getName());
+            player.setPlayerListName("§c" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("bauleitung".toLowerCase())) {
             setPlayer(player, "bauleitung");

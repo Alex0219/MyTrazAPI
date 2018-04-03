@@ -1,5 +1,11 @@
 package de.fileinputstream.worldbackup;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 /**
  * User: Alexander<br/>
  * Date: 28.02.2018<br/>
@@ -36,4 +42,34 @@ package de.fileinputstream.worldbackup;
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
 public class Bootstrap {
+
+    public static void main(String[] args) {
+        //zipFolder(new File("/var/Minecraft/Minecraft/Survival1.12"));
+    }
+
+    public static void zipFolder(final File folder, final File zipFile) throws IOException {
+        zipFolder(folder, new FileOutputStream(zipFile));
+    }
+
+    public static void zipFolder(final File folder, final OutputStream outputStream) throws IOException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+            processFolder(folder, zipOutputStream, folder.getPath().length() + 1);
+        }
+    }
+
+    private static void processFolder(final File folder, final ZipOutputStream zipOutputStream, final int prefixLength)
+            throws IOException {
+        for (final File file : folder.listFiles()) {
+            if (file.isFile()) {
+                final ZipEntry zipEntry = new ZipEntry(file.getPath().substring(prefixLength));
+                zipOutputStream.putNextEntry(zipEntry);
+                try (FileInputStream inputStream = new FileInputStream(file)) {
+                    IOUtils.copy(inputStream, zipOutputStream);
+                }
+                zipOutputStream.closeEntry();
+            } else if (file.isDirectory()) {
+                processFolder(file, zipOutputStream, prefixLength);
+            }
+        }
+    }
 }

@@ -20,7 +20,7 @@ public class CommandRang implements CommandExecutor {
             String s = RankManager.getRank(uuid);
             if (s.equalsIgnoreCase("Admin".toLowerCase()) || p.isOp()) {
                 if (args.length == 2) {
-                    if (args[1].equalsIgnoreCase("Admin".toLowerCase()) || args[1].equalsIgnoreCase("Dev".toLowerCase()) || args[1].equalsIgnoreCase("Mod".toLowerCase()) || args[1].equalsIgnoreCase("Sup".toLowerCase()) || args[1].equalsIgnoreCase("Architekt".toLowerCase()) || args[1].equalsIgnoreCase("YouTuber") || args[1].equalsIgnoreCase("Premium".toLowerCase()) || args[1].equalsIgnoreCase("Spieler".toLowerCase()) || args[1].equalsIgnoreCase("Bauleitung".toLowerCase()) || args[1].equalsIgnoreCase("Premiumplus".toLowerCase()) || args[1].equalsIgnoreCase("Teamleitung".toLowerCase())) {
+                    if (args[1].equalsIgnoreCase("Admin".toLowerCase()) || args[1].equalsIgnoreCase("Dev".toLowerCase()) || args[1].equalsIgnoreCase("Mod".toLowerCase()) || args[1].equalsIgnoreCase("Sup".toLowerCase()) || args[1].equalsIgnoreCase("Architekt".toLowerCase()) || args[1].equalsIgnoreCase("YouTuber") || args[1].equalsIgnoreCase("Premium".toLowerCase()) || args[1].equalsIgnoreCase("Spieler".toLowerCase()) || args[1].equalsIgnoreCase("Bauleitung".toLowerCase()) || args[1].equalsIgnoreCase("Premiumplus".toLowerCase()) || args[1].equalsIgnoreCase("Teamleitung".toLowerCase()) || args[1].equalsIgnoreCase("Inhaber".toLowerCase())) {
                         String rank = args[1];
                         RankManager.setRank(UUIDFetcher.getUUID(args[0]).toString(), rank);
                         System.out.println(UUIDFetcher.getUUID(args[0]).toString());

@@ -20,9 +20,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.lang.reflect.Field;
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
@@ -98,27 +97,16 @@ public class ListenerConnect implements Listener {
         NameTags.addToTeam(player);
         NameTags.updateTeams();
         sendTablist(player, "§4§lMyTraz.NET - §aSurvival", "§cTeamspeak: MyTraz.NET");
-        Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), new Runnable() {
+        LocalDate localDate = LocalDate.now();
+        Locale spanishLocale = new Locale("de", "DE");
+        String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", spanishLocale));
 
-            @Override
-            public void run() {
-                SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ",
-                        Locale.GERMAN);
-                DateFormatSymbols dfs = df.getDateFormatSymbols();
-                String[] swd = {"", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
-                String[] swm = {"", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August,", "September", "Oktober", "November", "Dezember"};
-                dfs.setShortWeekdays(swd);
-                dfs.setShortMonths(swm);
-                df.setDateFormatSymbols(dfs);
-                String datum = df.format(new Date());
-                if (player != null) {
-                    new ListenerConnect().sendTablist(player, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-                }
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
+                new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+            }, 1, 1);
+        });
 
-
-
-            }
-        }, 0, 0);
 
         player.sendMessage("§7--------------------------------------------------");
         player.sendMessage("§cWillkommen auf Survival! Gebe /tutorial ein, um die Hilfeseite aufzurufen.");

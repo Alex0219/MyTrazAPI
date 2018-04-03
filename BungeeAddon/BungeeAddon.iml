@@ -8,6 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="BungeeCord" level="project" />
-    <orderEntry type="library" name="slf4j-api-1.7.22" level="project" />
+    <orderEntry type="library" name="jedis-2.9.0" level="application" />
+    <orderEntry type="library" name="slf4j-api-1.8.0-beta2" level="project" />
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
   </component>
 </module>

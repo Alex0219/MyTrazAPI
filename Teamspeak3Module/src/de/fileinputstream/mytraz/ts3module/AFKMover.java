@@ -69,19 +69,17 @@ public class AFKMover {
                                         AFKMover.AFK.remove(clients.getUniqueIdentifier());
                                         Bootstrap.api.sendPrivateMessage(clients.getId(), "Du wurdest in den AFK Channel verschoben");
 
-                                        if (clients.isInServerGroup(209)) {
-                                            Bootstrap.api.moveClient(clients.getId(), 40);
+                                        if (clients.isInServerGroup(242)) {
+                                            Bootstrap.api.moveClient(clients.getId(), 508);
                                         } else {
-                                            Bootstrap.api.moveClient(clients.getId(), 71);
+                                            Bootstrap.api.moveClient(clients.getId(), 538);
                                         }
 
                                     }
                                 }
                             }
                         } else {
-                            if (AFKMover.AFK.containsKey(clients.getUniqueIdentifier())) {
-                                AFKMover.AFK.remove(clients.getUniqueIdentifier());
-                            }
+                            AFKMover.AFK.remove(clients.getUniqueIdentifier());
                             if ((AFKMover.Moved.containsKey(clients.getUniqueIdentifier())) &&
                                     (AFKMover.Moved.get(clients.getUniqueIdentifier()).booleanValue())) {
                                 AFKMover.Moved.remove(clients.getUniqueIdentifier());

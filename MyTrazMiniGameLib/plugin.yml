@@ -1,0 +1,8 @@
+name: RedisBuilder
+main: de.fileinputstream.redisbuilder.RedisBuilder
+version: 1.0
+author: FileInputStream
+
+commands:
+
+    rang:

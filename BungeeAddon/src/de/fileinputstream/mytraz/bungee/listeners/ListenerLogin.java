@@ -1,6 +1,13 @@
 package de.fileinputstream.mytraz.bungee.listeners;
 
+import de.fileinputstream.mytraz.bungee.manager.BanManager;
+import de.fileinputstream.mytraz.bungee.manager.MuteManager;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
 /**
  * User: Alexander<br/>
@@ -39,5 +46,32 @@ import net.md_5.bungee.api.plugin.Listener;
  */
 public class ListenerLogin implements Listener {
 
+    @EventHandler
+    public void onLogin(LoginEvent e) {
 
+        String playername = e.getConnection().getName();
+        BanManager.createPlayer(playername);
+        MuteManager.createPlayer(playername);
+        if (BanManager.isBanned(playername)) {
+            long currentm = System.currentTimeMillis();
+            long current = currentm / 1000L;
+            long end = BanManager.getEnd(playername);
+            if ((end > current) || (end == -1L)) {
+                e.setCancelled(true);
+                e.setCancelReason(BanManager.getBannedMessage(playername));
+            } else {
+                BanManager.unBan(playername, "Cloud");
+                e.setCancelled(false);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PostLoginEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        String header = "§7« §6MyTraz.NET - §bNo Limit Netzwerk §8✗ \n §9Teamspeak §7» §7MyTraz.NET §8✗ \n §9Forum §7» forum.mytraz.net  ";
+
+        player.setTabHeader(new TextComponent("wwewweweweweweew"), new TextComponent(""));
+
+    }
 }

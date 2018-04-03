@@ -53,14 +53,14 @@ public class CommandRemoveResident implements CommandExecutor {
                 String targetName = args[0];
                 String targetUUID = UUIDFetcher.getUUID(targetName).toString();
                 String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-                if (RedisBuilder.getInstance().getWorldManager().hasWorld(uuid)) {
-                    String worldID = RedisBuilder.getInstance().getWorldManager().getWorld(uuid);
+                if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
+                    String worldID = RedisBuilder.getWorldManager().getWorld(uuid);
                     if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(targetUUID, worldID)) {
                         Bootstrap.getInstance().getWorldManager().removeResident(worldID, targetUUID);
                         player.sendMessage(Bootstrap.getInstance().getPrefix() + " §7Du hast den Spieler §a" + targetName + " §caus deiner Welt entfernt.");
                         if (Bukkit.getPlayer(targetName) != null) {
                             Player target = Bukkit.getPlayer(targetName);
-                            if (target.getWorld().getName().equalsIgnoreCase(RedisBuilder.getInstance().getWorldManager().getWorld(uuid))) {
+                            if (target.getWorld().getName().equalsIgnoreCase(RedisBuilder.getWorldManager().getWorld(uuid))) {
                                 target.sendMessage(Bootstrap.getInstance().getPrefix() + player.getName() + " §chat dich aus seiner Welt geworfen!");
                                 target.sendMessage(Bootstrap.getInstance().getPrefix() + " §cDu wirst nun an den Spawn teleportiert.");
                                 target.teleport(Bukkit.getWorld(Bootstrap.getInstance().getSpawnWorld()).getSpawnLocation());

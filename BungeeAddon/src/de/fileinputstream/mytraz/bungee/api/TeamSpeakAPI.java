@@ -58,12 +58,12 @@ public class TeamSpeakAPI {
 
     public static void connect() {
         TS3Config config = new TS3Config();
-        config.setHost("94.130.83.180");
+        config.setHost("mytraz.net");
         query = new TS3Query(config);
         query.connect();
         api = query.getApi();
         api.login("serveradmin", "yJvNgSYu");
-        api.selectVirtualServerById(2);
+        api.selectVirtualServerById(6);
         api.setNickname("TSLink");
         api.registerAllEvents();
         api.addTS3Listeners(new Teamspeak3Listener());
@@ -126,12 +126,12 @@ public class TeamSpeakAPI {
                 MySQL.update("INSERT INTO ts (uuid, tsid) VALUES ('" + p.getUniqueId().toString() + "', '" + client.getUniqueIdentifier() + "')");
             } else {
                 Client v = api.getClientByUId(getTsID(p));
-                if (v.isInServerGroup(34)) {
-                    api.removeClientFromServerGroup(34, v.getDatabaseId());
+                if (v.isInServerGroup(230)) {
+                    api.removeClientFromServerGroup(230, v.getDatabaseId());
                 }
                 MySQL.update("UPDATE ts SET tsid = '" + client.getUniqueIdentifier() + "' WHERE UUID = '" + p.getUniqueId().toString() + "'");
             }
-            api.addClientToServerGroup(34, client.getDatabaseId());
+            api.addClientToServerGroup(230, client.getDatabaseId());
             Teamspeak3Listener.verify.remove(code);
         } else {
             p.sendMessage("§7«▌§cMyTraz§7▌» §cDu konntest nicht auf dem Teamspeak gefunden werden!");

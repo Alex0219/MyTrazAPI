@@ -2,11 +2,17 @@ package de.fileinputstream.redisbuilder;
 
 import de.fileinputstream.redisbuilder.commands.CommandAddHologram;
 import de.fileinputstream.redisbuilder.commands.CommandRang;
+import de.fileinputstream.redisbuilder.commands.CommandSwitchMiniGames;
 import de.fileinputstream.redisbuilder.handler.JoinHandler;
 import de.fileinputstream.redisbuilder.handler.ListenerBlock;
 import de.fileinputstream.redisbuilder.handler.ListenerChat;
+import de.fileinputstream.redisbuilder.handler.SignInteractHandler;
 import de.fileinputstream.redisbuilder.mod.ModdedJoinHandler;
+import de.fileinputstream.redisbuilder.networking.NettyServer;
+import de.fileinputstream.redisbuilder.networking.client.NettyClient;
 import de.fileinputstream.redisbuilder.rank.ScoreManager;
+import de.fileinputstream.redisbuilder.servers.ServerGUI;
+import de.fileinputstream.redisbuilder.servers.server.ServerRegistry;
 import de.fileinputstream.redisbuilder.user.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -19,7 +25,7 @@ import redis.clients.jedis.Jedis;
  * Time: 17:26<br/>
  * MIT License
  * <p>
- * Copyright (c) 2017 Alexander Fiedler
+ * Copyright (c) 2018 Alexander Fiedler
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -55,6 +61,10 @@ public class RedisBuilder extends JavaPlugin {
      */
     public static RedisBuilder instance;
     public static WorldManager worldManager;
+    public NettyServer server;
+    public NettyClient client;
+    public ServerRegistry serverRegistry;
+    public ServerGUI serverGUI;
     Jedis jedis;
     ScoreManager scoreManager;
 
@@ -96,31 +106,43 @@ public class RedisBuilder extends JavaPlugin {
         instance = this;
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
-        buildRedis();
-        worldManager = new WorldManager();
-        PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new JoinHandler(), this);
-        pm.registerEvents(new ListenerChat(), this);
-        getCommand("rang").setExecutor(new CommandRang());
-        scoreManager = new ScoreManager();
-        scoreManager.initPrefix();
-
-        getCommand("addhologram").setExecutor(new CommandAddHologram());
-        getConfig().options().copyDefaults(true);
-        getConfig().addDefault("ServerType", "Lobby");
-        getConfig().addDefault("Redis-DB", 0);
-        saveConfig();
-
-
-        if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
-            System.out.println("Backend -> Registering more listeners for modded.");
-            Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
-            System.out.println("Backend -> Using alternative scoreboard method.");
-
-        } else if (getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
+        if (!getInstance().isDevMode()) {
+            buildRedis();
+            worldManager = new WorldManager();
+            PluginManager pm = Bukkit.getPluginManager();
             pm.registerEvents(new JoinHandler(), this);
-            pm.registerEvents(new ListenerBlock(), this);
-            System.out.println("Backend -> Using normal scoreboard method.");
+            pm.registerEvents(new ListenerChat(), this);
+            getCommand("rang").setExecutor(new CommandRang());
+            getCommand("switchminigames").setExecutor(new CommandSwitchMiniGames());
+            scoreManager = new ScoreManager();
+            scoreManager.initPrefix();
+
+            getCommand("addhologram").setExecutor(new CommandAddHologram());
+            getConfig().options().copyDefaults(true);
+            getConfig().addDefault("ServerType", "Lobby");
+            getConfig().addDefault("Redis-DB", 0);
+            saveConfig();
+
+
+            if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
+                System.out.println("Backend -> Registering more listeners for modded.");
+                Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
+                System.out.println("Backend -> Using alternative scoreboard method.");
+
+            } else if (getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
+                /**
+                 * Registry for server type lobby
+                 */
+                pm.registerEvents(new JoinHandler(), this);
+                pm.registerEvents(new ListenerBlock(), this);
+                System.out.println("Backend -> Using normal scoreboard method.");
+                serverGUI = new ServerGUI();
+            }
+        } else {
+            //This is for the sign mode testing:
+
+            Bukkit.getPluginManager().registerEvents(new SignInteractHandler(), this);
+            serverGUI = new ServerGUI();
         }
 
 
@@ -142,6 +164,38 @@ public class RedisBuilder extends JavaPlugin {
         }
 
     }
+
+    /**
+     * Gibt zurück, ob der Developer-Modus aktiviert ist.
+     *
+     * @return boolean
+     */
+    public boolean isDevMode() {
+        return getConfig().getBoolean("DevMode");
+    }
+
+    public ServerRegistry getServerRegistry() {
+        return serverRegistry;
+    }
+
+    public NettyClient getNettyClient() {
+        return client;
+    }
+
+    public NettyServer getNettyServer() {
+        return server;
+    }
+
+    public ServerGUI getServerGUI() {
+        return serverGUI;
+    }
+
+    /**
+     * Gibt die Instanz der {@link ServerRegistry} zurück.
+     *
+     * @return {@link ServerRegistry}
+     */
+
 
     public ScoreManager getScoreManager() {
         return scoreManager;

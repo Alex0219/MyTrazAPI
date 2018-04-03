@@ -51,8 +51,8 @@ public class CommandNewWorldSpawn implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            if (RedisBuilder.getInstance().getWorldManager().hasWorld(uuid)) {
-                World world = Bukkit.getWorld(RedisBuilder.getInstance().getWorldManager().getWorld(uuid));
+            if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
+                World world = Bukkit.getWorld(RedisBuilder.getWorldManager().getWorld(uuid));
                 if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
                     Location location = player.getLocation();
                     world.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());

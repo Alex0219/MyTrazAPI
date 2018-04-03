@@ -9,9 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 
@@ -88,22 +87,13 @@ public class Bootstrap extends JavaPlugin {
         spawnWorld = getConfig().getString("SpawnWorld");
         ontimeTracker = new OntimeTracker();
         ontimeTracker.startCounter();
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), new Runnable() {
+        LocalDate localDate = LocalDate.now();
+        Locale spanishLocale = new Locale("de", "DE");
+        String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", spanishLocale));
 
-                @Override
-                public void run() {
-                    SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss ",
-                            Locale.GERMAN);
-                    DateFormatSymbols dfs = df.getDateFormatSymbols();
-                    String[] swd = {"", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
-                    String[] swm = {"", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August,", "September", "Oktober", "November", "Dezember"};
-                    dfs.setShortWeekdays(swd);
-                    dfs.setShortMonths(swm);
-                    df.setDateFormatSymbols(dfs);
-                    String datum = df.format(new Date());
-                    new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + datum + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-                }
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
+                new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
             }, 1, 1);
         });
 

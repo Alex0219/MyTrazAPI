@@ -54,13 +54,13 @@ public class Bootstrap {
 
         api.login("serveradmin", "yJvNgSYu");
 
-        api.selectVirtualServerById(2);
+        api.selectVirtualServerById(6);
         api.setNickname("MyTraz-Bot");
         api.broadcast("Bot nun aktiv");
         api.registerAllEvents();
 
         AFKMover.start();
-        api.addTS3Listeners(new TS3Listener[]{new TS3Listener() {
+        api.addTS3Listeners(new TS3Listener() {
             public void onTextMessage(TextMessageEvent e) {
             }
 
@@ -72,16 +72,16 @@ public class Bootstrap {
 
             public void onClientMoved(ClientMovedEvent e) {
                 int id = e.getTargetChannelId();
-                if (id == 51) {
+                if (id == 518) {
                     for (Client clients : Bootstrap.api.getClients()) {
-                        if (clients.isInServerGroup(15)) {
+                        if (clients.isInServerGroup(213) || clients.isInServerGroup(239)) {
                             Bootstrap.api.sendPrivateMessage(clients.getId(), "Jemand möchte sich bewerben.");
                         }
                     }
                 }
-                if (id == 60) {
+                if (id == 527) {
                     for (Client clients : Bootstrap.api.getClients()) {
-                        if ((clients.isInServerGroup(22)) || (clients.isInServerGroup(20)) || (clients.isInServerGroup(21)) || (clients.isInServerGroup(15))) {
+                        if ((clients.isInServerGroup(216)) || (clients.isInServerGroup(217)) || (clients.isInServerGroup(213))) {
                             Bootstrap.api.sendPrivateMessage(clients.getId(), "Jemand benötigt Hilfe im Support");
                         }
                     }
@@ -90,15 +90,11 @@ public class Bootstrap {
 
             public void onClientLeave(ClientLeaveEvent e) {
                 Client client = Bootstrap.api.getClientByNameExact(e.getInvokerName(), true);
-                if (AFKMover.AFK.containsKey(client.getUniqueIdentifier())) {
-                    AFKMover.AFK.remove(client.getUniqueIdentifier());
-                }
+                AFKMover.AFK.remove(client.getUniqueIdentifier());
                 if (AFKMover.Channel.containsKey(client.getUniqueIdentifier())) {
                     AFKMover.Channel.containsKey(client.getUniqueIdentifier());
                 }
-                if (AFKMover.Moved.containsKey(client.getUniqueIdentifier())) {
-                    AFKMover.Moved.remove(client.getUniqueIdentifier());
-                }
+                AFKMover.Moved.remove(client.getUniqueIdentifier());
             }
 
             public void onClientJoin(ClientJoinEvent e) {
@@ -121,6 +117,6 @@ public class Bootstrap {
 
             public void onChannelCreate(ChannelCreateEvent e) {
             }
-        }});
+        });
     }
 }

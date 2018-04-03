@@ -1,12 +1,19 @@
 package de.fileinputstream.mytraz.bungee;
 
 import de.fileinputstream.mytraz.bungee.api.TeamSpeakAPI;
-import de.fileinputstream.mytraz.bungee.commands.CommandHub;
-import de.fileinputstream.mytraz.bungee.commands.CommandTS;
+import de.fileinputstream.mytraz.bungee.commands.*;
+import de.fileinputstream.mytraz.bungee.listeners.ListenerChat;
+import de.fileinputstream.mytraz.bungee.listeners.ListenerLogin;
+import de.fileinputstream.mytraz.bungee.manager.Files;
 import de.fileinputstream.mytraz.bungee.sql.MySQL;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+import redis.clients.jedis.Jedis;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,20 +55,10 @@ public class Bootstrap extends Plugin {
 
     public static Bootstrap instance;
     MySQL mysql;
+    Jedis jedis;
 
     public static Bootstrap getInstance() {
         return instance;
-    }
-
-    @Override
-    public void onEnable() {
-        instance = this;
-        mysql = new MySQL();
-        TeamSpeakAPI.connect();
-        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandHub("hub"));
-        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandTS("ts"));
-        MySQL.connect();
-        scheduleUpdateTask();
     }
 
     @Override
@@ -80,4 +77,76 @@ public class Bootstrap extends Plugin {
     public MySQL getMysql() {
         return mysql;
     }
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        buildRedis();
+        mysql = new MySQL();
+        TeamSpeakAPI.connect();
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandHub("hub"));
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandTS("ts"));
+        BungeeCord.getInstance().getPluginManager().registerListener(this, new ListenerLogin());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Ban());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Unban());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Tempban());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Banlist());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Mutelist());
+        BungeeCord.getInstance().getPluginManager().registerListener(this, new ListenerChat());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Mute());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Unmute());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Kick());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Check());
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new Tempmute());
+        createFolders();
+        MySQL.connect();
+        scheduleUpdateTask();
+
+    }
+
+    public void buildRedis() {
+        jedis = new Jedis("127.0.0.1", 6379);
+        jedis.connect();
+        System.out.println("Backend -> Connected to redis.");
+
+    }
+
+    public void createFolders() {
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdir();
+        }
+        Files.BanFile = new File(getDataFolder().getPath(), "bans.yml");
+        if (!Files.BanFile.exists()) {
+            try {
+                Files.BanFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Files.MuteFile = new File(getDataFolder().getPath(), "mutes.yml");
+        if (!Files.MuteFile.exists()) {
+            try {
+                Files.MuteFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Files.MuteConfig =
+                    ConfigurationProvider.getProvider(YamlConfiguration.class).load(Files.MuteFile);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            Files.BanConfig =
+                    ConfigurationProvider.getProvider(YamlConfiguration.class).load(Files.BanFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Jedis getJedis() {
+        return jedis;
+    }
+
 }

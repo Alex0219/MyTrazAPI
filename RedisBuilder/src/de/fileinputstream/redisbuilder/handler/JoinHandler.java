@@ -4,8 +4,9 @@ import de.fileinputstream.redisbuilder.RedisBuilder;
 import de.fileinputstream.redisbuilder.user.DBUser;
 import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -86,9 +87,9 @@ public class JoinHandler implements Listener {
 
         String name = event.getPlayer().getName();
         String uuid = UUIDFetcher.getUUID(name).toString();
-        System.out.println(uuid.toString());
+        System.out.println(uuid);
         System.out.println(name);
-        DBUser dbUser = new DBUser(uuid.toString(), name);
+        DBUser dbUser = new DBUser(uuid, name);
         System.out.println(dbUser.toString());
 
         long millisNow = System.currentTimeMillis();
@@ -129,29 +130,25 @@ public class JoinHandler implements Listener {
         player.sendMessage("§4Wichtig: §aDa wir uns mit der Hauptlobby noch in der Bauphase befinden , ist dies nur eine vorübergehende Lobby.");
         player.sendMessage("§7--------------------------------------------------");
         player.sendMessage("§7--------------------------------------------------");
-        player.sendMessage("§cWir bieten im Moment nur Survival an, die MiniGames und Modded sind bald verüfgbar.");
+        player.sendMessage("§aERSTES MiniGame bereits verfügbar!");
         player.sendMessage("§7--------------------------------------------------");
 
         player.sendTitle("§7§lWillkommen auf", "§l§6MyTraz.net");
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 20F, 2F);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(RedisBuilder.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                Random r = new Random();
-                switch (r.nextInt(2)) {
-                    case 1:
-                        player.sendMessage("§cMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
-                        break;
-                    case 2:
-                        player.sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
-                        break;
-                    case 0:
-                        player.sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
-                        break;
-
-                }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(RedisBuilder.getInstance(), () -> {
+            Random r = new Random();
+            switch (r.nextInt(2)) {
+                case 1:
+                    player.sendMessage("§cMyTraz ist ein Projekt von §l§6www.mediolutec.de!");
+                    break;
+                case 2:
+                    player.sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
+                    break;
+                case 0:
+                    player.sendMessage("§cDie ersten 40 Spieler erhalten bei 85 Stunden Spielzeit §cLifetime Premium §7kostenlos");
+                    break;
 
             }
+
         }, 2500L, 2500L);
     }
 
@@ -177,8 +174,13 @@ public class JoinHandler implements Listener {
                             ItemMeta barrierMeta = barrier.getItemMeta();
                             barrierMeta.setDisplayName("§7»§cKommt noch!");
                             barrier.setItemMeta(barrierMeta);
+
+                            ItemStack item = new ItemStack(Material.COOKIE);
+                            ItemMeta meta = item.getItemMeta();
+                            meta.setDisplayName("§7»§aMiniGames");
+                            item.setItemMeta(meta);
                             inv.setItem(1, barrier);
-                            inv.setItem(2, barrier);
+                            inv.setItem(2, item);
                             inv.setItem(3, barrier);
                             event.getPlayer().openInventory(inv);
                         }
@@ -195,14 +197,13 @@ public class JoinHandler implements Listener {
     public void onClick(InventoryClickEvent event) {
         try {
             if (RedisBuilder.getInstance().getConfig().getString("ServerType").equalsIgnoreCase("Lobby")) {
-                System.out.println("lobby");
-                System.out.println("netherstar");
+
                 if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§7»§eSurvival")) {
                     System.out.println("survival");
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     DataOutputStream out = new DataOutputStream(b);
                     try {
-                        System.out.println("gets called");
+
                         out.writeUTF("Connect");
                         out.writeUTF("survival");
                     } catch (IOException ex) {
@@ -210,6 +211,19 @@ public class JoinHandler implements Listener {
                     }
                     Player player = (Player) event.getWhoClicked();
                     player.sendPluginMessage(RedisBuilder.getInstance(), "BungeeCord", b.toByteArray());
+
+                } else if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§7»§aMiniGames")) {
+                    if (RedisBuilder.getInstance().getConfig().getBoolean("MiniGames")) {
+                        Player player = (Player) event.getWhoClicked();
+                        World world = Bukkit.getWorld("MiniGameLobby");
+                        Location loc = world.getSpawnLocation();
+                        player.teleport(new Location(world, loc.getX(), loc.getY(), loc.getX()));
+                    } else {
+                        Player player = (Player) event.getWhoClicked();
+                        player.closeInventory();
+                        player.sendMessage("§aMiniGames in Wartung!");
+
+                    }
 
                 }
 

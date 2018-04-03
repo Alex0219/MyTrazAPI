@@ -55,7 +55,7 @@ public class Teamspeak3Listener implements TS3Listener {
     public void onClientJoin(ClientJoinEvent e) {
         MySQL.connect();
 
-        if (!TeamSpeakAPI.api.getClientByUId(e.getUniqueClientIdentifier()).isInServerGroup(209)) {
+        if (!TeamSpeakAPI.api.getClientByUId(e.getUniqueClientIdentifier()).isInServerGroup(242)) {
             if (!TeamSpeakAPI.isVerified(e.getUniqueClientIdentifier())) {
                 String key = randomString(6) + e.getUniqueClientIdentifier();
                 TeamSpeakAPI.api.sendPrivateMessage(e.getClientId(), "Du bist noch nicht mit dem Minecraft Server gelinkt. Bitte verwende in Minecraft: /ts " + key);
