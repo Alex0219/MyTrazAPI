@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class SignInteractHandler implements Listener {
@@ -33,5 +34,13 @@ public class SignInteractHandler implements Listener {
         Sign sign = (Sign) clickedBlock;
         String signGroupLine = sign.getLine(1);
         RedisBuilder.getInstance().getServerGUI().showServersOfGroup(player, signGroupLine);
+    }
+
+    public void onSignChanged(SignChangeEvent event) {
+        Sign sign = (Sign) event.getBlock();
+        if(sign.getLine(0).equalsIgnoreCase("[Cloud]")) {
+            String group = sign.getLine(1);
+
+        }
     }
 }

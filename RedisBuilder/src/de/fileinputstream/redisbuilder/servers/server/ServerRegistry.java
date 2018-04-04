@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ServerRegistry {
 
-    public ArrayList<Server> servers = new ArrayList<>();
+    public final ArrayList<Server> servers = new ArrayList<>();
 
     public void addServer(Server server) {
         if (!servers.contains(server)) {

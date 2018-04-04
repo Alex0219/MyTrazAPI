@@ -1,9 +1,9 @@
-package de.fileinputstream.redisbuilder.networking;
+package de.fileinputstream.mytraz.bungee.networking;
 
-import de.fileinputstream.redisbuilder.networking.codec.PacketDecoder;
-import de.fileinputstream.redisbuilder.networking.codec.PacketEncoder;
-import de.fileinputstream.redisbuilder.networking.handler.WrapperHandler;
-import de.fileinputstream.redisbuilder.networking.ssl.SSLFactory;
+import de.fileinputstream.mytraz.bungee.networking.codec.PacketDecoder;
+import de.fileinputstream.mytraz.bungee.networking.codec.PacketEncoder;
+import de.fileinputstream.mytraz.bungee.networking.handler.WrapperHandler;
+import de.fileinputstream.mytraz.bungee.networking.ssl.SSLFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -32,6 +32,7 @@ public class NettyServer {
 
 
     public void run() {
+        connected = false;
         boolean epoll = Epoll.isAvailable();
         System.out.println("[Sys] Server-Typ: " + (epoll ? "Epoll" : "Nio"));
         EventLoopGroup mainEventLoopGroup = epoll ? new EpollEventLoopGroup(2) : new NioEventLoopGroup(2);
@@ -58,6 +59,7 @@ public class NettyServer {
                         }
                     });
             serverBootstrap.bind(port).channel().closeFuture().sync();
+            connected = true;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

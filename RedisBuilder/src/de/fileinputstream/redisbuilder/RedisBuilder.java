@@ -10,6 +10,7 @@ import de.fileinputstream.redisbuilder.handler.SignInteractHandler;
 import de.fileinputstream.redisbuilder.mod.ModdedJoinHandler;
 import de.fileinputstream.redisbuilder.networking.NettyServer;
 import de.fileinputstream.redisbuilder.networking.client.NettyClient;
+import de.fileinputstream.redisbuilder.networking.registry.PacketRegistry;
 import de.fileinputstream.redisbuilder.rank.ScoreManager;
 import de.fileinputstream.redisbuilder.servers.ServerGUI;
 import de.fileinputstream.redisbuilder.servers.server.ServerRegistry;
@@ -63,6 +64,7 @@ public class RedisBuilder extends JavaPlugin {
     public static WorldManager worldManager;
     public NettyServer server;
     public NettyClient client;
+    public PacketRegistry packetRegistry;
     public ServerRegistry serverRegistry;
     public ServerGUI serverGUI;
     Jedis jedis;
@@ -142,6 +144,8 @@ public class RedisBuilder extends JavaPlugin {
             //This is for the sign mode testing:
 
             Bukkit.getPluginManager().registerEvents(new SignInteractHandler(), this);
+            packetRegistry = new PacketRegistry();
+            serverRegistry = new ServerRegistry();
             serverGUI = new ServerGUI();
         }
 
@@ -174,6 +178,11 @@ public class RedisBuilder extends JavaPlugin {
         return getConfig().getBoolean("DevMode");
     }
 
+    /**
+     * Gibt die Instanz der {@link ServerRegistry} zurück.
+     *
+     * @return {@link ServerRegistry}
+     */
     public ServerRegistry getServerRegistry() {
         return serverRegistry;
     }
@@ -190,11 +199,11 @@ public class RedisBuilder extends JavaPlugin {
         return serverGUI;
     }
 
-    /**
-     * Gibt die Instanz der {@link ServerRegistry} zurück.
-     *
-     * @return {@link ServerRegistry}
-     */
+    public PacketRegistry getPacketRegistry() {
+        return packetRegistry;
+    }
+
+
 
 
     public ScoreManager getScoreManager() {

@@ -16,19 +16,19 @@ public class ServerGUI {
 
     /**
      * Ist für das Darstellen der Server im Spielerinventar da.
-     */
+     *
     /*
     Zeigt dem Spieler alle Server einer bestimmten Gruppe an.
      */
-    public void showServersOfGroup(Player player, String name) {
-        Inventory inv = Bukkit.createInventory(null, 9 * 4, "Wähle einen §c" + name + "§6Server");
+    public void showServersOfGroup(final Player player, final String name) {
+       final Inventory inv = Bukkit.createInventory(null, 9 * 4, "Wähle einen §c" + name + "§6Server");
 
         for (Server servers : RedisBuilder.getInstance().getServerRegistry().servers) {
             if (servers.getGroup().equalsIgnoreCase(name)) {
-                ItemStack server = new ItemStack(Material.STAINED_CLAY, (byte) 6);
-                ItemMeta meta = server.getItemMeta();
+                final ItemStack server = new ItemStack(Material.STAINED_CLAY, (byte) 6);
+              final  ItemMeta meta = server.getItemMeta();
                 meta.setDisplayName("§7Join >> §c" + servers.getName());
-                List<String> lores = new ArrayList<>();
+                final List<String> lores = new ArrayList<>();
                 lores.add("§m---------");
                 lores.add("§7Online: " + servers.getOnline() + "/" + servers.getMaxOnline());
                 lores.add("§7Status:" + servers.getServerState());
@@ -37,8 +37,6 @@ public class ServerGUI {
                 server.setItemMeta(meta);
                 inv.addItem(server);
                 player.openInventory(inv);
-
-
             }
 
         }
