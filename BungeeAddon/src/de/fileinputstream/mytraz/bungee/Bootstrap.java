@@ -6,6 +6,7 @@ import de.fileinputstream.mytraz.bungee.listeners.ListenerChat;
 import de.fileinputstream.mytraz.bungee.listeners.ListenerLogin;
 import de.fileinputstream.mytraz.bungee.manager.Files;
 import de.fileinputstream.mytraz.bungee.networking.NettyServer;
+import de.fileinputstream.mytraz.bungee.networking.client.NettyClient;
 import de.fileinputstream.mytraz.bungee.networking.registry.PacketRegistry;
 import de.fileinputstream.mytraz.bungee.sql.MySQL;
 import net.md_5.bungee.BungeeCord;
@@ -57,6 +58,7 @@ public class Bootstrap extends Plugin {
 
     public static Bootstrap instance;
     MySQL mysql;
+   ;
     Jedis jedis;
     NettyServer nettyServer;
     PacketRegistry packetRegistry;
@@ -67,6 +69,7 @@ public class Bootstrap extends Plugin {
 
     @Override
     public void onDisable() {
+
         instance = null;
     }
 
@@ -89,7 +92,7 @@ public class Bootstrap extends Plugin {
         buildRedis();
         mysql = new MySQL();
         TeamSpeakAPI.connect();
-        nettyServer = new NettyServer("128.0.0.1",7645);
+        nettyServer = new NettyServer("127.0.0.1",7645);
         nettyServer.run();
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandHub("hub"));
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandTS("ts"));

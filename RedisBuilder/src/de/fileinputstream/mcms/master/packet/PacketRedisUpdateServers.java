@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class PacketRedisUpdateServers extends Packet {
 
 
-    ArrayList<Server> serverList = new ArrayList<>();
+   public ArrayList<Server> serverList = new ArrayList<>();
 
     public PacketRedisUpdateServers() {
 

@@ -2,6 +2,7 @@ package de.fileinputstream.mytraz.bungee.networking;
 
 import de.fileinputstream.mytraz.bungee.networking.codec.PacketDecoder;
 import de.fileinputstream.mytraz.bungee.networking.codec.PacketEncoder;
+import de.fileinputstream.mytraz.bungee.networking.handler.GameServerHandler;
 import de.fileinputstream.mytraz.bungee.networking.handler.WrapperHandler;
 import de.fileinputstream.mytraz.bungee.networking.ssl.SSLFactory;
 import io.netty.bootstrap.ServerBootstrap;
@@ -55,7 +56,7 @@ public class NettyServer {
                             //socketChannel.pipeline().addLast(ZlibCodecFactory.newZlibDecoder(ZlibWrapper.GZIP));
                             socketChannel.pipeline().addLast("decoder", new PacketDecoder());
                             socketChannel.pipeline().addLast("encoder", new PacketEncoder());
-                            socketChannel.pipeline().addLast("handler", new WrapperHandler());
+                            socketChannel.pipeline().addLast("handler", new GameServerHandler());
                         }
                     });
             serverBootstrap.bind(port).channel().closeFuture().sync();

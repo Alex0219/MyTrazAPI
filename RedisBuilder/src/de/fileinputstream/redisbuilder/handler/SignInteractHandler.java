@@ -40,6 +40,10 @@ public class SignInteractHandler implements Listener {
         Sign sign = (Sign) event.getBlock();
         if(sign.getLine(0).equalsIgnoreCase("[Cloud]")) {
             String group = sign.getLine(1);
+            sign.setLine(0,"§m------------------");
+            sign.setLine(1,"§7>> " + group);
+            sign.setLine(2,"§m------------------");
+            event.getPlayer().sendMessage("§Schild wurde erstellt.");
 
         }
     }

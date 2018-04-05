@@ -14,8 +14,8 @@ public class PacketRegistry {
     private Map<Integer, Packet> packets = new HashMap<>();
 
     public PacketRegistry() {
-        packets.put(1, new PacketProxyServerRegister());
-        packets.put(2, new PacketProxyServerUnregister());
+        packets.put(7, new PacketProxyServerRegister());
+        packets.put(8, new PacketProxyServerUnregister());
     }
 
     public Class<? extends Packet> getPacketClassByID(int id) {

@@ -1,6 +1,8 @@
 package de.fileinputstream.redisbuilder.servers.server;
 
+import de.fileinputstream.redisbuilder.servers.ChannelObject;
 import de.fileinputstream.redisbuilder.servers.enums.ServerState;
+import io.netty.channel.Channel;
 
 public class Server {
 
@@ -10,14 +12,16 @@ public class Server {
     int online;
     int maxOnline;
     ServerState serverState;
+    ChannelObject channelObject;
 
-    public Server(String name, String group, String ip, int online, int maxOnline, ServerState serverState) {
+    public Server(String name, String group, String ip, int online, int maxOnline, ServerState serverState, ChannelObject channelObjectl) {
         this.name = name;
         this.group = group;
         this.ip = ip;
         this.online = online;
         this.maxOnline = maxOnline;
         this.serverState = serverState;
+        this.channelObject = channelObject;
     }
 
     public String getName() {
@@ -46,6 +50,18 @@ public class Server {
 
     public int getOnline() {
         return online;
+    }
+
+    public ChannelObject getChannelObject() {
+        return channelObject;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Channel getChannel() {
+        return channelObject.getChannel();
     }
 
     @Override

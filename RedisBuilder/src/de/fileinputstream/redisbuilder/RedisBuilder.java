@@ -1,6 +1,7 @@
 package de.fileinputstream.redisbuilder;
 
-import de.fileinputstream.redisbuilder.commands.CommandAddHologram;
+import de.fileinputstream.mcms.master.packet.PacketCloudServerDisconnect;
+import de.fileinputstream.mcms.master.packet.PacketUpdateServerData;
 import de.fileinputstream.redisbuilder.commands.CommandRang;
 import de.fileinputstream.redisbuilder.commands.CommandSwitchMiniGames;
 import de.fileinputstream.redisbuilder.handler.JoinHandler;
@@ -13,6 +14,7 @@ import de.fileinputstream.redisbuilder.networking.client.NettyClient;
 import de.fileinputstream.redisbuilder.networking.registry.PacketRegistry;
 import de.fileinputstream.redisbuilder.rank.ScoreManager;
 import de.fileinputstream.redisbuilder.servers.ServerGUI;
+import de.fileinputstream.redisbuilder.servers.enums.ServerState;
 import de.fileinputstream.redisbuilder.servers.server.ServerRegistry;
 import de.fileinputstream.redisbuilder.user.WorldManager;
 import org.bukkit.Bukkit;
@@ -83,7 +85,17 @@ public class RedisBuilder extends JavaPlugin {
     public void onDisable() {
         instance = null;
         //Disconnect from redis.
+        getNettyClient().channel.writeAndFlush(new PacketCloudServerDisconnect("Server Stop(onDisable)"));
         getJedis().disconnect();
+    }
+
+    public void startUpdateScheduler() {
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+              getNettyClient().channel.writeAndFlush(new PacketUpdateServerData(System.getProperty("servername"),Bukkit.getOnlinePlayers().size(),Bukkit.getMaxPlayers(),ServerState.WAITING));
+            }
+        },2000,2000);
     }
 
     /**
@@ -119,13 +131,12 @@ public class RedisBuilder extends JavaPlugin {
             scoreManager = new ScoreManager();
             scoreManager.initPrefix();
 
-            getCommand("addhologram").setExecutor(new CommandAddHologram());
             getConfig().options().copyDefaults(true);
             getConfig().addDefault("ServerType", "Lobby");
             getConfig().addDefault("Redis-DB", 0);
             saveConfig();
 
-
+            client = new NettyClient(System.getProperty("wrapperhost"),7766);
             if (getConfig().getString("ServerType").equalsIgnoreCase("Unhinged")) {
                 System.out.println("Backend -> Registering more listeners for modded.");
                 Bukkit.getPluginManager().registerEvents(new ModdedJoinHandler(), this);
@@ -135,18 +146,23 @@ public class RedisBuilder extends JavaPlugin {
                 /**
                  * Registry for server type lobby
                  */
-                pm.registerEvents(new JoinHandler(), this);
-                pm.registerEvents(new ListenerBlock(), this);
-                System.out.println("Backend -> Using normal scoreboard method.");
-                serverGUI = new ServerGUI();
-            }
-        } else {
-            //This is for the sign mode testing:
 
+            }
+
+            System.out.println(System.getProperty("wrapperhost"));
+            pm.registerEvents(new JoinHandler(), this);
+            pm.registerEvents(new ListenerBlock(), this);
+            System.out.println("Backend -> Using normal scoreboard method.");
+            serverGUI = new ServerGUI();
+            getNettyClient().run();
             Bukkit.getPluginManager().registerEvents(new SignInteractHandler(), this);
             packetRegistry = new PacketRegistry();
             serverRegistry = new ServerRegistry();
             serverGUI = new ServerGUI();
+        } else {
+            //This is for the sign mode testing:
+
+
         }
 
 
