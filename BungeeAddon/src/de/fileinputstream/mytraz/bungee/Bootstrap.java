@@ -6,7 +6,6 @@ import de.fileinputstream.mytraz.bungee.listeners.ListenerChat;
 import de.fileinputstream.mytraz.bungee.listeners.ListenerLogin;
 import de.fileinputstream.mytraz.bungee.manager.Files;
 import de.fileinputstream.mytraz.bungee.networking.NettyServer;
-import de.fileinputstream.mytraz.bungee.networking.client.NettyClient;
 import de.fileinputstream.mytraz.bungee.networking.registry.PacketRegistry;
 import de.fileinputstream.mytraz.bungee.sql.MySQL;
 import net.md_5.bungee.BungeeCord;
@@ -14,6 +13,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import redis.clients.jedis.Jedis;
+
 
 import java.io.File;
 import java.io.IOException;

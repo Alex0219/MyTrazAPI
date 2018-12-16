@@ -65,10 +65,16 @@ public class ListenerChat implements Listener {
         b.add("ich hab deine mutter gefickt");
         b.add("schamhaarasierer");
         b.add("fotzenlecker");
+        b.add("hurensohn");
+        b.add("analgasfotze");
         b.add(".de");
         b.add(".com");
         b.add(".xyz");
         b.add(".net");
+        b.add("dein vater ist ein spast");
+        b.add("spast");
+        b.add("Aasgeier");
+        b.add("org");
     }
 
     @EventHandler
@@ -82,11 +88,12 @@ public class ListenerChat implements Listener {
                 if (insult.contains(p.getName())) {
                     MuteManager.Mute(p.getName(), "Beleidugung/Linkweitergabe im Chat", "Cloud", 36000);
                     insult.remove(p.getName());
-                    e.setMessage("MyTraz ist der tollste Server auf der Welt!");
+                    e.setMessage("Ich finde FlippiGames wirklich toll!");
+                    p.sendMessage("§bFlippiGames §7» §cDu wurdest für §eBeleidigung §cgemutet!");
 
                 } else {
-                    p.sendMessage("§bCloud §7» §cBitte beleidige nicht oder schreibe keine Links!");
-                    p.sendMessage("§bCloud §7» Solltest du dies nochmal schreiben, wirst du gemutet!");
+                    p.sendMessage("§bFlippiGames §7» §cBitte beleidige nicht oder schreibe keine Links!");
+                    p.sendMessage("§bFlippiGames §7» Solltest du dies nochmal schreiben, wirst du gemutet!");
                     e.setMessage("MyTraz ist der tollste Server auf der Welt!");
                     insult.add(p.getName());
 
@@ -108,9 +115,9 @@ public class ListenerChat implements Listener {
                 e.setCancelled(true);
 
 
-                p.sendMessage("§bCloud §7» §cDu wurdest aus dem Chat gebannt!");
-                p.sendMessage("§bCloud §7» Dauer: " + MuteManager.getRemainingTime(p.getName()));
-                p.sendMessage("§bCloud §7» §cGrund: " + MuteManager.getReason(p.getName()));
+                p.sendMessage("§bFlippiGames §7» §cDu wurdest aus dem Chat gebannt!");
+                p.sendMessage("§bFlippiGames §7» Dauer: " + MuteManager.getRemainingTime(p.getName()));
+                p.sendMessage("§bFlippiGames §7» §cGrund: " + MuteManager.getReason(p.getName()));
             }
         }
     }

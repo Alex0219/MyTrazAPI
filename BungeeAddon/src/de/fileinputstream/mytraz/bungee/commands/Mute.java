@@ -20,10 +20,10 @@ public class Mute
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission("server.mute")) {
             if (args.length < 2) {
-                sender.sendMessage("§bCloud §7» §cVerwende /mute <Spieler> <Grund> ");
+                sender.sendMessage("§bFlippiGames §7» §cVerwende /mute <Spieler> <Grund> ");
             } else {
                 if (MuteManager.isMuted(args[0])) {
-                    sender.sendMessage("§bCloud §7» §cDieser Spieler ist bereits gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §cDieser Spieler ist bereits gemutet.");
                     return;
                 }
                 String message = "";
@@ -45,18 +45,18 @@ public class Mute
                 String bannerRank = RankManager.getRank(bannerUUID);
                 if (bannedrank == null || bannedrank.equalsIgnoreCase("")) {
                     MuteManager.Mute(args[0], message, target.getName(), -1);
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
                     return;
                 }
                 System.out.println(bannedUUID);
                 System.out.println(bannerUUID);
 
                 if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("admin")) {
-                    sender.sendMessage("§bCloud §7» §cDu darfst diesen Spieler nicht muten!");
+                    sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht muten!");
                     return;
                 } else {
                     MuteManager.Mute(args[0], message, target.getName(), -1);
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
                     return;
                 }
 

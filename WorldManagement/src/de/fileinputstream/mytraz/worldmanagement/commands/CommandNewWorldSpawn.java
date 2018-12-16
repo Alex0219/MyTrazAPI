@@ -1,7 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -51,19 +51,19 @@ public class CommandNewWorldSpawn implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
-                World world = Bukkit.getWorld(RedisBuilder.getWorldManager().getWorld(uuid));
+            if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+                World world = Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid));
                 if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
                     Location location = player.getLocation();
                     world.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-                    player.sendMessage("§7«▌§cMyTraz§7▌» Du hast den Spawnpunkt für deine Welt gesetzt!");
+                    player.sendMessage("§bFlippiGames §7» Du hast den Spawnpunkt für deine Welt gesetzt!");
                 } else {
-                    player.sendMessage("§7«▌§cMyTraz§7▌» Diese Welt gehört dir nicht!");
+                    player.sendMessage("§bFlippiGames §7» Diese Welt gehört dir nicht!");
                     return true;
                 }
 
             } else {
-                player.sendMessage("§7«▌§cMyTraz§7▌» Du hast noch keine Welt!");
+                player.sendMessage("§bFlippiGames §7» Du hast noch keine Welt!");
             }
         }
         return false;

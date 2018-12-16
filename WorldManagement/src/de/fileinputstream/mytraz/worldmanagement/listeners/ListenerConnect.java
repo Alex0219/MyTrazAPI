@@ -1,15 +1,17 @@
 package de.fileinputstream.mytraz.worldmanagement.listeners;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.chatlog.entry.ChatEntry;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
+
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.rank.RankManager;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent;
-import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_13_R1.IChatBaseComponent;
+import net.minecraft.server.v1_13_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +24,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -64,10 +67,10 @@ public class ListenerConnect implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
 
-        Bukkit.broadcastMessage("§7«▌§cMyTraz§7▌» §c" + event.getPlayer().getName() + " §7ist §cgestorben!");
+        Bukkit.broadcastMessage("§bFlippiGames §7» §c" + event.getPlayer().getName() + " §7ist §cgestorben!");
         String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
-        if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
-            event.setRespawnLocation(Bukkit.getWorld(RedisBuilder.getWorldManager().getWorld(uuid)).getSpawnLocation());
+        if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+            event.setRespawnLocation(Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid)).getSpawnLocation());
         } else {
             event.setRespawnLocation(Bukkit.getWorld(Bootstrap.getInstance().getConfig().getString("SpawnWorld")).getSpawnLocation());
         }
@@ -87,7 +90,23 @@ public class ListenerConnect implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        DBUser dbUser = new DBUser(UUIDFetcher.getUUID(event.getPlayer().getName()).toString(), event.getPlayer().getName());
+        System.out.println(dbUser.toString());
+
+        long millisNow = System.currentTimeMillis();
+
+        if (!dbUser.userExists()) {
+            dbUser.createUser();
+            String millis = String.valueOf(System.currentTimeMillis() - millisNow);
+            System.out.println("Backend -> Player Join took " + millis + " milliseconds");
+
+        } else {
+            System.out.println("Backend -> User already exists!");
+            String millis = String.valueOf(System.currentTimeMillis() - millisNow);
+            System.out.println("Backend -> Player Join took " + millis + " milliseconds");
+        }
         String rank = RankManager.getRank(UUIDFetcher.getUUID(event.getPlayer().getName()).toString());
+        Bootstrap.getInstance().getChatLogManager().chatLogs.put(dbUser.getUuid(),new ArrayList<ChatEntry>());
         if (!rank.equalsIgnoreCase("spieler") || !rank.equalsIgnoreCase("premium")) {
             event.setJoinMessage("§8§l[Team] §r§c" + event.getPlayer().getName() + " §7ist dem Server beigetreten.");
         }
@@ -96,6 +115,7 @@ public class ListenerConnect implements Listener {
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(16);
         NameTags.addToTeam(player);
         NameTags.updateTeams();
+        dbUser.executeJoin();
         sendTablist(player, "§4§lMyTraz.NET - §aSurvival", "§cTeamspeak: MyTraz.NET");
         LocalDate localDate = LocalDate.now();
         Locale spanishLocale = new Locale("de", "DE");
@@ -120,8 +140,8 @@ public class ListenerConnect implements Listener {
         event.setQuitMessage("§c" + event.getPlayer().getName() + " §7hat den Server verlassen.");
         Player player = event.getPlayer();
         String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-        if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
-            String world = RedisBuilder.getWorldManager().getWorld(uuid);
+        if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+            String world = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
             Bukkit.unloadWorld(world, true);
             System.out.println("Backend -> Unloading world from player: " + player.getName() + "(uuid:" + uuid + ").");
         }

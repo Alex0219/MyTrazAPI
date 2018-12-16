@@ -66,12 +66,4 @@ public class ListenerLogin implements Listener {
         }
     }
 
-    @EventHandler
-    public void onJoin(PostLoginEvent event) {
-        ProxiedPlayer player = event.getPlayer();
-        String header = "§7« §6MyTraz.NET - §bNo Limit Netzwerk §8✗ \n §9Teamspeak §7» §7MyTraz.NET §8✗ \n §9Forum §7» forum.mytraz.net  ";
-
-        player.setTabHeader(new TextComponent("wwewweweweweweew"), new TextComponent(""));
-
-    }
 }

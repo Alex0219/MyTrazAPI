@@ -1,8 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.rank.RankManager;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
+import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -56,21 +56,21 @@ public class CommandWorldInfo implements CommandExecutor {
                     String targetUUID = UUIDFetcher.getUUID(playername).toString();
                     player.sendMessage("§7===========§a" + playername + "§7==============");
                     player.sendMessage("§aInfo über:§4 " + playername);
-                    player.sendMessage("§aWelten:§6 " + RedisBuilder.getWorldManager().getWorld(targetUUID));
+                    player.sendMessage("§aWelten:§6 " + Bootstrap.getInstance().getWorldManager().getWorld(targetUUID));
                     player.sendMessage("§7===========§a" + playername + "§7==============");
                     if (RankManager.getRank(targetUUID).equalsIgnoreCase("")) {
-                        player.sendMessage("§c§7«▌§cMyTraz§7▌» Dieser Spieler existiert nicht!");
+                        player.sendMessage("§bFlippiGames §7» Dieser Spieler existiert nicht!");
 
                     }
                 } else {
-                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Verwende /worldinfo <Spieler>");
+                    player.sendMessage("§bFlippiGames §7» Verwende /worldinfo <Spieler>");
                     return true;
                 }
             } else {
 
             }
         } else {
-            sender.sendMessage("§7«▌§cMyTraz§7▌» Nur Spieler können diesen Befehö ausführen.");
+            sender.sendMessage("§bFlippiGames §7» Nur Spieler können diesen Befehö ausführen.");
         }
         return false;
     }

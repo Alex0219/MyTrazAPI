@@ -53,12 +53,12 @@ public class CommandAcceptinvite implements CommandExecutor {
             if (Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(uuid)) {
                 String worldID = Bootstrap.getInstance().getWorldManager().worldInvites.get(uuid);
                 Bootstrap.getInstance().getWorldManager().addResident(worldID, uuid);
-                System.out.println("§7«▌§cMyTraz§7▌» Du hast die Einladung erfolgreich angenommen!");
+                System.out.println("§bFlippiGames §7» Du hast die Einladung erfolgreich angenommen!");
                 Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
                 Bukkit.createWorld(new WorldCreator(worldID));
                 player.teleport(Bukkit.getWorld(worldID).getSpawnLocation());
             } else {
-                player.sendMessage("§c§7«▌§cMyTraz§7▌» Du wurdest von niemandem in eine Welt eingeladen.");
+                player.sendMessage("§bFlippiGames §7» Du wurdest von niemandem in eine Welt eingeladen.");
                 return true;
             }
         } else {

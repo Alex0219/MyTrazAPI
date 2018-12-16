@@ -1,8 +1,6 @@
 package de.fileinputstream.mytraz.worldmanagement.uuid;
 
-
-import de.fileinputstream.redisbuilder.rank.RankManager;
-import de.fileinputstream.redisbuilder.uuid.UUIDFetcher;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

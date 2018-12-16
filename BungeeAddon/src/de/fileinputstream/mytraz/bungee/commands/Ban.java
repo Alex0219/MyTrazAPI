@@ -17,10 +17,10 @@ public class Ban
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission("server.ban")) {
             if (args.length < 2) {
-                sender.sendMessage("§bCloud §7» §cVerwende /ban <Spieler> <Grund> ");
+                sender.sendMessage("§bFlippiGames §7» §cVerwende /ban <Spieler> <Grund> ");
             } else {
                 if (BanManager.isBanned(args[0])) {
-                    sender.sendMessage("§bCloud §7» §cDieser Spieler ist bereits gebannt.");
+                    sender.sendMessage("§bFlippiGames §7» §cDieser Spieler ist bereits gebannt.");
                     return;
                 }
                 String message = "";
@@ -34,7 +34,7 @@ public class Ban
 
                 if (!(sender instanceof ProxiedPlayer)) {
                     BanManager.Ban(args[0], message, sender.getName(), -1);
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gebannt.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gebannt.");
                     return;
                 } else {
 
@@ -48,18 +48,18 @@ public class Ban
                     String bannerRank = RankManager.getRank(bannerUUID);
                     if (bannedrank == null || bannedrank.equalsIgnoreCase("")) {
                         BanManager.Ban(args[0], message, sender.getName(), -1);
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gebannt.");
                         return;
                     }
                     System.out.println(bannedUUID);
                     System.out.println(bannerUUID);
 
                     if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("admin")) {
-                        sender.sendMessage("§bCloud §7» §cDu darfst diesen Spieler nicht bannen!");
+                        sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht bannen!");
                         return;
                     } else {
                         BanManager.Ban(args[0], message, sender.getName(), -1);
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gebannt.");
                         return;
                     }
                 }

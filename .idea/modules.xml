@@ -3,15 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BungeeAddon/BungeeAddon.iml" filepath="$PROJECT_DIR$/BungeeAddon/BungeeAddon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GlobalCache/GlobalCache.iml" filepath="$PROJECT_DIR$/GlobalCache/GlobalCache.iml" />
       <module fileurl="file://$PROJECT_DIR$/GlobalCore/GlobalCore.iml" filepath="$PROJECT_DIR$/GlobalCore/GlobalCore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MyTrazKnockffa/MyTrazKnockffa.iml" filepath="$PROJECT_DIR$/MyTrazKnockffa/MyTrazKnockffa.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MyTrazMiniGameLib/MyTrazMiniGameLib.iml" filepath="$PROJECT_DIR$/MyTrazMiniGameLib/MyTrazMiniGameLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MyTrazSignAddon/MyTrazSignAddon.iml" filepath="$PROJECT_DIR$/MyTrazSignAddon/MyTrazSignAddon.iml" />
       <module fileurl="file://$PROJECT_DIR$/None - API.iml" filepath="$PROJECT_DIR$/None - API.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" filepath="$PROJECT_DIR$/RedisBuilder/RedisBuilder.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Teamspeak3Module/Teamspeak3Module.iml" filepath="$PROJECT_DIR$/Teamspeak3Module/Teamspeak3Module.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WorldBackup/WorldBackup.iml" filepath="$PROJECT_DIR$/WorldBackup/WorldBackup.iml" />
       <module fileurl="file://$PROJECT_DIR$/WorldManagement/WorldManagement.iml" filepath="$PROJECT_DIR$/WorldManagement/WorldManagement.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyTrazAPI/src/main/main.iml" filepath="$PROJECT_DIR$/MyTrazAPI/src/main/main.iml" />
     </modules>

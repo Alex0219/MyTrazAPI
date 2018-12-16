@@ -1,6 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement;
 
+import de.fileinputstream.mytraz.worldmanagement.chatlog.ChatLogManager;
 import de.fileinputstream.mytraz.worldmanagement.commands.*;
+import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerChat;
 import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
 import de.fileinputstream.mytraz.worldmanagement.tracker.OntimeTracker;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
@@ -56,7 +58,8 @@ public class Bootstrap extends JavaPlugin {
     WorldManager worldManager;
     String spawnWorld;
     OntimeTracker ontimeTracker;
-    String prefix = "§7«▌§cMyTraz§7▌»";
+    ChatLogManager chatLogManager;
+    String prefix = "§bFlippiGames §7»";
 
     public static Bootstrap getInstance() {
         return instance;
@@ -74,6 +77,7 @@ public class Bootstrap extends JavaPlugin {
         worldManager = new WorldManager();
 
         Bukkit.getPluginManager().registerEvents(new ListenerConnect(), this);
+        Bukkit.getPluginManager().registerEvents(new ListenerChat(), this);
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("DB", "1");
         getConfig().addDefault("SpawnWorld", "world");
@@ -82,8 +86,12 @@ public class Bootstrap extends JavaPlugin {
         jedis = new Jedis("127.0.0.1", 6379);
         jedis.connect();
         System.out.println("Connected to redis!");
+        if(!getJedis().exists("survivalWorldIDCount")) {
+            getJedis().set("survivalWorldIDCount","1");
+            System.out.println("Backend -> Warning! Key 'survivalWorldIDCount' was missing! Created it.");
+        }
 
-
+        chatLogManager = new ChatLogManager();
         spawnWorld = getConfig().getString("SpawnWorld");
         ontimeTracker = new OntimeTracker();
         ontimeTracker.startCounter();
@@ -125,8 +133,11 @@ public class Bootstrap extends JavaPlugin {
         getCommand("warp").setExecutor(new CommandWarp());
         getCommand("setwarp").setExecutor(new CommandSetWarp());
         getCommand("delwarp").setExecutor(new CommandDelWarp());
-        getCommand("schafmodus").setExecutor(new CommandSchafModus());
+        getCommand("rang").setExecutor(new CommandRang());
+        getCommand("chatlog").setExecutor(new CommandChatLog());
     }
+
+
 
     public Jedis getJedis() {
         return jedis;
@@ -146,5 +157,9 @@ public class Bootstrap extends JavaPlugin {
 
     public OntimeTracker getOntimeTracker() {
         return ontimeTracker;
+    }
+
+    public ChatLogManager getChatLogManager() {
+        return chatLogManager;
     }
 }

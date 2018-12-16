@@ -26,12 +26,12 @@ public class Tempban
 
             if (args.length < 4) {
 
-                sender.sendMessage("§bCloud §7» §cVerwende /tempban <Spieler> <Zeit> <Zeitform> <Grund> ");
+                sender.sendMessage("§bFlippiGames §7» §cVerwende /tempban <Spieler> <Zeit> <Zeitform> <Grund> ");
 
             } else {
 
                 if (BanManager.isBanned(args[0])) {
-                    sender.sendMessage("§bCloud §7» §cDieser Spieler bereits schon gebannt.");
+                    sender.sendMessage("§bFlippiGames §7» §cDieser Spieler bereits schon gebannt.");
                     return;
                 }
 
@@ -61,14 +61,14 @@ public class Tempban
                 String bannerRank = RankManager.getRank(bannerUUID);
                 if (bannedrank == null || bannedrank.equalsIgnoreCase("")) {
                     BanManager.Ban(args[0], message, sender.getName(), -1);
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gebannt.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gebannt.");
                     return;
                 }
                 System.out.println(bannedUUID);
                 System.out.println(bannerUUID);
 
                 if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("admin")) {
-                    sender.sendMessage("§bCloud §7» §cDu darfst diesen Spieler nicht bannen!");
+                    sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht bannen!");
                     return;
                 } else {
                     int Time = Integer.parseInt(args[1]);
@@ -78,7 +78,7 @@ public class Tempban
                             (TimeUnit.equalsIgnoreCase("sekunden")) ||
                             (TimeUnit.equalsIgnoreCase("secs"))) {
 
-                        sender.sendMessage("§bCloud §7» §cDer Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §cDer Spieler wurde gebannt.");
 
                         BanManager.Ban(args[0], message, sender.getName(), Time * 1);
 
@@ -89,7 +89,7 @@ public class Tempban
                             (TimeUnit.equalsIgnoreCase("minute"))) {
 
 
-                        sender.sendMessage("§bCloud §7» §cDer Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §cDer Spieler wurde gebannt.");
 
                         BanManager.Ban(args[0], message, sender.getName(),
                                 Time * 60);
@@ -98,7 +98,7 @@ public class Tempban
                             (TimeUnit.equalsIgnoreCase("hour")) ||
                             (TimeUnit.equalsIgnoreCase("hours"))) {
 
-                        sender.sendMessage("§bCloud §7» §cDer Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §cDer Spieler wurde gebannt.");
 
                         BanManager.Ban(args[0], message, sender.getName(),
                                 Time * 60 * 60);
@@ -111,7 +111,7 @@ public class Tempban
                             (TimeUnit.equalsIgnoreCase("days"))) {
 
 
-                        sender.sendMessage("§bCloud §7» §cDer Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §cDer Spieler wurde gebannt.");
 
                         BanManager.Ban(args[0], message,
                                 sender.getName(), Time * 60 * 60 * 24);
@@ -122,7 +122,7 @@ public class Tempban
                             (TimeUnit.equalsIgnoreCase("wochen")) ||
                             (TimeUnit.equalsIgnoreCase("weeks"))) {
 
-                        sender.sendMessage("§bCloud §7» §cDer Spieler wurde gebannt.");
+                        sender.sendMessage("§bFlippiGames §7» §cDer Spieler wurde gebannt.");
 
                         BanManager.Ban(args[0], message,
                                 sender.getName(), Time * 60 * 60 *
@@ -130,7 +130,7 @@ public class Tempban
 
                     } else {
 
-                        sender.sendMessage("§bCloud §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
+                        sender.sendMessage("§bFlippiGames §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
 
                     }
                 }

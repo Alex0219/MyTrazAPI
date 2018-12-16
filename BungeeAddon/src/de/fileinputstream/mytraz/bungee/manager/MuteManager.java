@@ -101,12 +101,12 @@ public class MuteManager {
             Files.saveMuteFile();
             for (ProxiedPlayer o : BungeeCord.getInstance().getPlayers()) {
                 if (o.hasPermission("server.team")) {
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                     o.sendMessage("§cTyp §7» §4MUTE");
                     o.sendMessage("§7Spieler »  §c " + playername);
                     o.sendMessage("§7Von » §c" + MutedBy);
                     o.sendMessage("§7Dauer §7» §c" + getRemainingTime(playername));
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                 }
             }
         }
@@ -129,11 +129,11 @@ public class MuteManager {
             Files.saveMuteFile();
             for (ProxiedPlayer o : BungeeCord.getInstance().getPlayers()) {
                 if (o.hasPermission("server.team")) {
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                     o.sendMessage("§cTyp » §4UNMUTE");
                     o.sendMessage("§7Spieler §7»  §c " + playername);
                     o.sendMessage("§7Von » §c" + By);
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                 }
             }
         }

@@ -2,7 +2,6 @@ package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -53,14 +52,17 @@ public class CommandRemoveResident implements CommandExecutor {
                 String targetName = args[0];
                 String targetUUID = UUIDFetcher.getUUID(targetName).toString();
                 String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-                if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
-                    String worldID = RedisBuilder.getWorldManager().getWorld(uuid);
+                if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+                    String worldID = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
                     if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(targetUUID, worldID)) {
+                        if(!Bootstrap.getInstance().getWorldManager().getWorld(uuid).equalsIgnoreCase(worldID)) {
+                            player.sendMessage(Bootstrap.getInstance().getPrefix() + " §cDu kannst dich nicht aus deinen eigenen Welt entfernen!");
+                        }
                         Bootstrap.getInstance().getWorldManager().removeResident(worldID, targetUUID);
                         player.sendMessage(Bootstrap.getInstance().getPrefix() + " §7Du hast den Spieler §a" + targetName + " §caus deiner Welt entfernt.");
                         if (Bukkit.getPlayer(targetName) != null) {
                             Player target = Bukkit.getPlayer(targetName);
-                            if (target.getWorld().getName().equalsIgnoreCase(RedisBuilder.getWorldManager().getWorld(uuid))) {
+                            if (target.getWorld().getName().equalsIgnoreCase(Bootstrap.getInstance().getWorldManager().getWorld(uuid))) {
                                 target.sendMessage(Bootstrap.getInstance().getPrefix() + player.getName() + " §chat dich aus seiner Welt geworfen!");
                                 target.sendMessage(Bootstrap.getInstance().getPrefix() + " §cDu wirst nun an den Spawn teleportiert.");
                                 target.teleport(Bukkit.getWorld(Bootstrap.getInstance().getSpawnWorld()).getSpawnLocation());
@@ -72,12 +74,12 @@ public class CommandRemoveResident implements CommandExecutor {
                         return true;
                     }
                 } else {
-                    player.sendMessage("§7«▌§cMyTraz§7▌» Du hast noch keine Welt.");
+                    player.sendMessage("§bFlippiGames §7» Du hast noch keine Welt.");
                     return true;
                 }
 
             } else {
-                player.sendMessage("§7«▌§cMyTraz§7▌» Verwende /removeresident <Name>");
+                player.sendMessage("§bFlippiGames §7» Verwende /removeresident <Name>");
                 return true;
             }
 

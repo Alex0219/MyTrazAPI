@@ -105,13 +105,13 @@ public class BanManager {
             Files.saveBanFile();
             for (ProxiedPlayer o : BungeeCord.getInstance().getPlayers()) {
                 if (o.hasPermission("server.team")) {
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                     o.sendMessage("§7Typ » §4BAN");
                     o.sendMessage("§7Spieler »  §c " + Spielername);
                     o.sendMessage("§7Banndauer »  §c " + getRemainingTime(Spielername));
                     o.sendMessage("§7Grund »  §c " + getReason(Spielername));
                     o.sendMessage("§7Von » §c" + von);
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                 }
             }
         }
@@ -134,11 +134,11 @@ public class BanManager {
             Files.saveBanFile();
             for (ProxiedPlayer o : BungeeCord.getInstance().getPlayers()) {
                 if (o.hasPermission("server.team")) {
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                     o.sendMessage("§7Typ » §4UNBAN");
                     o.sendMessage("§7Spieler »  §c " + Spielername);
                     o.sendMessage("§7Von » §c " + von);
-                    o.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                    o.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                 }
             }
         }

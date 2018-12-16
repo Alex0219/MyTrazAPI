@@ -16,13 +16,13 @@ public class Banlist
         if (sender.hasPermission("server.banlist")) {
             if (BanManager.getBannedPlayers().size() == 0) {
 
-                sender.sendMessage("&§bCloud §7» §cEs gibt noch keine gebannten Spieler!");
+                sender.sendMessage("&§bFlippiGames §7» §cEs gibt noch keine gebannten Spieler!");
                 return;
             }
 
             sender.sendMessage("§cgebannte Spieler:");
             for (String x : BanManager.getBannedPlayers()) {
-                sender.sendMessage("§bCloud §7» §6" + x + " §8/check " + x);
+                sender.sendMessage("§bFlippiGames §7» §6" + x + " §8/check " + x);
             }
         }
     }

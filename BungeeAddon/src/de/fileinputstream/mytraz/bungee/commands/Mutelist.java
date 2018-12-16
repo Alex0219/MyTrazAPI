@@ -17,14 +17,14 @@ public class Mutelist
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission("server.mute")) {
             if (MuteManager.getMutedPlayers().size() == 0) {
-                sender.sendMessage("§bCloud §7» §cEs gibt keine gemuteten Spieler.");
+                sender.sendMessage("§bFlippiGames §7» §cEs gibt keine gemuteten Spieler.");
                 return;
             }
 
             sender.sendMessage("§c: ");
 
             for (String x : MuteManager.getMutedPlayers()) {
-                sender.sendMessage("§bCloud §7» §6" + x + " §8/check " + x);
+                sender.sendMessage("§bFlippiGames §7» §6" + x + " §8/check " + x);
             }
         }
     }

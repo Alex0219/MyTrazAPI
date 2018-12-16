@@ -1,8 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import de.fileinputstream.redisbuilder.RedisBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,15 +57,15 @@ public class CommandResidents implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            String world = RedisBuilder.getWorldManager().getWorld(uuid);
+            String world = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
             ExecutorService service = Executors.newCachedThreadPool();
             residents = Bootstrap.getInstance().getWorldManager().getWorldResidents(world);
 
             if (residents.isEmpty()) {
-                player.sendMessage("§7«▌§cMyTraz§7▌» §cDeine Welt hat noch keine Mitbewohner");
+                player.sendMessage("§bFlippiGames §7» §cDeine Welt hat noch keine Mitbewohner");
                 return true;
             } else {
-                player.sendMessage("§7«▌§cMyTraz§7▌» §7 Deine Welt hat folgende Mitbewohner:");
+                player.sendMessage("§bFlippiGames §7» §7 Deine Welt hat folgende Mitbewohner:");
                 for (String entry : residents) {
                     String targetName = UUIDFetcher.getName(UUID.fromString(entry));
                     player.sendMessage("§7Benutzer: §c" + targetName);

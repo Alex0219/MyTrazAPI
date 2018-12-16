@@ -18,7 +18,7 @@ public class Kick
             return;
         }
         if (args.length < 2) {
-            p.sendMessage("§bCloud §7 §cVerwende /kick <Spieler> <Grund>");
+            p.sendMessage("§bFlippiGames §7 §cVerwende /kick <Spieler> <Grund>");
             return;
         }
 
@@ -30,11 +30,11 @@ public class Kick
 
         for (ProxiedPlayer team : BungeeCord.getInstance().getPlayers()) {
             if (team.hasPermission("server.team")) {
-                team.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                team.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
                 team.sendMessage("§cTyp » §4KICK");
                 team.sendMessage("§7Spieler » §c " + target.getName());
                 team.sendMessage("§7Von » §c" + p.getName());
-                team.sendMessage("§7§m-------------§bCloud §7»§7§m-------------");
+                team.sendMessage("§7§m-------------§bFlippiGames §7»§7§m-------------");
             }
         }
     }

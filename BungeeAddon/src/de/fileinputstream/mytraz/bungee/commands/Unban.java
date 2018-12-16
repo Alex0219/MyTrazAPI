@@ -16,13 +16,13 @@ public class Unban
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission("server.unban")) {
             if (args.length != 1) {
-                sender.sendMessage("§bCloud §7» §cVerwende /unban <Spieler> ");
+                sender.sendMessage("§bFlippiGames §7» §cVerwende /unban <Spieler> ");
             } else {
                 if (!BanManager.isBanned(args[0])) {
-                    sender.sendMessage("§bCloud §7» §cDieser Spieler ist nicht gebannt.");
+                    sender.sendMessage("§bFlippiGames §7» §cDieser Spieler ist nicht gebannt.");
                     return;
                 }
-                sender.sendMessage("§bCloud §7» §cDer Spieler wurde entbannt.");
+                sender.sendMessage("§bFlippiGames §7» §cDer Spieler wurde entbannt.");
                 BanManager.unBan(args[0], sender.getName());
             }
         }

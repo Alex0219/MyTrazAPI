@@ -1,9 +1,9 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
+
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import de.fileinputstream.redisbuilder.RedisBuilder;
-import de.fileinputstream.redisbuilder.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
@@ -63,19 +63,19 @@ public class CommandTPWorld implements CommandExecutor {
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
             String rank = RankManager.getRank(UUIDFetcher.getUUID(player.getName()).toString());
             if (args.length == 0) {
-                if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
+                if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
                     String world = getWorld(uuid);
                     System.out.println(world);
                     if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(world).exists()) {
                         new WorldCreator(world).createWorld();
                         player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
                     } else {
-                        player.sendMessage("§c§7«▌§cMyTraz§7▌» §cDiese Welt existiert nicht!");
+                        player.sendMessage("§bFlippiGames §7» §cDiese Welt existiert nicht!");
                         return true;
                     }
 
                 } else {
-                    player.sendMessage("§c§7«▌§cMyTraz§7▌» Du besitzt keine Welt.");
+                    player.sendMessage("§bFlippiGames §7» Du besitzt keine Welt.");
                     return true;
                 }
             } else if (args.length == 1) {
@@ -95,7 +95,7 @@ public class CommandTPWorld implements CommandExecutor {
                             player.teleport(Bukkit.getWorld(args[0]).getSpawnLocation());
                             return true;
                         } else {
-                            player.sendMessage("§c§7«▌§cMyTraz§7▌» §cDiese Welt existiert nicht!");
+                            player.sendMessage("§bFlippiGames §7» §cDiese Welt existiert nicht!");
                             return true;
                         }
 
@@ -104,12 +104,12 @@ public class CommandTPWorld implements CommandExecutor {
                             new WorldCreator(args[0]).createWorld();
                             player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
                         } else {
-                            player.sendMessage("§c§7«▌§cMyTraz§7▌» §cDiese Welt existiert nicht!");
+                            player.sendMessage("§bFlippiGames §7» §cDiese Welt existiert nicht!");
                             return true;
                         }
 
                     } else {
-                        player.sendMessage("§c§7«▌§cMyTraz§7▌» Du darfst dich nicht in diese Welt teleportieren.");
+                        player.sendMessage("§bFlippiGames §7» Du darfst dich nicht in diese Welt teleportieren.");
                         return true;
                     }
 
@@ -117,7 +117,7 @@ public class CommandTPWorld implements CommandExecutor {
 
 
             } else {
-                player.sendMessage("§c§7«▌§cMyTraz§7▌» Bitte verwende /tpworld oder /tpworld <ID>");
+                player.sendMessage("§bFlippiGames §7» Bitte verwende /tpworld oder /tpworld <ID>");
             }
 
         } else {
@@ -129,8 +129,8 @@ public class CommandTPWorld implements CommandExecutor {
 
     public String getWorld(String uuid) {
 
-        if (RedisBuilder.getWorldManager().hasWorld(uuid)) {
-            String worldString = RedisBuilder.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
+        if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+            String worldString = Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
             System.out.println(worldString);
             ArrayList<String> playerWorlds = new ArrayList<String>(Arrays.asList(worldString));
             String world = playerWorlds.get(0).replace("[", "").replace("]", "");

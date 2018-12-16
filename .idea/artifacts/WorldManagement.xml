@@ -1,10 +1,10 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="WorldManagement">
-    <output-path>$USER_HOME$/MyTrazOutputs</output-path>
+    <output-path>$USER_HOME$/Desktop/Server/plugins</output-path>
     <root id="archive" name="WorldManagement.jar">
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jedis-2.9.0.jar" path-in-jar="/" />
       <element id="file-copy" path="$PROJECT_DIR$/WorldManagement/plugin.yml" />
       <element id="module-output" name="WorldManagement" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jedis-3.0.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

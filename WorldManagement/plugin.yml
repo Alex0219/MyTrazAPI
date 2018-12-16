@@ -29,7 +29,7 @@ commands:
     vanish:
        aliases: [v]
     ontime:
-       aliases: [spielzeit,playtime,ichbinzudoof]
+       aliases: [spielzeit,playtime]
     fly:
 
     setwarp:
@@ -38,4 +38,6 @@ commands:
 
     delwarp:
 
-    schafmodus:
+    chatlog:
+
+    rang:

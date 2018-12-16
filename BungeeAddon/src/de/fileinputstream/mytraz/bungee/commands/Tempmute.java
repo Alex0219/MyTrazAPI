@@ -19,10 +19,10 @@ public class Tempmute
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission("server.tempmute")) {
             if (args.length < 4) {
-                sender.sendMessage("§bCloud §7» §cVerwende /tempmute <Spieler> <Zeit> <Zeitform> <Grund> ");
+                sender.sendMessage("§bFlippiGames §7» §cVerwende /tempmute <Spieler> <Zeit> <Zeitform> <Grund> ");
             } else {
                 if (MuteManager.isMuted(args[0])) {
-                    sender.sendMessage("§bCloud §7»§cDieser Spieler ist bereits gemutet.");
+                    sender.sendMessage("§bFlippiGames §7»§cDieser Spieler ist bereits gemutet.");
                     return;
                 }
 
@@ -49,7 +49,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("sek")) ||
                             (TimeUnit.equalsIgnoreCase("sekunden")) ||
                             (TimeUnit.equalsIgnoreCase("secs"))) {
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message, sender.getName(),
                                 Time * 1);
@@ -60,7 +60,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("minutes"))) {
 
 
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message, sender.getName(),
                                 Time * 60);
@@ -68,7 +68,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("hour")) ||
                             (TimeUnit.equalsIgnoreCase("hours"))) {
 
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message,
                                 sender.getName(), Time * 60 * 60);
@@ -79,7 +79,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("day")) ||
                             (TimeUnit.equalsIgnoreCase("days"))) {
 
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message,
                                 sender.getName(), Time * 60 * 60 * 24);
@@ -88,21 +88,21 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("woche")) ||
                             (TimeUnit.equalsIgnoreCase("wochen")) ||
                             (TimeUnit.equalsIgnoreCase("weeks"))) {
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message,
                                 sender.getName(), Time * 60 * 60 *
                                         24 * 7);
 
                     } else {
-                        sender.sendMessage("§bCloud §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
+                        sender.sendMessage("§bFlippiGames §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
                     }
                 }
                 System.out.println(bannedUUID);
                 System.out.println(bannerUUID);
 
                 if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("admin")) {
-                    sender.sendMessage("§bCloud §7» §cDu darfst diesen Spieler nicht muten!");
+                    sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht muten!");
                     return;
                 } else {
                     String TimeUnit = args[2];
@@ -116,7 +116,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("sek")) ||
                             (TimeUnit.equalsIgnoreCase("sekunden")) ||
                             (TimeUnit.equalsIgnoreCase("secs"))) {
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message, sender.getName(),
                                 Time * 1);
@@ -127,7 +127,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("minutes"))) {
 
 
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message, sender.getName(),
                                 Time * 60);
@@ -135,7 +135,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("hour")) ||
                             (TimeUnit.equalsIgnoreCase("hours"))) {
 
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message,
                                 sender.getName(), Time * 60 * 60);
@@ -146,7 +146,7 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("day")) ||
                             (TimeUnit.equalsIgnoreCase("days"))) {
 
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message,
                                 sender.getName(), Time * 60 * 60 * 24);
@@ -155,14 +155,14 @@ public class Tempmute
                             (TimeUnit.equalsIgnoreCase("woche")) ||
                             (TimeUnit.equalsIgnoreCase("wochen")) ||
                             (TimeUnit.equalsIgnoreCase("weeks"))) {
-                        sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                        sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                         MuteManager.Mute(args[0], message,
                                 sender.getName(), Time * 60 * 60 *
                                         24 * 7);
 
                     } else {
-                        sender.sendMessage("§bCloud §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
+                        sender.sendMessage("§bFlippiGames §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
                     }
                 }
 
@@ -177,7 +177,7 @@ public class Tempmute
                         (TimeUnit.equalsIgnoreCase("sek")) ||
                         (TimeUnit.equalsIgnoreCase("sekunden")) ||
                         (TimeUnit.equalsIgnoreCase("secs"))) {
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                     MuteManager.Mute(args[0], message, sender.getName(),
                             Time * 1);
@@ -188,7 +188,7 @@ public class Tempmute
                         (TimeUnit.equalsIgnoreCase("minutes"))) {
 
 
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                     MuteManager.Mute(args[0], message, sender.getName(),
                             Time * 60);
@@ -196,7 +196,7 @@ public class Tempmute
                         (TimeUnit.equalsIgnoreCase("hour")) ||
                         (TimeUnit.equalsIgnoreCase("hours"))) {
 
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                     MuteManager.Mute(args[0], message,
                             sender.getName(), Time * 60 * 60);
@@ -207,7 +207,7 @@ public class Tempmute
                         (TimeUnit.equalsIgnoreCase("day")) ||
                         (TimeUnit.equalsIgnoreCase("days"))) {
 
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                     MuteManager.Mute(args[0], message,
                             sender.getName(), Time * 60 * 60 * 24);
@@ -216,14 +216,14 @@ public class Tempmute
                         (TimeUnit.equalsIgnoreCase("woche")) ||
                         (TimeUnit.equalsIgnoreCase("wochen")) ||
                         (TimeUnit.equalsIgnoreCase("weeks"))) {
-                    sender.sendMessage("§bCloud §7» §7Der Spieler wurde gemutet.");
+                    sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gemutet.");
 
                     MuteManager.Mute(args[0], message,
                             sender.getName(), Time * 60 * 60 *
                                     24 * 7);
 
                 } else {
-                    sender.sendMessage("§bCloud §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
+                    sender.sendMessage("§bFlippiGames §7» §cBitte verwende diese Zeitformen:  s | m | h | d | w");
                 }
             }
 

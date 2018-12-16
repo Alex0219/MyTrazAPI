@@ -2,7 +2,6 @@ package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import de.fileinputstream.redisbuilder.RedisBuilder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -59,15 +58,15 @@ public class CommandWorlds implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            String world = RedisBuilder.getWorldManager().getWorld(uuid);
+            String world = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
             ExecutorService service = Executors.newCachedThreadPool();
             worlds = Bootstrap.getInstance().getWorldManager().getResidentWorlds(uuid);
 
             if (worlds.isEmpty()) {
-                player.sendMessage("§7«▌§cMyTraz§7▌» §cDu bist noch kein Mitbewohner einer Welt.");
+                player.sendMessage("§bFlippiGames §7» §cDu bist noch kein Mitbewohner einer Welt.");
                 return true;
             } else {
-                player.sendMessage("§7«▌§cMyTraz§7▌» §7 Du bist in folgenden Welten eingetragen:");
+                player.sendMessage("§bFlippiGames §7» §7 Du bist in folgenden Welten eingetragen:");
                 for (String entry : worlds) {
                     TextComponent message = new TextComponent("§7Welt: §e" + entry + " §7Welt von §c" + Bootstrap.getInstance().getWorldManager().getOwnerFromWorld(entry));
                     message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpworld " + entry));

@@ -1,7 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement.world;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
-import de.fileinputstream.redisbuilder.RedisBuilder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -76,7 +76,7 @@ public class WorldManager {
 
         String joinedResidentWorlds = Arrays.toString(residentWorlds.toArray());
         ArrayList<String> worldResidents = new ArrayList<String>();
-        String worldID = UUID.randomUUID().toString();
+        String worldID = Bootstrap.getInstance().getJedis().incr("survivalWorldIDCount").toString();
         if (!worlds.contains(worldID)) {
             worlds.add(worldID);
         }
@@ -85,7 +85,7 @@ public class WorldManager {
         Bukkit.getPlayer(name).sendMessage("§aDeine Welt " + "§c" + worldID + " §awird nun erstellt. Wenn die Erstellung abgeschlossen ist, wirst du automatisch in deine Welt teleportiert.");
         Bootstrap.getInstance().getJedis().hset("world:" + worldID, "timestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
         Bootstrap.getInstance().getJedis().hset("world:" + worldID, "owner", name);
-        RedisBuilder.getInstance().getJedis().hset("uuid:" + uuid, "worlds", joinedWorld);
+        Bootstrap.getInstance().getJedis().hset("uuid:" + uuid, "worlds", joinedWorld);
         Bootstrap.getInstance().getWorldManager().addResident(worldID, uuid);
         //Teleport the player to the spawn location
         Bukkit.getPlayer(name).teleport(Bukkit.getWorld(worldID).getSpawnLocation());
@@ -262,5 +262,30 @@ public class WorldManager {
         }
         return "";
     }
+
+
+    /**
+     * @param uuid
+     * @return {@link boolean} Überprüft, ob ein Spieler eine Welt besitzt.
+     * Dabei ist es egal, wieviele Welten der User hat.
+     */
+
+    public boolean hasWorld(String uuid) {
+
+        return Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "hasworld").equalsIgnoreCase("true");
+    }
+
+    public String getWorld(String uuid) {
+
+        if (hasWorld(uuid)) {
+            String worldString = Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "worlds");
+            System.out.println(worldString);
+            ArrayList<String> playerWorlds = new ArrayList(Arrays.asList(worldString));
+            String world = playerWorlds.get(0).replace("[", "").replace("]", "");
+            return world;
+        }
+        return "";
+    }
+
 
 }
