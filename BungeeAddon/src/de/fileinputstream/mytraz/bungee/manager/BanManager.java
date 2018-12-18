@@ -211,10 +211,10 @@ public class BanManager {
         if (isBanned(Spielername)) {
             if (getEnd(Spielername) != -1L) {
                 BanMsg =
-                        "§7Du wurdest vom §cMyTraz §7Netzwerk gebannt! \n§7Grund » §c" + getReason(Spielername) + "\n§7Dauer » §c" + getRemainingTime(Spielername);
+                        "§7Du wurdest vom §cFlippiGames §7Netzwerk gebannt! \n§7Grund » §c" + getReason(Spielername) + "\n§7Dauer » §c" + getRemainingTime(Spielername);
             } else {
                 BanMsg =
-                        "§7Du wurdest vom §cMyTraz §7Netzwerk gebannt! \n§7Grund » §c" + getReason(Spielername) + "\n§7Dauer » §cpermanent";
+                        "§7Du wurdest vom §cFlippiGames §7Netzwerk gebannt! \n§7Grund » §c" + getReason(Spielername) + "\n§7Dauer » §cpermanent";
             }
         }
         return BanMsg;

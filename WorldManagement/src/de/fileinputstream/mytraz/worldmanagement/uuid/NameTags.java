@@ -92,11 +92,17 @@ public class NameTags {
             setPlayer(player, "bauleitung");
             player.setPlayerListName("§2§l" + player.getName());
             return;
-        } else if (s.equalsIgnoreCase("teamleitung".toLowerCase())) {
-            setPlayer(player, "teamleitung");
-            player.setPlayerListName("§c§l" + player.getName());
+        } else if (s.equalsIgnoreCase("partner".toLowerCase())) {
+            setPlayer(player, "partner");
+            player.setPlayerListName("§6§l" + player.getName());
             return;
-            //§8[§8] §8[§cM§8]§c" + p.getName() + "§7 » "
+
+
+        } else if (s.equalsIgnoreCase("inhaber".toLowerCase())) {
+            setPlayer(player, "inhaber");
+            player.setPlayerListName("§4§l" + player.getName());
+            return;
+
 
         }
 
@@ -109,9 +115,9 @@ public class NameTags {
 
             Constructor<?> boardConstructor = getNMSClass("Scoreboard").getConstructor();
             Object board = boardConstructor.newInstance();
-            init("00001O", "owner", "§4Owner" + suffix, board);
+            init("00001O", "owner", "§4§l" + suffix, board);
             init("00002A", "admin", "§4§l" + suffix, board);
-            init("00003TL", "teamleitung", "§c§l" + suffix, board);
+            init("00003P", "partner", "§6§l" + suffix, board);
             init("00004D", "dev", "§3" + suffix, board);
             init("00005M", "mod", "§c" + suffix, board);
             init("00006S", "sup", "§1" + suffix, board);

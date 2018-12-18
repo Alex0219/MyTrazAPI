@@ -4,9 +4,11 @@ import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.entry.ChatEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import sun.security.provider.SecureRandom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -23,8 +25,7 @@ public class ChatLogManager {
 
     public ArrayList<String> alreadyLogged = new ArrayList<>();
     public String createChatLog(final String uuid,String creator, String target) {
-        if(!alreadyLogged.contains(target)) {
-            final String chatLogID = UUID.randomUUID().toString();
+        final String chatLogID = generateRandomString(17);
             System.out.println("Creating a new chatlog...");
             ArrayList<ChatEntry> chatEntries = chatLogs.get(uuid);
             if(chatEntries.size() > 0) {
@@ -33,15 +34,11 @@ public class ChatLogManager {
                 for(ChatEntry listEntries : chatEntries) {
                     Bootstrap.getInstance().getJedis().hset("chatlog:"+chatLogID,listEntries.getId(),listEntries.getMessage()+","+listEntries.getTimestamp()+","+listEntries.getUuid() + ","+listEntries.getUsername());
                 }
-                alreadyLogged.add(target);
-                removeLogged(target,uuid);
                 return chatLogID;
             } else {
                 return "NOMESSAGES";
             }
-        } else {
-            return "ALREADYLOGGED";
-        }
+
 
 
     }
@@ -58,6 +55,18 @@ public class ChatLogManager {
                 }
             }
         },6000L);
+    }
+
+    public String generateRandomString(int length) {
+        String randomString = "";
+
+        final char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890".toCharArray();
+        final Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            randomString = randomString + chars[random.nextInt(chars.length)];
+        }
+
+        return randomString;
     }
 
 }

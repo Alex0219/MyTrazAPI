@@ -10,16 +10,20 @@ import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import net.minecraft.server.v1_13_R1.IChatBaseComponent;
 import net.minecraft.server.v1_13_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -116,17 +120,20 @@ public class ListenerConnect implements Listener {
         NameTags.addToTeam(player);
         NameTags.updateTeams();
         dbUser.executeJoin();
-        sendTablist(player, "§4§lMyTraz.NET - §aSurvival", "§cTeamspeak: MyTraz.NET");
+        sendTablist(player, "§l§4FlippiGames §7Dein Flipptastisches Minecraft Netzwerk!", "§7Teamspeak: FlippiGames.DE");
         LocalDate localDate = LocalDate.now();
         Locale spanishLocale = new Locale("de", "DE");
         String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", spanishLocale));
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
-                new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+                new ListenerConnect().sendTablist(p, "§l§4FlippiGames §7Dein Flipptastisches Minecraft Netzwerk!\n", "§7Teamspeak: FlippiGames.DE \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
             }, 1, 1);
         });
-
+        if (player.getWorld().getName().equalsIgnoreCase("world")) {
+            player.setHealthScale(20.0);
+            player.setFoodLevel(20);
+        }
 
         player.sendMessage("§7--------------------------------------------------");
         player.sendMessage("§cWillkommen auf Survival! Gebe /tutorial ein, um die Hilfeseite aufzurufen.");
@@ -179,5 +186,51 @@ public class ListenerConnect implements Listener {
 
         }
     }
+
+    @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity().getWorld().getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent event) {
+        if (event.getWorld().getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onFoodChange(FoodLevelChangeEvent event) {
+        if (event.getEntity().getWorld().getName().equalsIgnoreCase("world")) {
+            event.setFoodLevel(20);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void pnEnterWater(PlayerMoveEvent event) {
+        if (event.getPlayer().getWorld().getName().equalsIgnoreCase("world")) {
+            if (event.getPlayer().getLocation().getBlock().getType() == Material.WATER || event.getPlayer().getLocation().getBlock().getType() == Material.LEGACY_STATIONARY_WATER) {
+                event.getPlayer().chat("/spawn");
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        if (event.getPlayer().getWorld().getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event) {
+        if (event.getPlayer().getWorld().getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+        }
+    }
+
 
 }

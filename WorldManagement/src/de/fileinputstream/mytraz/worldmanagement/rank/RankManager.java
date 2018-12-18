@@ -122,6 +122,14 @@ public class RankManager {
             player.setCustomName("§c" + player.getName());
             return;
 
+        } else if (s.equalsIgnoreCase("partner".toLowerCase())) {
+            player.setPlayerListName("§6" + player.getName());
+            player.setCustomName("§6" + player.getName());
+            return;
+        } else if (s.equalsIgnoreCase("inhaber".toLowerCase())) {
+            player.setPlayerListName("§4" + player.getName());
+            player.setCustomName("§4" + player.getName());
+            return;
         }
     }
 

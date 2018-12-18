@@ -50,7 +50,7 @@ public class CommandWorldInfo implements CommandExecutor {
             Player player = (Player) sender;
             String uuid = UUIDFetcher.getUUID(player.getName()).toString();
             String rank = RankManager.getRank(uuid);
-            if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
+            if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod") || rank.equalsIgnoreCase("partner")) {
                 if (args.length == 1) {
                     String playername = args[0];
                     String targetUUID = UUIDFetcher.getUUID(playername).toString();

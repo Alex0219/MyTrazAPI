@@ -55,8 +55,9 @@ public class CommandRemoveResident implements CommandExecutor {
                 if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
                     String worldID = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
                     if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(targetUUID, worldID)) {
-                        if(!Bootstrap.getInstance().getWorldManager().getWorld(uuid).equalsIgnoreCase(worldID)) {
+                        if (Bootstrap.getInstance().getWorldManager().getWorld(uuid).equalsIgnoreCase(worldID)) {
                             player.sendMessage(Bootstrap.getInstance().getPrefix() + " §cDu kannst dich nicht aus deinen eigenen Welt entfernen!");
+                            return true;
                         }
                         Bootstrap.getInstance().getWorldManager().removeResident(worldID, targetUUID);
                         player.sendMessage(Bootstrap.getInstance().getPrefix() + " §7Du hast den Spieler §a" + targetName + " §caus deiner Welt entfernt.");

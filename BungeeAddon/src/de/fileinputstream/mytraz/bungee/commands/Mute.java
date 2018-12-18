@@ -51,7 +51,10 @@ public class Mute
                 System.out.println(bannedUUID);
                 System.out.println(bannerUUID);
 
-                if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("admin")) {
+                if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("inhaber")) {
+                    sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht muten!");
+                    return;
+                } else if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("partner")) {
                     sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht muten!");
                     return;
                 } else {

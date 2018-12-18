@@ -2,17 +2,19 @@ package de.fileinputstream.mytraz.worldmanagement.listeners;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.entry.ChatEntry;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * © Alexander Fiedler 2018 - 2019
@@ -37,6 +39,56 @@ public class ListenerChat implements Listener {
             currentChatEntries.add(chatEntry);
             Bootstrap.getInstance().getChatLogManager().chatLogs.replace(chatterUUID,currentChatEntries);
         }
+
+        Player p = event.getPlayer();
+        String uuid = UUIDFetcher.getUUID(p.getName()).toString();
+        event.setCancelled(true);
+
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                String msg = event.getMessage();
+                String rank = RankManager.getRank(uuid);
+                if (rank.equalsIgnoreCase("mod")) {
+                    Bukkit.broadcastMessage("§c" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("architekt")) {
+                    Bukkit.broadcastMessage("§2" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("spieler")) {
+                    System.out.println("ist spieler");
+                    Bukkit.broadcastMessage("§7" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("dev")) {
+                    Bukkit.broadcastMessage("§3" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("admin")) {
+                    Bukkit.broadcastMessage("§4§l" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("sup")) {
+                    Bukkit.broadcastMessage("§1" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("youtuber")) {
+                    Bukkit.broadcastMessage("§5" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("premium".toLowerCase())) {
+                    Bukkit.broadcastMessage("§6" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("bauleitung")) {
+                    Bukkit.broadcastMessage("§2§l" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("inhaber")) {
+                    Bukkit.broadcastMessage("§4§l" + p.getName() + "§7 » " + msg);
+                }
+                if (rank.equalsIgnoreCase("partner")) {
+                    Bukkit.broadcastMessage("§6§l" + p.getName() + "§7 » " + msg);
+                }
+
+            }
+
+        });
 
     }
 

@@ -1,6 +1,5 @@
 package de.fileinputstream.mytraz.bungee;
 
-import de.fileinputstream.mytraz.bungee.api.TeamSpeakAPI;
 import de.fileinputstream.mytraz.bungee.commands.*;
 import de.fileinputstream.mytraz.bungee.listeners.ListenerChat;
 import de.fileinputstream.mytraz.bungee.listeners.ListenerLogin;
@@ -90,12 +89,11 @@ public class Bootstrap extends Plugin {
         instance = this;
         packetRegistry = new PacketRegistry();
         buildRedis();
-        mysql = new MySQL();
-        TeamSpeakAPI.connect();
-        nettyServer = new NettyServer("127.0.0.1",7645);
-        nettyServer.run();
+        // mysql = new MySQL();
+        //  TeamSpeakAPI.connect();
+        //nettyServer = new NettyServer("127.0.0.1",7645);
+        //nettyServer.run();
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandHub("hub"));
-        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CommandTS("ts"));
         BungeeCord.getInstance().getPluginManager().registerListener(this, new ListenerLogin());
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new Ban());
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new Unban());
@@ -109,8 +107,8 @@ public class Bootstrap extends Plugin {
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new Check());
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new Tempmute());
         createFolders();
-        MySQL.connect();
-        scheduleUpdateTask();
+        //MySQL.connect();
+        //scheduleUpdateTask();
 
     }
 

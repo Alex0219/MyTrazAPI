@@ -54,7 +54,20 @@ public class Ban
                     System.out.println(bannedUUID);
                     System.out.println(bannerUUID);
 
-                    if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("admin")) {
+                    if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("inhaber")) {
+                        if (bannerRank.equalsIgnoreCase("partner")) {
+                            BanManager.Ban(args[0], message, sender.getName(), -1);
+                            sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gebannt.");
+                            return;
+                        }
+                        sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht bannen!");
+                        return;
+                    } else if (!bannerRank.equalsIgnoreCase("admin") && RankManager.getRank(bannedUUID).equalsIgnoreCase("partner")) {
+                        if (bannerRank.equalsIgnoreCase("partner")) {
+                            BanManager.Ban(args[0], message, sender.getName(), -1);
+                            sender.sendMessage("§bFlippiGames §7» §7Der Spieler wurde gebannt.");
+                            return;
+                        }
                         sender.sendMessage("§bFlippiGames §7» §cDu darfst diesen Spieler nicht bannen!");
                         return;
                     } else {

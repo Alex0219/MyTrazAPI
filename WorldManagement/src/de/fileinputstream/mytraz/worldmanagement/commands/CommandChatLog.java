@@ -25,21 +25,30 @@ public class CommandChatLog implements CommandExecutor {
         if(args.length == 1) {
             if(Bukkit.getPlayer(commandSender.getName()) !=null) {
                 String targetName = args[0];
+                if (commandSender.getName().equalsIgnoreCase(targetName)) {
+                    commandSender.sendMessage("§bFlippiGames §7» §cDu kannst keinen ChatLog über dich selbst erstellen!");
+                    return true;
+                }
+                if (Bukkit.getPlayer(targetName) == null) {
+                    commandSender.sendMessage("§bFlippiGames §7» §cBitte gebe einen Spieler an, der online ist!");
+                    return true;
+                }
+
+
                 String targetUUID = UUIDFetcher.getUUID(targetName).toString();
                String chatlogID = Bootstrap.getInstance().getChatLogManager().createChatLog(targetUUID,commandSender.getName(),targetName);
+                if (chatlogID.equalsIgnoreCase("NOMESSAGES")) {
+                    commandSender.sendMessage("§bFlippiGames §7» §cDieser Spieler hat noch keine Nachrichten geschrieben!");
+                    return true;
+                }
                 if(cooldownList.contains(commandSender.getName())) {
                     commandSender.sendMessage("§bFlippiGames §7» §cBitte warte noch, bis du einen weiteren ChatLog erstellst!");
+                    return true;
                 }
-               if(chatlogID.equalsIgnoreCase("ALREADYLOGGED")) {
-                   commandSender.sendMessage("§bFlippiGames §7» §cÜber diesen Spieler wurde bereits ein ChatLog erstellt!");
-                   return true;
-               }
-               if(chatlogID.equalsIgnoreCase("NOMESSAGES")) {
-                   commandSender.sendMessage("§bFlippiGames §7» §cDieser Spieler hat noch keine Nachrichten geschrieben!");
-                   return true;
-               }
+
                 commandSender.sendMessage("§bFlippiGames §7» §aErstelle einen neuen ChatLog...");
-                commandSender.sendMessage("§bFlippiGames §7» §eDu kannst den ChatLog hier einsehen: http://localhost/index.php?chatlogid="+chatlogID);
+                commandSender.sendMessage("§bFlippiGames §7» §eDu kannst den ChatLog hier einsehen: https://flippigames.de/chatlog?chatlogid=" + chatlogID);
+                cooldownList.add(commandSender.getName());
                 executeCooldown(commandSender.getName());
 
             } else {
@@ -56,11 +65,11 @@ public class CommandChatLog implements CommandExecutor {
         Bukkit.getScheduler().runTaskLaterAsynchronously(Bootstrap.getInstance(), new BukkitRunnable() {
             @Override
             public void run() {
-                if(cooldownList.contains(playerName)) {
-                    cooldownList.remove(cooldownList);
-                }
+
+                cooldownList.remove(playerName);
+
             }
-        },6000L);
+        }, 600L);
     }
 
 }

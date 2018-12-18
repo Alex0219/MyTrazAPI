@@ -107,7 +107,10 @@ public class CommandAddResident implements CommandExecutor {
             @Override
             public void run() {
                 Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
-                Bukkit.getPlayer(name).sendMessage("§bFlippiGames §7» Deine Einladung ist abgelaufen.");
+                if (Bukkit.getPlayer(name) != null) {
+                    Bukkit.getPlayer(name).sendMessage("§bFlippiGames §7» Deine Einladung ist abgelaufen.");
+                }
+
 
             }
         }, 300000);

@@ -54,7 +54,7 @@ public class CommandHub extends Command {
                 ServerInfo target = ProxyServer.getInstance().getServerInfo("lobby");
                 player.connect(target);
             } else {
-                player.sendMessage("§7«▌§cMyTraz§7▌» §cDu befindest dich bereits auf der Lobby!");
+                player.sendMessage("§bFlippiGames §7» §cDu befindest dich bereits auf der Lobby!");
             }
 
         }

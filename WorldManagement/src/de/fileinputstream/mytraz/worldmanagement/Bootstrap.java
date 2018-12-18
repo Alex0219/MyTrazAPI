@@ -1,5 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement;
 
+import de.fileinputstream.mytraz.worldmanagement.backup.BackupData;
+import de.fileinputstream.mytraz.worldmanagement.backup.BackupManager;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.ChatLogManager;
 import de.fileinputstream.mytraz.worldmanagement.commands.*;
 import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerChat;
@@ -13,6 +15,8 @@ import redis.clients.jedis.Jedis;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -59,6 +63,7 @@ public class Bootstrap extends JavaPlugin {
     String spawnWorld;
     OntimeTracker ontimeTracker;
     ChatLogManager chatLogManager;
+    BackupManager backupManager;
     String prefix = "§bFlippiGames §7»";
 
     public static Bootstrap getInstance() {
@@ -74,8 +79,9 @@ public class Bootstrap extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        worldManager = new WorldManager();
 
+        worldManager = new WorldManager();
+        backupManager = new BackupManager();
         Bukkit.getPluginManager().registerEvents(new ListenerConnect(), this);
         Bukkit.getPluginManager().registerEvents(new ListenerChat(), this);
         getConfig().options().copyDefaults(true);
@@ -108,6 +114,8 @@ public class Bootstrap extends JavaPlugin {
 
         NameTags.initScoreboardTeams();
         loadCommands();
+
+
     }
 
     @Override
@@ -135,6 +143,9 @@ public class Bootstrap extends JavaPlugin {
         getCommand("delwarp").setExecutor(new CommandDelWarp());
         getCommand("rang").setExecutor(new CommandRang());
         getCommand("chatlog").setExecutor(new CommandChatLog());
+        //getCommand("listbackups").setExecutor(new CommandBackupList());
+        // getCommand("restorebackup").setExecutor(new CommandRestoreBackup());
+        // getCommand("dobackup").setExecutor(new CommandDoBackup());
     }
 
 
@@ -161,5 +172,9 @@ public class Bootstrap extends JavaPlugin {
 
     public ChatLogManager getChatLogManager() {
         return chatLogManager;
+    }
+
+    public BackupManager getBackupManager() {
+        return backupManager;
     }
 }
