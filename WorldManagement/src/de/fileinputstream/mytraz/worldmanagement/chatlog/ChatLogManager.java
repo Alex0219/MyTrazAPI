@@ -38,9 +38,6 @@ public class ChatLogManager {
             } else {
                 return "NOMESSAGES";
             }
-
-
-
     }
 
     public void removeLogged(String name, String uuid) {

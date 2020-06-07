@@ -57,7 +57,7 @@ public class CommandCreateWorld implements CommandExecutor {
 
                 Bootstrap.getInstance().getJedis().hset("uuid:" + uuid, "hasworld", "true");
             } else {
-                player.sendMessage("§bFlippiGames §7» Du hast bereits eine Welt.");
+                player.sendMessage("§bAlex0219.de §7» Du hast bereits eine Welt.");
             }
         } else {
             return true;

@@ -56,14 +56,14 @@ public class CommandNewWorldSpawn implements CommandExecutor {
                 if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
                     Location location = player.getLocation();
                     world.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-                    player.sendMessage("§bFlippiGames §7» Du hast den Spawnpunkt für deine Welt gesetzt!");
+                    player.sendMessage("§bAlex0219.de §7» Du hast den Spawnpunkt für deine Welt gesetzt!");
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Diese Welt gehört dir nicht!");
+                    player.sendMessage("§bAlex0219.de §7» Diese Welt gehört dir nicht!");
                     return true;
                 }
 
             } else {
-                player.sendMessage("§bFlippiGames §7» Du hast noch keine Welt!");
+                player.sendMessage("§bAlex0219.de §7» Du hast noch keine Welt!");
             }
         }
         return false;

@@ -36,46 +36,46 @@ public class CommandRestoreBackup implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+            String uuid = player.getUniqueId().toString();
             String rank = RankManager.getRank(uuid);
             if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod") || rank.equalsIgnoreCase("partner")) {
                 if (args.length == 2) {
                     String worldID = args[0];
                     String backupID = args[1];
                     if (backupList.containsKey(player)) {
-                        player.sendMessage("§7FlippiGames §7» §cDu hast bereits eine Backup Aktion am Laufen!");
-                        player.sendMessage("§7FlippiGames §7» §cBitte führe diese zuerst durch oder breche diese ab.");
+                        player.sendMessage("§7Alex0219.de §7» §cDu hast bereits eine Backup Aktion am Laufen!");
+                        player.sendMessage("§7Alex0219.de §7» §cBitte führe diese zuerst durch oder breche diese ab.");
                         return true;
                     }
                     List<String> worldBackups = Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(worldID);
                     if (worldBackups.size() < 1) {
-                        player.sendMessage("§7FlippiGames §7» §cFür diese Welt wurde noch kein Backup erstellt!");
+                        player.sendMessage("§7Alex0219.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
                         return true;
                     }
                     if (!new File("plugins/WorldManagement/worldBackups/" + worldID + "_" + backupID + ".zip").exists()) {
-                        player.sendMessage("§7FlippiGames §7» §cDie eingegebende Backup-ID ist ungültig!");
+                        player.sendMessage("§7Alex0219.de §7» §cDie eingegebende Backup-ID ist ungültig!");
                         return true;
                     }
 
-                    player.sendMessage("§bFlippiGames §7» §4Die folgende Welt wird mit dem folgenden Backup ersetzt: §a" + backupID);
+                    player.sendMessage("§bAlex0219.de §7» §4Die folgende Welt wird mit dem folgenden Backup ersetzt: §a" + backupID);
                     Long millis = Long.valueOf(backupID);
                     Instant instant = Instant.ofEpochMilli(millis);
                     ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
 
                     DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
-                    player.sendMessage("§bFlippiGames §7» ID: §b" + millis + " §7Von: §b" + fmt.format(z));
-                    player.sendMessage("§bFlippiGames §7» §cDie Welt wird auf den Zeitpunkt: §a" + fmt.format(z) + " §czurückgesetzt.");
-                    player.sendMessage("§bFlippiGames §7» §aAktion durchführen: /dobackup, §eAktion §cnicht §edurchführen: /denybackup");
+                    player.sendMessage("§bAlex0219.de §7» ID: §b" + millis + " §7Von: §b" + fmt.format(z));
+                    player.sendMessage("§bAlex0219.de §7» §cDie Welt wird auf den Zeitpunkt: §a" + fmt.format(z) + " §czurückgesetzt.");
+                    player.sendMessage("§bAlex0219.de §7» §aAktion durchführen: /dobackup, §eAktion §cnicht §edurchführen: /denybackup");
                     backupList.put(player, new BackupPerformData(worldID, "plugins/WorldManagement/worldBackups/" + worldID + "_" + backupID + ".zip"));
                     return true;
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Verwende /restorebackup <ID> <Backupid>");
+                    player.sendMessage("§bAlex0219.de §7» Verwende /restorebackup <ID> <Backupid>");
                     return true;
                 }
 
             }
         } else {
-            sender.sendMessage("§bFlippiGames §7» Nur Spieler können diesen Befehl ausführen.");
+            sender.sendMessage("§bAlex0219.de §7» Nur Spieler können diesen Befehl ausführen.");
         }
         return false;
     }

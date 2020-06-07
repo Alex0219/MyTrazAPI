@@ -52,7 +52,7 @@ public class RankManager {
      */
     public static String getRank(String uuid) {
         Bootstrap.getInstance().getJedis().select(0);
-        DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
+        DBUser user = new DBUser(uuid, UUIDFetcher.getName(uuid));
         if (user.userExists()) {
             return Bootstrap.getInstance().getJedis().hget("uuid:" + uuid, "rank");
         }
@@ -64,11 +64,24 @@ public class RankManager {
      */
     public static void setRank(String uuid, String rank) {
         Bootstrap.getInstance().getJedis().select(0);
-        DBUser user = new DBUser(uuid, UUIDFetcher.getName(UUID.fromString(uuid)));
+        DBUser user = new DBUser(uuid, UUIDFetcher.getName(uuid));
         if (user.userExists()) {
             Bootstrap.getInstance().getJedis().hset("uuid:" + uuid, "rank", rank);
 
         }
+    }
+
+    /**
+     * Defines whether a user is permitted to ban a specific user.
+     * @param executor
+     * @param banned
+     * @return Boolean
+     */
+    public boolean isPermittedToBan(DBUser executor, DBUser banned) {
+        if(executor.getRankLevel() > banned.getRankLevel()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -80,7 +93,13 @@ public class RankManager {
         String uuid = UUIDFetcher.getUUID(player.getName()).toString();
 
         String s = RankManager.getRank(uuid);
-        if (s.equalsIgnoreCase("admin".toLowerCase())) {
+
+        if (s.equalsIgnoreCase("superadmin".toLowerCase())) {
+            player.setPlayerListName("§4Admin §7❘ §4" + player.getName());
+            player.setCustomName("§4" + player.getName());
+            player.setCustomNameVisible(true);
+            return;
+        } else if (s.equalsIgnoreCase("admin".toLowerCase())) {
             player.setPlayerListName("§4" + player.getName());
             player.setCustomName("§4" + player.getName());
             player.setCustomNameVisible(true);
@@ -110,7 +129,7 @@ public class RankManager {
             player.setCustomName("§7" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
-            player.setPlayerListName("§c" + player.getName());
+            player.setPlayerListName("§cMod §7❘ §c" + player.getName());
             player.setCustomName("§c" + player.getName());
             return;
         } else if (s.equalsIgnoreCase("bauleitung".toLowerCase())) {

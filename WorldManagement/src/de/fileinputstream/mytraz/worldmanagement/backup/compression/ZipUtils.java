@@ -17,14 +17,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtils {
 
-    public static void main(String args[]) {
-
-
-    }
-
     public boolean zipFolder(String sourceDir, String zipFile) {
-
-
         try {
             FileOutputStream fout = new FileOutputStream(zipFile);
 

@@ -91,6 +91,7 @@ public class WorldManager {
         Bukkit.getPlayer(name).teleport(Bukkit.getWorld(worldID).getSpawnLocation());
         Bukkit.getWorld(worldID).setAutoSave(true);
         Bukkit.getWorld(worldID).setSpawnLocation(Bukkit.getWorld(worldID).getSpawnLocation().getBlockX(), Bukkit.getWorld(worldID).getSpawnLocation().getBlockY() + 6, Bukkit.getWorld(worldID).getSpawnLocation().getBlockZ());
+        Bukkit.getWorld(worldID).setKeepSpawnInMemory(false);
         Bukkit.getWorld(worldID).save();
     }
 

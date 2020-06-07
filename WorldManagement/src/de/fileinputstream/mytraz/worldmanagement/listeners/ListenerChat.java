@@ -29,7 +29,7 @@ public class ListenerChat implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         final Player chatter = event.getPlayer();
-        String chatterUUID = UUIDFetcher.getUUID(chatter.getName()).toString();
+        String chatterUUID = chatter.getUniqueId().toString();
         if(Bootstrap.getInstance().getChatLogManager().chatLogs.containsKey(chatterUUID)) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.GERMANY);
             Date date = new Date();
@@ -41,7 +41,7 @@ public class ListenerChat implements Listener {
         }
 
         Player p = event.getPlayer();
-        String uuid = UUIDFetcher.getUUID(p.getName()).toString();
+        String uuid = p.getUniqueId().toString();
         event.setCancelled(true);
 
 
@@ -58,14 +58,13 @@ public class ListenerChat implements Listener {
                     Bukkit.broadcastMessage("§2" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("spieler")) {
-                    System.out.println("ist spieler");
                     Bukkit.broadcastMessage("§7" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("dev")) {
                     Bukkit.broadcastMessage("§3" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("admin")) {
-                    Bukkit.broadcastMessage("§4§l" + p.getName() + "§7 » " + msg);
+                    Bukkit.broadcastMessage("§4Admin §7❘ §4" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("sup")) {
                     Bukkit.broadcastMessage("§1" + p.getName() + "§7 » " + msg);
@@ -79,8 +78,8 @@ public class ListenerChat implements Listener {
                 if (rank.equalsIgnoreCase("bauleitung")) {
                     Bukkit.broadcastMessage("§2§l" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("inhaber")) {
-                    Bukkit.broadcastMessage("§4§l" + p.getName() + "§7 » " + msg);
+                if (rank.equalsIgnoreCase("superadmin")) {
+                    Bukkit.broadcastMessage("§4Admin §7❘ §4" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("partner")) {
                     Bukkit.broadcastMessage("§6§l" + p.getName() + "§7 » " + msg);

@@ -7,12 +7,14 @@ import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import net.minecraft.server.v1_13_R1.IChatBaseComponent;
-import net.minecraft.server.v1_13_R1.PacketPlayOutPlayerListHeaderFooter;
+
+
+import net.minecraft.server.v1_15_R1.IChatBaseComponent;
+import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,7 +73,7 @@ public class ListenerConnect implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
 
-        Bukkit.broadcastMessage("§bFlippiGames §7» §c" + event.getPlayer().getName() + " §7ist §cgestorben!");
+        Bukkit.broadcastMessage("§bAlex0219.de §7» §c" + event.getPlayer().getName() + " §7ist §cgestorben!");
         String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
         if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
             event.setRespawnLocation(Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid)).getSpawnLocation());
@@ -94,7 +96,7 @@ public class ListenerConnect implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        DBUser dbUser = new DBUser(UUIDFetcher.getUUID(event.getPlayer().getName()).toString(), event.getPlayer().getName());
+        DBUser dbUser = new DBUser(event.getPlayer().getUniqueId().toString(), event.getPlayer().getName());
         System.out.println(dbUser.toString());
 
         long millisNow = System.currentTimeMillis();
@@ -109,27 +111,23 @@ public class ListenerConnect implements Listener {
             String millis = String.valueOf(System.currentTimeMillis() - millisNow);
             System.out.println("Backend -> Player Join took " + millis + " milliseconds");
         }
-        String rank = RankManager.getRank(UUIDFetcher.getUUID(event.getPlayer().getName()).toString());
-        Bootstrap.getInstance().getChatLogManager().chatLogs.put(dbUser.getUuid(),new ArrayList<ChatEntry>());
-        if (!rank.equalsIgnoreCase("spieler") || !rank.equalsIgnoreCase("premium")) {
-            event.setJoinMessage("§8§l[Team] §r§c" + event.getPlayer().getName() + " §7ist dem Server beigetreten.");
-        }
-        event.setJoinMessage("§c" + event.getPlayer().getName() + " §7ist dem Server beigetreten.");
         Player player = event.getPlayer();
+        String rank = RankManager.getRank(event.getPlayer().getUniqueId().toString());
+        Bootstrap.getInstance().getChatLogManager().chatLogs.put(dbUser.getUuid(),new ArrayList<ChatEntry>());
+        NameTags.setTags(player);
+        event.setJoinMessage(event.getPlayer().getDisplayName() + " §7ist dem Server beigetreten.");
+        //Remove cooldown that was added in minecraft 1.9
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(16);
-        NameTags.addToTeam(player);
-        NameTags.updateTeams();
-        dbUser.executeJoin();
-        sendTablist(player, "§l§4FlippiGames §7Dein Flipptastisches Minecraft Netzwerk!", "§7Teamspeak: FlippiGames.DE");
+        //sendTablist(player, "§l§4Alex0219.de §7Dein Minecraft Netzwerk!", "§7Teamspeak: Alex0219.de");
         LocalDate localDate = LocalDate.now();
         Locale spanishLocale = new Locale("de", "DE");
         String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", spanishLocale));
 
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
-                new ListenerConnect().sendTablist(p, "§l§4FlippiGames §7Dein Flipptastisches Minecraft Netzwerk!\n", "§7Teamspeak: FlippiGames.DE \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-            }, 1, 1);
-        });
+        //Bukkit.getOnlinePlayers().forEach(p -> {
+          //  Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
+            //    new ListenerConnect().sendTablist(p, "§l§4Alex0219.de §7Dein Minecraft Netzwerk!\n", "§7Teamspeak: Alex0219.de.DE \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+            //}, 1, 1);
+        //});
         if (player.getWorld().getName().equalsIgnoreCase("world")) {
             player.setHealthScale(20.0);
             player.setFoodLevel(20);
@@ -146,7 +144,7 @@ public class ListenerConnect implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage("§c" + event.getPlayer().getName() + " §7hat den Server verlassen.");
         Player player = event.getPlayer();
-        String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+        String uuid = event.getPlayer().getUniqueId().toString();
         if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
             String world = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
             Bukkit.unloadWorld(world, true);

@@ -26,7 +26,7 @@ public class CommandSetWarp implements CommandExecutor {
                 File file = new File("plugins//WorldManagement//Warps//" + args[0]);
 
                 if (file.exists()) {
-                    player.sendMessage("§bFlippiGames §7» §4Dieser Warp existiert bereits!");
+                    player.sendMessage("§bAlex0219.de §7» §4Dieser Warp existiert bereits!");
                     return true;
                 } else {
                     try {

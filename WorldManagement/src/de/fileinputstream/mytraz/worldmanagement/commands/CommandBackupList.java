@@ -30,19 +30,19 @@ public class CommandBackupList implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+            String uuid = player.getUniqueId().toString();
             String rank = RankManager.getRank(uuid);
             if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod") || rank.equalsIgnoreCase("partner")) {
                 if (args.length == 1) {
                     String worldID = args[0];
                     List<String> worldBackups = Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(args[0]);
                     if (worldBackups.size() < 1) {
-                        player.sendMessage("§7FlippiGames §7» §cFür diese Welt wurde noch kein Backup erstellt!");
+                        player.sendMessage("§7Alex0219.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
                         return true;
                     }
                     List<List<String>> pages = CommandBackupList.getPages(worldBackups, 5);
-                    player.sendMessage("§bFlippiGames §7» Es gibt §c" + pages.size() + " §7Seiten.");
-                    player.sendMessage("§bFlippiGames §7» Seite: 0");
+                    player.sendMessage("§bAlex0219.de §7» Es gibt §c" + pages.size() + " §7Seiten.");
+                    player.sendMessage("§bAlex0219.de §7» Seite: 0");
                     for (int i = 0; i < pages.size(); i++) {
                         if (i == 0) {
 
@@ -57,7 +57,7 @@ public class CommandBackupList implements CommandExecutor {
                                 ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
 
                                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
-                                player.sendMessage("§bFlippiGames §7» ID: §b" + millis + " §7Von: §b" + fmt.format(z));
+                                player.sendMessage("§bAlex0219.de §7» ID: §b" + millis + " §7Von: §b" + fmt.format(z));
 
                             }
                         }
@@ -69,7 +69,7 @@ public class CommandBackupList implements CommandExecutor {
                     int pageNumber = Integer.valueOf(args[1]);
                     List<String> worldBackups = Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(args[0]);
                     if (worldBackups.size() < 1) {
-                        player.sendMessage("§7FlippiGames §7» §cFür diese Welt wurde noch kein Backup erstellt!");
+                        player.sendMessage("§7Alex0219.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
                         return true;
                     }
                     List<List<String>> pages = CommandBackupList.getPages(worldBackups, 5);
@@ -88,20 +88,20 @@ public class CommandBackupList implements CommandExecutor {
                                 ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
 
                                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
-                                player.sendMessage("§bFlippiGames §7» ID: §b" + millis + " §7Von: §b" + fmt.format(z));
+                                player.sendMessage("§bAlex0219.de §7» ID: §b" + millis + " §7Von: §b" + fmt.format(z));
 
                             }
                         }
                     }
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Verwende /listbackups <ID> oder /listbackups <ID> <Seitenzahl>");
+                    player.sendMessage("§bAlex0219.de §7» Verwende /listbackups <ID> oder /listbackups <ID> <Seitenzahl>");
                     return true;
                 }
             } else {
 
             }
         } else {
-            sender.sendMessage("§bFlippiGames §7» Nur Spieler können diesen Befehl ausführen.");
+            sender.sendMessage("§bAlex0219.de §7» Nur Spieler können diesen Befehl ausführen.");
         }
         return false;
     }

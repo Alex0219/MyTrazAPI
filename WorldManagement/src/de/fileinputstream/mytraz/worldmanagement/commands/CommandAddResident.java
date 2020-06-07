@@ -51,7 +51,7 @@ public class CommandAddResident implements CommandExecutor {
             Player player = (Player) sender;
             if (args.length == 1) {
 
-                String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+                String uuid = player.getUniqueId().toString();
                 String targetUUID = UUIDFetcher.getUUID(args[0]).toString();
 
                 if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
@@ -60,40 +60,40 @@ public class CommandAddResident implements CommandExecutor {
                         if (!Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(targetUUID)) {
                             if (Bukkit.getPlayer(args[0]) != null) {
                                 if (!Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(targetUUID)) {
-                                    player.sendMessage("§bFlippiGames §7» Du hast §a" + args[0] + " §cin deine Welt eingeladen.");
-                                    player.sendMessage("§bFlippiGames §7» Diese Einladung läuft automatisch nach 5 Minuten ab.");
-                                    Bukkit.getPlayer(args[0]).sendMessage("§bFlippiGames §7» §aDu wurdest von §a" + player.getName() + " §cin seine Welt eingeladen.");
-                                    Bukkit.getPlayer(args[0]).sendMessage("§bFlippiGames §7» Du kannst diese Einladung mit /acceptinvite akzeptieren.");
-                                    Bukkit.getPlayer(args[0]).sendMessage("§bFlippiGames §7» Diese Einladung läuft automatisch nach 5 Minuten ab.");
+                                    player.sendMessage("§bAlex0219.de §7» Du hast §a" + args[0] + " §cin deine Welt eingeladen.");
+                                    player.sendMessage("§bAlex0219.de §7» Diese Einladung läuft automatisch nach 5 Minuten ab.");
+                                    Bukkit.getPlayer(args[0]).sendMessage("§bAlex0219.de §7» §aDu wurdest von §a" + player.getName() + " §cin seine Welt eingeladen.");
+                                    Bukkit.getPlayer(args[0]).sendMessage("§bAlex0219.de §7» Du kannst diese Einladung mit /acceptinvite akzeptieren.");
+                                    Bukkit.getPlayer(args[0]).sendMessage("§bAlex0219.de §7» Diese Einladung läuft automatisch nach 5 Minuten ab.");
                                     Bootstrap.getInstance().getWorldManager().worldInvites.put(targetUUID, worldID);
                                     scheduleInviteTask(args[0], targetUUID);
                                 } else {
-                                    player.sendMessage("§bFlippiGames §7» Dieser Spieler wurde bereits in eine Welt eingeladen.");
-                                    player.sendMessage("§bFlippiGames §7» Bitte warte noch, bis der Spieler die Einladung der anderen Welt angenommen hat.");
+                                    player.sendMessage("§bAlex0219.de §7» Dieser Spieler wurde bereits in eine Welt eingeladen.");
+                                    player.sendMessage("§bAlex0219.de §7» Bitte warte noch, bis der Spieler die Einladung der anderen Welt angenommen hat.");
                                     return true;
                                 }
 
                             } else {
-                                player.sendMessage("§bFlippiGames §7» Dieser Spieler ist nicht online!");
+                                player.sendMessage("§bAlex0219.de §7» Dieser Spieler ist nicht online!");
                                 return true;
                             }
                         } else {
-                            player.sendMessage("§bFlippiGames §7» Du hast diesen Spieler bereits in deine Welt eingeladen.");
+                            player.sendMessage("§bAlex0219.de §7» Du hast diesen Spieler bereits in deine Welt eingeladen.");
                             return true;
                         }
 
                     } else {
-                        player.sendMessage("§bFlippiGames §7» Dieser Spieler ist bereits Mitbewohner deiner Welt.");
+                        player.sendMessage("§bAlex0219.de §7» Dieser Spieler ist bereits Mitbewohner deiner Welt.");
                         return true;
                     }
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Du besitzt noch keine Welt. Erstelle dir eine mit: §a/createworld§c!");
+                    player.sendMessage("§bAlex0219.de §7» Du besitzt noch keine Welt. Erstelle dir eine mit: §a/createworld§c!");
                     return true;
                 }
 
 
             } else {
-                player.sendMessage("§bFlippiGames §7» Verwende /addresident <Spielername>");
+                player.sendMessage("§bAlex0219.de §7» Verwende /addresident <Spielername>");
                 return true;
             }
         } else {
@@ -108,7 +108,7 @@ public class CommandAddResident implements CommandExecutor {
             public void run() {
                 Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
                 if (Bukkit.getPlayer(name) != null) {
-                    Bukkit.getPlayer(name).sendMessage("§bFlippiGames §7» Deine Einladung ist abgelaufen.");
+                    Bukkit.getPlayer(name).sendMessage("§bAlex0219.de §7» Deine Einladung ist abgelaufen.");
                 }
 
 

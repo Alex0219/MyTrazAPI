@@ -1,10 +1,11 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.BackupPerformData;
+
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -30,18 +31,18 @@ public class CommandDoBackup implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+            String uuid = player.getUniqueId().toString();
             String rank = RankManager.getRank(uuid);
             if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod") || rank.equalsIgnoreCase("partner")) {
                 if (args.length == 0) {
 
                     if (!CommandRestoreBackup.backupList.containsKey(player)) {
-                        player.sendMessage("§bFlippiGames §7» §cDu hast noch keine Backup Aktion gestartet!");
+                        player.sendMessage("§bAlex0219.de §7» §cDu hast noch keine Backup Aktion gestartet!");
                         return true;
                     }
                     BackupPerformData performData = CommandRestoreBackup.backupList.get(player);
-                    new Thread(() -> {
-                        player.sendMessage("§bFlippiGames §7» §aStarte das Kopieren der Welt..");
+
+                        player.sendMessage("§bAlex0219.de §7» §aStarte das Kopieren der Welt..");
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
@@ -54,7 +55,7 @@ public class CommandDoBackup implements CommandExecutor {
                             if (Bukkit.getWorld(performData.getWorldID()).getPlayers().size() > 0) {
                                 for (Player players : Bukkit.getWorld(performData.getWorldID()).getPlayers()) {
                                     players.teleport(Bukkit.getWorld("world").getSpawnLocation());
-                                    players.sendMessage("§bFlippiGames §7» §aDu wurdest aus der Welt geworfen, da ein Backup geladen wird!");
+                                    players.sendMessage("§bAlex0219.de §7» §aDu wurdest aus der Welt geworfen, da ein Backup geladen wird!");
                                 }
                             }
                             unloadWorld(Bukkit.getWorld(performData.getWorldID()));
@@ -68,19 +69,19 @@ public class CommandDoBackup implements CommandExecutor {
                         deleteWorld(worldFolder);
 
                         try {
-                            ZipFile zipFile = new ZipFile(performData.getWorldID());
+                            ZipFile zipFile = new ZipFile(performData.getBackupPath());
 
-                            zipFile.extractAll(worldFolder.getPath());
+                            zipFile.extractAll(Bootstrap.getInstance().getServer().getWorldContainer().getAbsolutePath());
                         } catch (ZipException e) {
                             e.printStackTrace();
                         }
-                        player.sendMessage("§bFlippiGames §7» §aKonvertiere Welt..");
+                        player.sendMessage("§bAlex0219.de §7» §aKonvertiere Welt..");
                         try {
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        player.sendMessage("§bFlippiGames §7» §aLade Welt..");
+                        player.sendMessage("§bAlex0219.de §7» §aLade Welt..");
                         try {
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
@@ -88,19 +89,19 @@ public class CommandDoBackup implements CommandExecutor {
                         }
 
 
-                        player.sendMessage("§bFlippiGames §7» §aWiederherstellen des Backups erfolgreich abgeschlossen!");
-                    }).start();
+                        player.sendMessage("§bAlex0219.de §7» §aWiederherstellen des Backups erfolgreich abgeschlossen!");
+
                     Bukkit.createWorld(new WorldCreator(performData.getWorldID()));
 
                     return true;
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Verwende /dobackup");
+                    player.sendMessage("§bAlex0219.de §7» Verwende /dobackup");
                     return true;
                 }
 
             }
         } else {
-            sender.sendMessage("§bFlippiGames §7» Nur Spieler können diesen Befehl ausführen.");
+            sender.sendMessage("§bAlex0219.de §7» Nur Spieler können diesen Befehl ausführen.");
         }
         return false;
     }

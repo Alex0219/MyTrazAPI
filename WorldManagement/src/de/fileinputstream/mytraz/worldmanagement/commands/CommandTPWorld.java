@@ -52,30 +52,28 @@ import java.util.Arrays;
  */
 public class CommandTPWorld implements CommandExecutor {
 
-    public CommandTPWorld() {
-        System.out.println("Gets called");
-    }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            String rank = RankManager.getRank(UUIDFetcher.getUUID(player.getName()).toString());
+            String uuid = player.getUniqueId().toString();
+            String rank = RankManager.getRank(uuid);
             if (args.length == 0) {
                 if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
                     String world = getWorld(uuid);
                     System.out.println(world);
                     if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(world).exists()) {
                         new WorldCreator(world).createWorld();
+                        Bukkit.getWorld(world).setKeepSpawnInMemory(false);
                         player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
                     } else {
-                        player.sendMessage("§bFlippiGames §7» §cDiese Welt existiert nicht!");
+                        player.sendMessage("§bAlex0219.de §7» §cDiese Welt existiert nicht!");
                         return true;
                     }
 
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Du besitzt keine Welt.");
+                    player.sendMessage("§bAlex0219.de §7» Du besitzt keine Welt.");
                     return true;
                 }
             } else if (args.length == 1) {
@@ -92,24 +90,26 @@ public class CommandTPWorld implements CommandExecutor {
 
                         if (file.exists()) {
                             new WorldCreator(args[0]).createWorld();
+                            Bukkit.getWorld(args[0]).setKeepSpawnInMemory(false);
                             player.teleport(Bukkit.getWorld(args[0]).getSpawnLocation());
                             return true;
                         } else {
-                            player.sendMessage("§bFlippiGames §7» §cDiese Welt existiert nicht!");
+                            player.sendMessage("§bAlex0219.de §7» §cDiese Welt existiert nicht!");
                             return true;
                         }
 
                     } else if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, args[0])) {
                         if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(args[0]).exists()) {
                             new WorldCreator(args[0]).createWorld();
+                            Bukkit.getWorld(args[0]).setKeepSpawnInMemory(false);
                             player.teleport(Bukkit.getServer().getWorld(args[0]).getSpawnLocation());
                         } else {
-                            player.sendMessage("§bFlippiGames §7» §cDiese Welt existiert nicht!");
+                            player.sendMessage("§bAlex0219.de §7» §cDiese Welt existiert nicht!");
                             return true;
                         }
 
                     } else {
-                        player.sendMessage("§bFlippiGames §7» Du darfst dich nicht in diese Welt teleportieren.");
+                        player.sendMessage("§bAlex0219.de §7» Du darfst dich nicht in diese Welt teleportieren.");
                         return true;
                     }
 
@@ -117,7 +117,7 @@ public class CommandTPWorld implements CommandExecutor {
 
 
             } else {
-                player.sendMessage("§bFlippiGames §7» Bitte verwende /tpworld oder /tpworld <ID>");
+                player.sendMessage("§bAlex0219.de §7» Bitte verwende /tpworld oder /tpworld <ID>");
             }
 
         } else {

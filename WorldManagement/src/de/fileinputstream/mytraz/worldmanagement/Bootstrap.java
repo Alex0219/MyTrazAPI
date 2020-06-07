@@ -9,14 +9,14 @@ import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
 import de.fileinputstream.mytraz.worldmanagement.tracker.OntimeTracker;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
 import redis.clients.jedis.Jedis;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -61,10 +61,10 @@ public class Bootstrap extends JavaPlugin {
     Jedis jedis;
     WorldManager worldManager;
     String spawnWorld;
-    OntimeTracker ontimeTracker;
     ChatLogManager chatLogManager;
     BackupManager backupManager;
-    String prefix = "§bFlippiGames §7»";
+    Scoreboard mainScoreboard;
+    String prefix = "§bAlex0219.de §7»";
 
     public static Bootstrap getInstance() {
         return instance;
@@ -78,7 +78,6 @@ public class Bootstrap extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
 
         worldManager = new WorldManager();
         backupManager = new BackupManager();
@@ -97,22 +96,25 @@ public class Bootstrap extends JavaPlugin {
             System.out.println("Backend -> Warning! Key 'survivalWorldIDCount' was missing! Created it.");
         }
 
+        mainScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        new OntimeTracker().startCounter();
         chatLogManager = new ChatLogManager();
         spawnWorld = getConfig().getString("SpawnWorld");
-        ontimeTracker = new OntimeTracker();
-        ontimeTracker.startCounter();
         LocalDate localDate = LocalDate.now();
-        Locale spanishLocale = new Locale("de", "DE");
-        String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", spanishLocale));
+        Locale locale = new Locale("de", "DE");
+        String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", locale));
 
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
-                new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-            }, 1, 1);
-        });
+       // Bootstrap.getInstance().getBackupManager().performBackup(new BackupData("3",System.currentTimeMillis()));
+
+      //  Bukkit.getOnlinePlayers().forEach(p -> {
+         //   Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
+           //     new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+            //}, 1, 1);
+        //});
 
 
-        NameTags.initScoreboardTeams();
+        NameTags.createScoreboardTeam();
         loadCommands();
 
 
@@ -141,11 +143,11 @@ public class Bootstrap extends JavaPlugin {
         getCommand("warp").setExecutor(new CommandWarp());
         getCommand("setwarp").setExecutor(new CommandSetWarp());
         getCommand("delwarp").setExecutor(new CommandDelWarp());
-        getCommand("rang").setExecutor(new CommandRang());
+      // getCommand("rang").setExecutor(new CommandRang());
         getCommand("chatlog").setExecutor(new CommandChatLog());
-        //getCommand("listbackups").setExecutor(new CommandBackupList());
-        // getCommand("restorebackup").setExecutor(new CommandRestoreBackup());
-        // getCommand("dobackup").setExecutor(new CommandDoBackup());
+        getCommand("listbackups").setExecutor(new CommandBackupList());
+        getCommand("restorebackup").setExecutor(new CommandRestoreBackup());
+        getCommand("dobackup").setExecutor(new CommandDoBackup());
     }
 
 
@@ -166,9 +168,6 @@ public class Bootstrap extends JavaPlugin {
         return prefix;
     }
 
-    public OntimeTracker getOntimeTracker() {
-        return ontimeTracker;
-    }
 
     public ChatLogManager getChatLogManager() {
         return chatLogManager;
@@ -176,5 +175,9 @@ public class Bootstrap extends JavaPlugin {
 
     public BackupManager getBackupManager() {
         return backupManager;
+    }
+
+    public Scoreboard getMainScoreboard() {
+        return mainScoreboard;
     }
 }

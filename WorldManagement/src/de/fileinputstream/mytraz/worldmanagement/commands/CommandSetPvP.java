@@ -49,26 +49,26 @@ public class CommandSetPvP implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+            String uuid = player.getUniqueId().toString();
             if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
                 World world = Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid));
                 if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
                     if (player.getWorld().getPVP()) {
                         player.getWorld().setPVP(false);
-                        player.sendMessage("§bFlippiGames §7» Du hast PVP für deine Welt deaktiviert!");
+                        player.sendMessage("§bAlex0219.de §7» Du hast PVP für deine Welt deaktiviert!");
                         return true;
                     }
                     player.getWorld().setPVP(true);
-                    player.sendMessage("§bFlippiGames §7» Du hast PVP für deine Welt aktiviert!");
+                    player.sendMessage("§bAlex0219.de §7» Du hast PVP für deine Welt aktiviert!");
                     return true;
 
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Diese Welt gehört dir nicht!");
+                    player.sendMessage("§bAlex0219.de §7» Diese Welt gehört dir nicht!");
                     return true;
                 }
 
             } else {
-                player.sendMessage("§bFlippiGames §7» Du hast noch keine Welt!");
+                player.sendMessage("§bAlex0219.de §7» Du hast noch keine Welt!");
             }
         }
         return false;

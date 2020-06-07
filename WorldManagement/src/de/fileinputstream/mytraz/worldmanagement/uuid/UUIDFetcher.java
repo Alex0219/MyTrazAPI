@@ -3,8 +3,12 @@ package de.fileinputstream.mytraz.worldmanagement.uuid;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.util.UUIDTypeAdapter;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,101 +19,83 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class UUIDFetcher {
-	
-	/**
-     * Date when name changes were introduced
-     * @see UUIDFetcher#getUUIDAt(String, long)
-     */
-    public static final long FEBRUARY_2015 = 1422748800000L;
 
-    private static Gson gson = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
-
-    private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
-    private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/names";
-    private static Map<UUID, String> nameCache = new HashMap<UUID, String>();
-    private static ExecutorService pool = Executors.newCachedThreadPool();
-
-    private String name;
-    private UUID id;
-
-    /**
-     * Fetches the uuid asynchronously and passes it to the consumer
-     *
-     * @param name The name
-     * @param action Do what you want to do with the uuid her
-     */
-
-
-    /**
-     * Fetches the uuid synchronously and returns it
-     *
-     * @param name The name
-     * @return The uuid
-     */
-    public static UUID getUUID(String name) {
-        return getUUIDAt(name, System.currentTimeMillis());
-    }
-
-    /**
-     * Fetches the uuid synchronously for a specified name and time and passes the result to the consumer
-     *
-     * @param name The name
-     * @param timestamp Time when the player had this name in milliseconds
-     * @param action Do what you want to do with the uuid her
-     */
-
-
-    /**
-     * Fetches the uuid synchronously for a specified name and time
-     *
-     * @param name The name
-     * @param timestamp Time when the player had this name in milliseconds
-     * @see UUIDFetcher#FEBRUARY_2015
-     */
-    public static UUID getUUIDAt(String name, long timestamp) {
-        name = name.toLowerCase();
+    public static String getUUID(String username) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(UUID_URL, name, timestamp/1000)).openConnection();
-            connection.setReadTimeout(5000);
-            UUIDFetcher data = gson.fromJson(new BufferedReader(new InputStreamReader(connection.getInputStream())), UUIDFetcher.class);
+            URL url = new URL("https://api.minetools.eu/uuid/" + username);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
-            nameCache.put(data.id, data.name);
-            return data.id;
-        } catch (Exception e) {
-            return null;
+            String line = reader.readLine();
+
+            final JSONParser parser = new JSONParser();
+
+            try {
+
+
+                final JSONObject json = (JSONObject) parser.parse(new InputStreamReader(url.openStream()));
+
+                if (json.get("id") != null) {
+                    String uuid = insertDashUUID(json.get("id").toString());
+
+                    return uuid;
+                }
+
+
+            } catch (ParseException e) {
+
+            }
+
+
+        } catch (IOException e) {
         }
+        return "";
 
 
     }
 
-    /**
-     * Fetches the name asynchronously and passes it to the consumer
-     *
-     * @param uuid The uuid
-     * @param action Do what you want to do with the name her
-     */
-
-    /**
-     * Fetches the name synchronously and returns it
-     *
-     * @param uuid The uuid
-     * @return The name
-     */
-    public static String getName(UUID uuid) {
-        if (nameCache.containsKey(uuid)) {
-            return nameCache.get(uuid);
-        }
+    public static String getName(String uuid) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(NAME_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
-            connection.setReadTimeout(5000);
-            UUIDFetcher[] nameHistory = gson.fromJson(new BufferedReader(new InputStreamReader(connection.getInputStream())), UUIDFetcher[].class);
-            UUIDFetcher currentNameData = nameHistory[nameHistory.length - 1];
-            nameCache.put(uuid, currentNameData.name);
-            return currentNameData.name;
-        } catch (Exception e) {
-            e.printStackTrace();
+            URL url = new URL("https://api.minetools.eu/uuid/" + uuid);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            String line = reader.readLine();
+
+            final JSONParser parser = new JSONParser();
+
+            try {
+                final JSONObject json = (JSONObject) parser.parse(new InputStreamReader(url.openStream()));
+
+                if (json.get("name") != null) {
+                    String username = json.get("name").toString();
+
+                    return username;
+                }
+
+
+            } catch (ParseException e) {
+
+            }
+
+
+        } catch (IOException e) {
         }
-        return null;
+        return "";
+    }
+
+    public static String insertDashUUID(String uuid) {
+        StringBuffer sb = new StringBuffer(uuid);
+        sb.insert(8, "-");
+
+        sb = new StringBuffer(sb.toString());
+        sb.insert(13, "-");
+
+        sb = new StringBuffer(sb.toString());
+        sb.insert(18, "-");
+
+        sb = new StringBuffer(sb.toString());
+        sb.insert(23, "-");
+
+        return sb.toString();
     }
 
 }

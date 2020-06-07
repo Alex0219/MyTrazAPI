@@ -10,8 +10,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jedis-3.0.0" level="application" />
-    <orderEntry type="library" name="spigot-1.13" level="project" />
-    <orderEntry type="library" name="commons-compress-1.18" level="project" />
-    <orderEntry type="library" name="UUIDCache" level="project" />
+    <orderEntry type="module" module-name="RedisBuilder" />
+    <orderEntry type="library" name="Maven: redis.clients:jedis:3.3.0" level="project" />
+    <orderEntry type="library" name="spigot-1.15.2" level="project" />
+    <orderEntry type="library" name="zip4j-2.6.1" level="project" />
   </component>
 </module>

@@ -1,6 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,8 +47,7 @@ public class CommandOnTime implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player) {
-            commandSender.sendMessage("§7Deine Spielzeit: §c" + Bootstrap.getInstance().getOntimeTracker().getOnlinetime((Player) commandSender)
-            );
+            commandSender.sendMessage("§7Deine Spielzeit: §c" + new DBUser(((Player) commandSender).getUniqueId().toString(),commandSender.getName()).getOnlinetime());
         }
         return false;
     }

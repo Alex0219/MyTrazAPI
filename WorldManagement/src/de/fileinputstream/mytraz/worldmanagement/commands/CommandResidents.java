@@ -62,12 +62,12 @@ public class CommandResidents implements CommandExecutor {
             residents = Bootstrap.getInstance().getWorldManager().getWorldResidents(world);
 
             if (residents.isEmpty()) {
-                player.sendMessage("§bFlippiGames §7» §cDeine Welt hat noch keine Mitbewohner");
+                player.sendMessage("§bAlex0219.de §7» §cDeine Welt hat noch keine Mitbewohner");
                 return true;
             } else {
-                player.sendMessage("§bFlippiGames §7» §7 Deine Welt hat folgende Mitbewohner:");
+                player.sendMessage("§bAlex0219.de §7» §7 Deine Welt hat folgende Mitbewohner:");
                 for (String entry : residents) {
-                    String targetName = UUIDFetcher.getName(UUID.fromString(entry));
+                    String targetName = UUIDFetcher.getName(entry);
                     player.sendMessage("§7Benutzer: §c" + targetName);
                 }
             }

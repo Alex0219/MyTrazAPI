@@ -75,12 +75,12 @@ public class CommandRemoveResident implements CommandExecutor {
                         return true;
                     }
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Du hast noch keine Welt.");
+                    player.sendMessage("§bAlex0219.de §7» Du hast noch keine Welt.");
                     return true;
                 }
 
             } else {
-                player.sendMessage("§bFlippiGames §7» Verwende /removeresident <Name>");
+                player.sendMessage("§bAlex0219.de §7» Verwende /removeresident <Name>");
                 return true;
             }
 

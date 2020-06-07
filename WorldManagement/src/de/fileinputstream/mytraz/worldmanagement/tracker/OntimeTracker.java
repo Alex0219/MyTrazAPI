@@ -1,6 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement.tracker;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -50,60 +51,13 @@ public class OntimeTracker {
             @Override
             public void run() {
                 for (final Player all : Bukkit.getOnlinePlayers()) {
-                    if (Bootstrap.getInstance().getConfig().getString("Spieler." + all.getName() + ".online") != null) {
-                        Bootstrap.getInstance().getConfig().set("Spieler." + all.getName() + ".online", (Bootstrap.getInstance().getConfig().getLong("Spieler." + all.getName() + ".online") + 1L));
-                    } else {
-                        Bootstrap.getInstance().getConfig().set("Spieler." + all.getName() + ".online", 0);
-                    }
-
-                    Bootstrap.getInstance().saveConfig();
+                    final long currentOntime = Long.parseUnsignedLong(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "ontime"));
+                    final long ontimeNow = currentOntime+1L;
+                    Bootstrap.getInstance().getJedis().hset("uuid:" + UUIDFetcher.getUUID(all.getName()), "ontime", String.valueOf(ontimeNow));
                 }
             }
         }, 20L, 20L);
     }
 
-    public String getOnlinetime(final Player p) {
 
-        long seconds = Bootstrap.getInstance().getConfig().getLong("Spieler." + p.getName() + ".online");
-        long minutes = 0L;
-        long hours = 0L;
-        long days = 0L;
-        long weeks = 0L;
-        while (seconds > 60L) {
-            seconds -= 60L;
-            ++minutes;
-        }
-        while (minutes > 60L) {
-            minutes -= 60L;
-            ++hours;
-        }
-        while (hours > 24L) {
-            hours -= 24L;
-            ++days;
-        }
-        while (days > 7L) {
-            days -= 7L;
-            ++weeks;
-        }
-        while (weeks > 7L) {
-            days -= 7L;
-        }
-        if (weeks != 0L) {
-            return "§c" + weeks + " §7Woche(n) §c" + "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (days != 0L) {
-            return "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (hours != 0L) {
-            return "§c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (minutes != 0L) {
-            return "§c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (seconds != 0L) {
-            return "§c" + seconds + " §7Sekunde(n)";
-        }
-        return "§c" + weeks + " §7Woche(n) §c" + "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §6" + seconds + " §7Sekunde(n)";
-
-    }
 }

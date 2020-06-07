@@ -59,18 +59,18 @@ public class CommandWorldInfo implements CommandExecutor {
                     player.sendMessage("§aWelten:§6 " + Bootstrap.getInstance().getWorldManager().getWorld(targetUUID));
                     player.sendMessage("§7===========§a" + playername + "§7==============");
                     if (RankManager.getRank(targetUUID).equalsIgnoreCase("")) {
-                        player.sendMessage("§bFlippiGames §7» Dieser Spieler existiert nicht!");
+                        player.sendMessage("§bAlex0219.de §7» Dieser Spieler existiert nicht!");
 
                     }
                 } else {
-                    player.sendMessage("§bFlippiGames §7» Verwende /worldinfo <Spieler>");
+                    player.sendMessage("§bAlex0219.de §7» Verwende /worldinfo <Spieler>");
                     return true;
                 }
             } else {
 
             }
         } else {
-            sender.sendMessage("§bFlippiGames §7» Nur Spieler können diesen Befehö ausführen.");
+            sender.sendMessage("§bAlex0219.de §7» Nur Spieler können diesen Befehö ausführen.");
         }
         return false;
     }

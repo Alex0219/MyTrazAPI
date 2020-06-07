@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * You may not distribute this project or parts of it under you own name, you company name or someone other's name.
  * Created: 15.12.2018 at 22:40
  */
-public class CommandChatLog implements CommandExecutor {
+public class  CommandChatLog implements CommandExecutor {
     public ArrayList<String> cooldownList = new ArrayList<>();
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
@@ -26,11 +26,11 @@ public class CommandChatLog implements CommandExecutor {
             if(Bukkit.getPlayer(commandSender.getName()) !=null) {
                 String targetName = args[0];
                 if (commandSender.getName().equalsIgnoreCase(targetName)) {
-                    commandSender.sendMessage("§bFlippiGames §7» §cDu kannst keinen ChatLog über dich selbst erstellen!");
+                    commandSender.sendMessage("§bAlex0219.de §7» §cDu kannst keinen ChatLog über dich selbst erstellen!");
                     return true;
                 }
                 if (Bukkit.getPlayer(targetName) == null) {
-                    commandSender.sendMessage("§bFlippiGames §7» §cBitte gebe einen Spieler an, der online ist!");
+                    commandSender.sendMessage("§bAlex0219.de §7» §cBitte gebe einen Spieler an, der online ist!");
                     return true;
                 }
 
@@ -38,24 +38,24 @@ public class CommandChatLog implements CommandExecutor {
                 String targetUUID = UUIDFetcher.getUUID(targetName).toString();
                String chatlogID = Bootstrap.getInstance().getChatLogManager().createChatLog(targetUUID,commandSender.getName(),targetName);
                 if (chatlogID.equalsIgnoreCase("NOMESSAGES")) {
-                    commandSender.sendMessage("§bFlippiGames §7» §cDieser Spieler hat noch keine Nachrichten geschrieben!");
+                    commandSender.sendMessage("§bAlex0219.de §7» §cDieser Spieler hat noch keine Nachrichten geschrieben!");
                     return true;
                 }
                 if(cooldownList.contains(commandSender.getName())) {
-                    commandSender.sendMessage("§bFlippiGames §7» §cBitte warte noch, bis du einen weiteren ChatLog erstellst!");
+                    commandSender.sendMessage("§bAlex0219.de §7» §cBitte warte noch, bis du einen weiteren ChatLog erstellst!");
                     return true;
                 }
 
-                commandSender.sendMessage("§bFlippiGames §7» §aErstelle einen neuen ChatLog...");
-                commandSender.sendMessage("§bFlippiGames §7» §eDu kannst den ChatLog hier einsehen: https://flippigames.de/chatlog?chatlogid=" + chatlogID);
+                commandSender.sendMessage("§bAlex0219.de §7» §aErstelle einen neuen ChatLog...");
+                commandSender.sendMessage("§bAlex0219.de §7» §eDu kannst den ChatLog hier einsehen: https://Alex0219.de.de/chatlog?chatlogid=" + chatlogID);
                 cooldownList.add(commandSender.getName());
                 executeCooldown(commandSender.getName());
 
             } else {
-                commandSender.sendMessage("§bFlippiGames §7» §cBitte gebe einen Spieler an, der auf dem Server ist!");
+                commandSender.sendMessage("§bAlex0219.de §7» §cBitte gebe einen Spieler an, der auf dem Server ist!");
             }
         } else {
-            commandSender.sendMessage("§bFlippiGames §7» §cBitte verwende /chatlog <Spieler>");
+            commandSender.sendMessage("§bAlex0219.de §7» §cBitte verwende /chatlog <Spieler>");
         }
 
         return false;

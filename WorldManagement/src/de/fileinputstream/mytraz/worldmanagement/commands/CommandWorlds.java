@@ -57,16 +57,16 @@ public class CommandWorlds implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
+            String uuid = player.getUniqueId().toString();
             String world = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
             ExecutorService service = Executors.newCachedThreadPool();
             worlds = Bootstrap.getInstance().getWorldManager().getResidentWorlds(uuid);
 
             if (worlds.isEmpty()) {
-                player.sendMessage("§bFlippiGames §7» §cDu bist noch kein Mitbewohner einer Welt.");
+                player.sendMessage("§bAlex0219.de §7» §cDu bist noch kein Mitbewohner einer Welt.");
                 return true;
             } else {
-                player.sendMessage("§bFlippiGames §7» §7 Du bist in folgenden Welten eingetragen:");
+                player.sendMessage("§bAlex0219.de §7» §7 Du bist in folgenden Welten eingetragen:");
                 for (String entry : worlds) {
                     TextComponent message = new TextComponent("§7Welt: §e" + entry + " §7Welt von §c" + Bootstrap.getInstance().getWorldManager().getOwnerFromWorld(entry));
                     message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpworld " + entry));
