@@ -5,26 +5,27 @@ import de.fileinputstream.mytraz.worldmanagement.chatlog.entry.ChatEntry;
 import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
-
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
-
-
 import net.minecraft.server.v1_15_R1.IChatBaseComponent;
 import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.WorldCreator;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.lang.reflect.Field;
@@ -73,9 +74,10 @@ public class ListenerConnect implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
 
-        Bukkit.broadcastMessage("§bAlex0219.de §7» §c" + event.getPlayer().getName() + " §7ist §cgestorben!");
+        Bukkit.broadcastMessage("§bAlex0219.de §7» §c" + event.getPlayer().getDisplayName() + " §7ist §cgestorben!");
         String uuid = UUIDFetcher.getUUID(event.getPlayer().getName()).toString();
         if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+            new WorldCreator(Bootstrap.getInstance().getWorldManager().getWorld(uuid)).createWorld();
             event.setRespawnLocation(Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid)).getSpawnLocation());
         } else {
             event.setRespawnLocation(Bukkit.getWorld(Bootstrap.getInstance().getConfig().getString("SpawnWorld")).getSpawnLocation());
@@ -88,8 +90,6 @@ public class ListenerConnect implements Listener {
         if (event.getEntity() instanceof Player) {
             Player player = event.getEntity();
             event.setDeathMessage(null);
-            event.getEntity().spigot().respawn();
-
         }
 
     }
@@ -113,36 +113,40 @@ public class ListenerConnect implements Listener {
         }
         Player player = event.getPlayer();
         String rank = RankManager.getRank(event.getPlayer().getUniqueId().toString());
-        Bootstrap.getInstance().getChatLogManager().chatLogs.put(dbUser.getUuid(),new ArrayList<ChatEntry>());
+        Bootstrap.getInstance().getChatLogManager().chatLogs.put(dbUser.getUuid(), new ArrayList<ChatEntry>());
         NameTags.setTags(player);
+
+
         event.setJoinMessage(event.getPlayer().getDisplayName() + " §7ist dem Server beigetreten.");
         //Remove cooldown that was added in minecraft 1.9
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(16);
         //sendTablist(player, "§l§4Alex0219.de §7Dein Minecraft Netzwerk!", "§7Teamspeak: Alex0219.de");
         LocalDate localDate = LocalDate.now();
-        Locale spanishLocale = new Locale("de", "DE");
-        String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", spanishLocale));
+        Locale locale = new Locale("de", "DE");
+        String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", locale));
 
         //Bukkit.getOnlinePlayers().forEach(p -> {
-          //  Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
-            //    new ListenerConnect().sendTablist(p, "§l§4Alex0219.de §7Dein Minecraft Netzwerk!\n", "§7Teamspeak: Alex0219.de.DE \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-            //}, 1, 1);
+        //  Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
+        //    new ListenerConnect().sendTablist(p, "§l§4Alex0219.de §7Dein Minecraft Netzwerk!\n", "§7Teamspeak: Alex0219.de.DE \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+        //}, 1, 1);
         //});
         if (player.getWorld().getName().equalsIgnoreCase("world")) {
             player.setHealthScale(20.0);
             player.setFoodLevel(20);
         }
 
-        player.sendMessage("§7--------------------------------------------------");
-        player.sendMessage("§cWillkommen auf Survival! Gebe /tutorial ein, um die Hilfeseite aufzurufen.");
-        player.sendMessage("§7--------------------------------------------------");
+        player.sendMessage("           §7*---*---*         ");
+        player.sendMessage(" ");
+        player.sendMessage("     §7Willkommen auf §a§lAlex0219.de");
+        player.sendMessage(" ");
+        player.sendMessage("           §7*---*---*           ");
 
 
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        event.setQuitMessage("§c" + event.getPlayer().getName() + " §7hat den Server verlassen.");
+        event.setQuitMessage("§c" + event.getPlayer().getDisplayName() + " §7hat den Server verlassen.");
         Player player = event.getPlayer();
         String uuid = event.getPlayer().getUniqueId().toString();
         if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
@@ -202,17 +206,8 @@ public class ListenerConnect implements Listener {
     @EventHandler
     public void onFoodChange(FoodLevelChangeEvent event) {
         if (event.getEntity().getWorld().getName().equalsIgnoreCase("world")) {
-            event.setFoodLevel(20);
+            //keep the current food level
             event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void pnEnterWater(PlayerMoveEvent event) {
-        if (event.getPlayer().getWorld().getName().equalsIgnoreCase("world")) {
-            if (event.getPlayer().getLocation().getBlock().getType() == Material.WATER || event.getPlayer().getLocation().getBlock().getType() == Material.LEGACY_STATIONARY_WATER) {
-                event.getPlayer().chat("/spawn");
-            }
         }
     }
 
@@ -226,6 +221,13 @@ public class ListenerConnect implements Listener {
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
         if (event.getPlayer().getWorld().getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityExplode(final EntityExplodeEvent event) {
+        if (event.getEntity() instanceof Creeper) {
             event.setCancelled(true);
         }
     }

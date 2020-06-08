@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * User: Alexander<br/>
@@ -115,46 +114,30 @@ public class DBUser {
     }
 
     public String getOnlinetime() {
-        long seconds = Long.parseLong(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "ontime"));
-        long minutes = 0L;
+        int minutes = Integer.parseInt(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "ontime"));
+
         long hours = 0L;
         long days = 0L;
         long weeks = 0L;
-        while (seconds > 60L) {
-            seconds -= 60L;
-            ++minutes;
-        }
+
         while (minutes > 60L) {
             minutes -= 60L;
             ++hours;
         }
-        while (hours > 24L) {
-            hours -= 24L;
+        while (hours > 23L) {
+            hours -= 23L;
             ++days;
         }
-        while (days > 7L) {
-            days -= 7L;
+        while (days > 6L) {
+            days -= 6L;
             ++weeks;
         }
         while (weeks > 7L) {
             days -= 7L;
         }
-        if (weeks != 0L) {
-            return "§c" + weeks + " §7Woche(n) §c" + "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (days != 0L) {
-            return "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (hours != 0L) {
-            return "§c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (minutes != 0L) {
-            return "§c" + minutes + " §7Minute(n) §c" + seconds + " §7Sekunde(n)";
-        }
-        if (seconds != 0L) {
-            return "§c" + seconds + " §7Sekunde(n)";
-        }
-        return "§c" + weeks + " §7Woche(n) §c" + "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n) §c" + minutes + " §7Minute(n) §6" + seconds + " §7Sekunde(n)";
+
+        return "§c" + days + " §7Tag(e) §c" + hours + " §7Stunde(n)";
+
 
     }
 

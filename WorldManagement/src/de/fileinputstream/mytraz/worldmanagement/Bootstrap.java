@@ -1,15 +1,14 @@
 package de.fileinputstream.mytraz.worldmanagement;
 
-import de.fileinputstream.mytraz.worldmanagement.backup.BackupData;
 import de.fileinputstream.mytraz.worldmanagement.backup.BackupManager;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.ChatLogManager;
 import de.fileinputstream.mytraz.worldmanagement.commands.*;
+import de.fileinputstream.mytraz.worldmanagement.db.RedisConnector;
 import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerChat;
 import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
 import de.fileinputstream.mytraz.worldmanagement.tracker.OntimeTracker;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -58,6 +57,7 @@ import java.util.Locale;
 public class Bootstrap extends JavaPlugin {
 
     static Bootstrap instance;
+    RedisConnector redisConnector;
     Jedis jedis;
     WorldManager worldManager;
     String spawnWorld;
@@ -88,11 +88,12 @@ public class Bootstrap extends JavaPlugin {
         getConfig().addDefault("SpawnWorld", "world");
         saveConfig();
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        jedis = new Jedis("127.0.0.1", 6379);
-        jedis.connect();
+        redisConnector = new RedisConnector();
+        redisConnector.connectToRedis("127.0.0.1", 6379);
+        jedis = redisConnector.getJedis();
         System.out.println("Connected to redis!");
-        if(!getJedis().exists("survivalWorldIDCount")) {
-            getJedis().set("survivalWorldIDCount","1");
+        if (!getJedis().exists("survivalWorldIDCount")) {
+            getJedis().set("survivalWorldIDCount", "1");
             System.out.println("Backend -> Warning! Key 'survivalWorldIDCount' was missing! Created it.");
         }
 
@@ -105,19 +106,22 @@ public class Bootstrap extends JavaPlugin {
         Locale locale = new Locale("de", "DE");
         String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM, yyyy", locale));
 
-       // Bootstrap.getInstance().getBackupManager().performBackup(new BackupData("3",System.currentTimeMillis()));
+        // Bootstrap.getInstance().getBackupManager().performBackup(new BackupData("3",System.currentTimeMillis()));
 
-      //  Bukkit.getOnlinePlayers().forEach(p -> {
-         //   Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
-           //     new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
-            //}, 1, 1);
+        //  Bukkit.getOnlinePlayers().forEach(p -> {
+        //   Bukkit.getScheduler().runTaskTimer(Bootstrap.getInstance(), () -> {
+        //     new ListenerConnect().sendTablist(p, "§l§4MyTraz §7No Limit Netzwerk\n §7- Server: §aSurvival", "§7Teamspeak: MyTraz.NET \n" + date + "\n§cSpieler online: §e" + Bukkit.getOnlinePlayers().size());
+        //}, 1, 1);
         //});
-
-
         NameTags.createScoreboardTeam();
         loadCommands();
 
-
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                getBackupManager().runCronJob();
+            }
+        }, 1, 20 * 60 * 60 * 6);
     }
 
     @Override
@@ -148,6 +152,7 @@ public class Bootstrap extends JavaPlugin {
         getCommand("listbackups").setExecutor(new CommandBackupList());
         getCommand("restorebackup").setExecutor(new CommandRestoreBackup());
         getCommand("dobackup").setExecutor(new CommandDoBackup());
+        getCommand("ec").setExecutor(new CommandEnderChest());
     }
 
 
@@ -180,4 +185,5 @@ public class Bootstrap extends JavaPlugin {
     public Scoreboard getMainScoreboard() {
         return mainScoreboard;
     }
+
 }

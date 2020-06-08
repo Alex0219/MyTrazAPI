@@ -1,14 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.backup;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.backup.compression.ZipUtils;
-
-
-import org.bukkit.World;
-
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.jline.internal.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,8 +55,12 @@ public class BackupManager {
     }
 
     public void runCronJob() {
-        for (World worlds : Bukkit.getWorlds()) {
-
+        int lastWorld = Integer.valueOf(Bootstrap.getInstance().getJedis().get("survivalWorldIDCount"));
+        for (int i = 0; i <= lastWorld; i++) {
+            //skip world 0
+            if (i != 0) {
+                performBackup(new BackupData(String.valueOf(i), System.currentTimeMillis()));
+            }
         }
     }
 }

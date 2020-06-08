@@ -3,7 +3,6 @@ package de.fileinputstream.mytraz.worldmanagement.listeners;
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.entry.ChatEntry;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
-import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,8 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.text.SimpleDateFormat;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,7 +45,7 @@ public class ListenerChat implements Listener {
         event.setCancelled(true);
 
 
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -58,7 +58,7 @@ public class ListenerChat implements Listener {
                     Bukkit.broadcastMessage("§2" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("spieler")) {
-                    Bukkit.broadcastMessage("§7" + p.getName() + "§7 » " + msg);
+                    Bukkit.broadcastMessage("§a" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("dev")) {
                     Bukkit.broadcastMessage("§3" + p.getName() + "§7 » " + msg);
@@ -66,8 +66,8 @@ public class ListenerChat implements Listener {
                 if (rank.equalsIgnoreCase("admin")) {
                     Bukkit.broadcastMessage("§4Admin §7❘ §4" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("sup")) {
-                    Bukkit.broadcastMessage("§1" + p.getName() + "§7 » " + msg);
+                if (rank.equalsIgnoreCase("stammspieler")) {
+                    Bukkit.broadcastMessage("§6Stammspieler §7| §6" + p.getName() + "§7 » " + msg);
                 }
                 if (rank.equalsIgnoreCase("youtuber")) {
                     Bukkit.broadcastMessage("§5" + p.getName() + "§7 » " + msg);

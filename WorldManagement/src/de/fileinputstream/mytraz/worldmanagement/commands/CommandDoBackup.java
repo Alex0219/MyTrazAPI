@@ -1,10 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.BackupPerformData;
-
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
-import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.bukkit.Bukkit;
@@ -91,8 +89,10 @@ public class CommandDoBackup implements CommandExecutor {
 
                         player.sendMessage("§bAlex0219.de §7» §aWiederherstellen des Backups erfolgreich abgeschlossen!");
 
+
                     Bukkit.createWorld(new WorldCreator(performData.getWorldID()));
 
+                    CommandRestoreBackup.backupList.remove(player);
                     return true;
                 } else {
                     player.sendMessage("§bAlex0219.de §7» Verwende /dobackup");

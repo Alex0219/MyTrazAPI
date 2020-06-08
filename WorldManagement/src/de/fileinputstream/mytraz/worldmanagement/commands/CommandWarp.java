@@ -70,8 +70,6 @@ public class CommandWarp implements CommandExecutor {
 
                     Location spawnLocation = new Location(world, x, y, z, yaw, pitch);
                     player.teleport(spawnLocation);
-
-
                 } else {
                     player.sendMessage("§cWarp §7● §4Dieser Warp existiert nicht!");
                 }

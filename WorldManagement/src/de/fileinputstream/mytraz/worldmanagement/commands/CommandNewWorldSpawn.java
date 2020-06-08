@@ -55,7 +55,8 @@ public class CommandNewWorldSpawn implements CommandExecutor {
                 World world = Bukkit.getWorld(Bootstrap.getInstance().getWorldManager().getWorld(uuid));
                 if (player.getWorld().getName().equalsIgnoreCase(world.getName())) {
                     Location location = player.getLocation();
-                    world.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                    world.setSpawnLocation(location);
+
                     player.sendMessage("§bAlex0219.de §7» Du hast den Spawnpunkt für deine Welt gesetzt!");
                 } else {
                     player.sendMessage("§bAlex0219.de §7» Diese Welt gehört dir nicht!");

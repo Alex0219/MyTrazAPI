@@ -1,7 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement.world;
 
+import com.boydti.fawe.bukkit.wrapper.AsyncWorld;
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -81,7 +81,8 @@ public class WorldManager {
             worlds.add(worldID);
         }
         String joinedWorld = Arrays.toString(worlds.toArray());
-        Bukkit.createWorld(new WorldCreator(worldID));
+        AsyncWorld world = AsyncWorld.create(new WorldCreator(worldID));
+
         Bukkit.getPlayer(name).sendMessage("§aDeine Welt " + "§c" + worldID + " §awird nun erstellt. Wenn die Erstellung abgeschlossen ist, wirst du automatisch in deine Welt teleportiert.");
         Bootstrap.getInstance().getJedis().hset("world:" + worldID, "timestamp", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
         Bootstrap.getInstance().getJedis().hset("world:" + worldID, "owner", name);

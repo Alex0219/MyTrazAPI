@@ -25,14 +25,17 @@ commands:
     tutorial:
         aliases: [help,tut]
     gm:
-        aliases: [gamemode,gmode]
+      aliases: [gamemode,gmode]
     vanish:
-       aliases: [v]
+      aliases: [v]
     ontime:
-       aliases: [spielzeit,playtime]
+      aliases: [spielzeit,playtime]
     fly:
 
     setwarp:
+
+    ec:
+      aliases: [bagpack,enderchest,rucksack]
 
     warp:
 

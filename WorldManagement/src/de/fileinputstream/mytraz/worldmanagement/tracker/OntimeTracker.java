@@ -1,6 +1,9 @@
 package de.fileinputstream.mytraz.worldmanagement.tracker;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
+import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,12 +54,26 @@ public class OntimeTracker {
             @Override
             public void run() {
                 for (final Player all : Bukkit.getOnlinePlayers()) {
-                    final long currentOntime = Long.parseUnsignedLong(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "ontime"));
-                    final long ontimeNow = currentOntime+1L;
-                    Bootstrap.getInstance().getJedis().hset("uuid:" + UUIDFetcher.getUUID(all.getName()), "ontime", String.valueOf(ontimeNow));
+                    try {
+                        final RankEnum rank = RankEnum.getRankByName(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "rank"));
+                        final long currentOntime = Long.parseUnsignedLong(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "ontime"));
+                        if (rank.getRankLevel() == 0 && currentOntime > 5630) {
+                            //set new rank if ontime is more than 4 days
+                            RankManager.setRank(all.getUniqueId().toString(), "stammspieler");
+                            //update tablist
+                            Bukkit.getOnlinePlayers().forEach(players -> NameTags.setTags(players));
+                        }
+
+                        final long ontimeNow = currentOntime + 1;
+                        if (!Bootstrap.getInstance().getJedis().isConnected()) {
+                            Bootstrap.getInstance().getJedis().connect();
+                        }
+                        Bootstrap.getInstance().getJedis().hset("uuid:" + UUIDFetcher.getUUID(all.getName()), "ontime", String.valueOf(ontimeNow));
+                    } catch (final Exception ex) {
+                    }
                 }
             }
-        }, 20L, 20L);
+        }, 1L, 60 * 20);
     }
 
 

@@ -1,9 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import com.boydti.fawe.bukkit.wrapper.AsyncWorld;
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
-
-import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
@@ -64,7 +63,7 @@ public class CommandTPWorld implements CommandExecutor {
                     String world = getWorld(uuid);
                     System.out.println(world);
                     if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(world).exists()) {
-                        new WorldCreator(world).createWorld();
+                        AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(world));
                         Bukkit.getWorld(world).setKeepSpawnInMemory(false);
                         player.teleport(Bukkit.getServer().getWorld(world).getSpawnLocation());
                     } else {
