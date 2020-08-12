@@ -3,6 +3,7 @@ main: de.fileinputstream.mytraz.worldmanagement.Bootstrap
 version: 1.0
 description: MyTraz World Management
 author: FileInputStream
+api-version: 1.16
 
 commands:
     tpworld:
@@ -50,3 +51,26 @@ commands:
     restorebackup:
 
     dobackup:
+
+    vote:
+
+    build:
+
+    setspawn:
+
+    residents:
+
+    spawn:
+
+    invsee:
+
+    cc:
+        aliases: [chatclear,leerdenchat]
+
+    denybackup:
+
+    createvotechest:
+
+    home:
+
+    sethome:
