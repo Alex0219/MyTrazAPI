@@ -1,11 +1,12 @@
 package de.fileinputstream.mytraz.worldmanagement.uuid;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
-import net.minecraft.server.v1_16_R1.ChatBaseComponent;
-import net.minecraft.server.v1_16_R1.ChatComponentText;
-import net.minecraft.server.v1_16_R1.IChatBaseComponent;
-import net.minecraft.server.v1_16_R1.ScoreboardTeamBase;
+import net.minecraft.server.v1_16_R2.ChatBaseComponent;
+import net.minecraft.server.v1_16_R2.ChatComponentText;
+import net.minecraft.server.v1_16_R2.IChatBaseComponent;
+import net.minecraft.server.v1_16_R2.ScoreboardTeamBase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -41,30 +42,50 @@ public class NameTags {
     public static void setTags(final Player player) {
         String userGroup;
 
-        String uuid = player.getUniqueId().toString();
-        String s = RankManager.getRank(uuid);
-        if (s.equalsIgnoreCase("superadmin".toLowerCase())) {
+
+        RankEnum rank = Bootstrap.getInstance().getRankManager().getDBUser(player.getName()).getRank();
+        if (rank == RankEnum.SUPERADMIN) {
             userGroup = "001SuperAdmin";
-        } else if (s.equalsIgnoreCase("admin".toLowerCase())) {
+        } else if (rank == RankEnum.ADMIN) {
+            if (Bootstrap.getInstance().getAfkPlayers().contains(player)) {
+                player.setPlayerListName("§4Admin §7| §4" + player.getName() + "§7[§cAFK§7]");
+            } else {
+                player.setPlayerListName("§4Admin §7| §4" + player.getName());
+            }
             player.setDisplayName("§4Admin §7| §4" + player.getName());
-            //player.setPlayerListName("§4Admin §7| §4" + player.getName());
             userGroup = "002Admin";
-        } else if (s.equalsIgnoreCase("mod".toLowerCase())) {
+        } else if (rank == RankEnum.MOD) {
             userGroup = "003Mod";
+            if (Bootstrap.getInstance().getAfkPlayers().contains(player)) {
+                player.setPlayerListName("§cMod §7| §c" + player.getName() + "§7[§cAFK§7]");
+            } else {
+                player.setPlayerListName("§cMod §7| §c" + player.getName());
+            }
             player.setDisplayName("§cMod §7| §c" + player.getName());
-            player.setPlayerListName("§cMod §7| §c" + player.getName());
-        } else if (s.equalsIgnoreCase("spender".toLowerCase())) {
+        } else if (rank == RankEnum.SPENDER) {
             userGroup = "004Spender";
+            if (Bootstrap.getInstance().getAfkPlayers().contains(player)) {
+                player.setPlayerListName("§bSpender §7| §b" + player.getName() + "§7[§cAFK§7]");
+            } else {
+                player.setPlayerListName("§bSpender §7| §b" + player.getName());
+            }
             player.setDisplayName("§bSpender §7| §c" + player.getName());
-            player.setPlayerListName("§bSpender §7| §c" + player.getName());
-        } else if (s.equalsIgnoreCase("stammspieler".toLowerCase())) {
+        } else if (rank == RankEnum.STAMMSPIELER) {
             userGroup = "005Stammspieler";
+            if (Bootstrap.getInstance().getAfkPlayers().contains(player)) {
+                player.setPlayerListName("§6Stammspieler §7| §6" + player.getName() + "§7[§cAFK§7]");
+            } else {
+                player.setPlayerListName("§6Stammspieler §7| §6" + player.getName());
+            }
             player.setDisplayName("§6Stammspieler §7| §6" + player.getName());
-            player.setPlayerListName("§6Stammspieler §7| §6" + player.getName());
         } else {
             userGroup = "006Spieler";
+            if (Bootstrap.getInstance().getAfkPlayers().contains(player)) {
+                player.setPlayerListName("§a" + player.getName() + "§7[§cAFK§7]");
+            } else {
+                player.setPlayerListName("§a" + player.getName());
+            }
             player.setDisplayName("§a" + player.getName());
-            player.setPlayerListName("§a" + player.getName());
         }
         Bootstrap.getInstance().getMainScoreboard().getTeam(userGroup).addPlayer(player);
 

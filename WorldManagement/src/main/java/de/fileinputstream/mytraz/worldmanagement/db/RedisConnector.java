@@ -2,6 +2,9 @@ package de.fileinputstream.mytraz.worldmanagement.db;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+import java.time.Duration;
 
 
 public class RedisConnector {
@@ -18,7 +21,18 @@ public class RedisConnector {
      * @param port
      */
     public void connectToRedis(String host, int port) {
-        jedisPool = new JedisPool(host, port);
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxIdle(0);
+        config.setMinIdle(1);
+        config.setMaxWaitMillis(30000);
+        config.setTestOnBorrow(true);
+        config.setTestOnReturn(true);
+        config.setTestWhileIdle(true);
+        config.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
+        config.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
+        config.setNumTestsPerEvictionRun(3);
+        config.setBlockWhenExhausted(true);
+        jedisPool = new JedisPool(config, host, port);
         System.out.println("Connected to redis server at " + host + ":" + port + " using password: no");
     }
 

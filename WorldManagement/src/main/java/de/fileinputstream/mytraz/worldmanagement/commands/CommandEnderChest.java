@@ -1,5 +1,6 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import org.bukkit.Bukkit;
@@ -16,7 +17,7 @@ public class CommandEnderChest implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (commandSender instanceof Player) {
-            DBUser dbUser = new DBUser(((Player) commandSender).getUniqueId().toString(), commandSender.getName());
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(commandSender.getName());
 
             if (args.length == 1) {
 
@@ -28,9 +29,9 @@ public class CommandEnderChest implements CommandExecutor {
                         return true;
                     }
 
-                    DBUser targetDbUser = new DBUser(target.getUniqueId().toString(), target.getName());
+                    DBUser targetDbUser = Bootstrap.getInstance().getRankManager().getDBUser(target.getName());
 
-                    if (!(dbUser.getRank().getRankLevel() > targetDbUser.getRank().getRankLevel())) {
+                    if (!(dbUser.getRank().getRankLevel() >= targetDbUser.getRank().getRankLevel())) {
                         commandSender.sendMessage("§bMC-Survival.de §7» §cDu darfst die Enderchest dieses Spielers nicht öffnen!");
                         return true;
                     } else {

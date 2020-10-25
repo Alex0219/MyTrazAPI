@@ -6,11 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="NPC-Util" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="MyTrazAPI" target="1.5" />
       <module name="MyTrazKnockffa" target="1.5" />
+      <module name="NPC-Util" target="8" />
+      <module name="WorldManagement" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

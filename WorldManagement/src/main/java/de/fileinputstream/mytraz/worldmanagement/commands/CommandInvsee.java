@@ -1,5 +1,6 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
@@ -18,7 +19,7 @@ public class CommandInvsee implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (commandSender instanceof Player) {
-            DBUser dbUser = new DBUser(((Player) commandSender).getUniqueId().toString(), commandSender.getName());
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(commandSender.getName());
             if (dbUser.getRank() == RankEnum.ADMIN || dbUser.getRank() == RankEnum.MOD) {
                 if (args.length == 1) {
                     Player target = Bukkit.getPlayer(args[0]);
@@ -27,9 +28,9 @@ public class CommandInvsee implements CommandExecutor {
                         return true;
                     }
 
-                    DBUser targetDbUser = new DBUser(target.getUniqueId().toString(), target.getName());
+                    DBUser targetDbUser = Bootstrap.getInstance().getRankManager().getDBUser(target.getName());
 
-                    if (!(dbUser.getRank().getRankLevel() > targetDbUser.getRank().getRankLevel())) {
+                    if (!(dbUser.getRank().getRankLevel() >= targetDbUser.getRank().getRankLevel())) {
                         commandSender.sendMessage("§bMC-Survival.de §7» §cDu darfst das Inventar dieses Spielers nicht öffnen!");
                         return true;
                     }

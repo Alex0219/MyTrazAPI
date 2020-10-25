@@ -5,6 +5,7 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/MyTrazKnockffa/pom.xml" />
+        <option value="$PROJECT_DIR$/WorldManagement/pom.xml" />
       </list>
     </option>
   </component>

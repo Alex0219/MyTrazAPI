@@ -58,8 +58,6 @@ public class CommandWorlds implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = player.getUniqueId().toString();
-            String world = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
-            ExecutorService service = Executors.newCachedThreadPool();
             worlds = Bootstrap.getInstance().getWorldManager().getResidentWorlds(uuid);
 
             if (worlds.isEmpty()) {

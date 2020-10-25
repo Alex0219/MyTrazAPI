@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="NPCUtil">
+    <output-path>$USER_HOME$/Desktop/Server/plugins</output-path>
+    <root id="archive" name="NPCUtil.jar">
+      <element id="module-output" name="NPC-Util" />
+      <element id="file-copy" path="$PROJECT_DIR$/WorldManagement/NPC-Util/src/main/resources/plugin.yml" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/npclib-api-2.9-SNAPSHOT.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

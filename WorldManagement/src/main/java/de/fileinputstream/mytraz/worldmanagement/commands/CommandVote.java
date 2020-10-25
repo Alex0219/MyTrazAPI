@@ -1,5 +1,6 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,11 +23,13 @@ public class CommandVote implements CommandExecutor {
 
         if (commandSender instanceof Player) {
             final Player player = (Player) commandSender;
-            DBUser user = new DBUser(player.getUniqueId().toString(), player.getName());
-            player.sendMessage("§bMC-Survival.de §7» §7Du hast bereits §c" + user.getVotes() + " §7Votes");
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(commandSender.getName());
+            player.sendMessage("§bMC-Survival.de §7» §7Du hast bereits §c" + dbUser.getVotes() + " §7Votes");
             player.sendMessage("§bMC-Survival.de §7» §7Hier kannst du voten:");
-            player.sendMessage("§7https://minecraft-server.eu/server/index/21945/");
+            player.sendMessage("§7https://minecraft-server.eu/vote/index/21945");
             player.sendMessage("§7https://www.serverliste.net/vote/3628");
+            player.sendMessage("§7https://minecraft-mp.com/server/267450/vote/");
+            player.sendMessage("§7https://minecraft-server-list.com/server/466719/vote/");
             player.sendMessage("§7https://www.minecraft-serverlist.net/vote/54438");
             return true;
         }

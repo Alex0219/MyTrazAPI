@@ -65,6 +65,7 @@ public class CommandTutorial implements CommandExecutor {
             pages.add("§c/acceptinvite \n \n§rNimmt die aktuelle Welteneinladung eines Spielers an.");
             pages.add("§c/removeresident <Name> \n \n§rEntfernt einen Spieler aus deiner Welt.");
             pages.add("§c/newworldspawn \n \n§rSetzt den Spawn deiner Welt auf die aktuelle Position");
+            pages.add("§c/lockworld\n \n§rWird alle Nicht-Bewohner aus deiner Welt.");
             pages.add("§c/sethome \n \n§rSetzt dein Home auf die aktuelle Position.");
             pages.add("§c/home \n \n§rTeleportiert dich zu deinem Home.");
             pages.add("§c/tpworld oder /tpworld <Weltenname> \n§rTeleportiert dich in eine Welt. Mit einer ID als zweites Argument kannst du in Welten gelangen, in denen du Bewohner bist.");

@@ -2,6 +2,7 @@ package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

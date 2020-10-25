@@ -238,7 +238,6 @@ public class WorldManager {
         File[] files = folder.listFiles();
         List<String> worldsResidents = new ArrayList<>();
         for (File file : files) {
-            System.out.println(file.getName());
             FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
             List<String> worlds = cfg.getStringList("Residents");
             if (worlds.contains(uuid)) {

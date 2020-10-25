@@ -1,19 +1,29 @@
 package de.fileinputstream.mytraz.worldmanagement;
 
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import de.fileinputstream.mytraz.worldmanagement.anticrash.AntiCrash;
 import de.fileinputstream.mytraz.worldmanagement.backup.BackupManager;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.ChatLogManager;
 import de.fileinputstream.mytraz.worldmanagement.commands.*;
 import de.fileinputstream.mytraz.worldmanagement.db.RedisConnector;
-import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerChat;
-import de.fileinputstream.mytraz.worldmanagement.listeners.ListenerConnect;
-import de.fileinputstream.mytraz.worldmanagement.listeners.VoteCaseListener;
-import de.fileinputstream.mytraz.worldmanagement.listeners.VoteEventListener;
+import de.fileinputstream.mytraz.worldmanagement.language.LanguageManager;
+import de.fileinputstream.mytraz.worldmanagement.listeners.*;
+import de.fileinputstream.mytraz.worldmanagement.npc.NPCManager;
+import de.fileinputstream.mytraz.worldmanagement.npc.NPCPlayerInjector;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.tracker.OntimeTracker;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
 import de.fileinputstream.mytraz.worldmanagement.votegamble.CaseManager;
 import de.fileinputstream.mytraz.worldmanagement.votegamble.CaseTimer;
 import de.fileinputstream.mytraz.worldmanagement.world.WorldManager;
+import net.minecraft.server.v1_16_R2.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,8 +37,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import redis.clients.jedis.Jedis;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 
 /**
@@ -80,6 +89,16 @@ public class Bootstrap extends JavaPlugin {
     Location spawnLocation;
     ArrayList<String> permittedBuilders = new ArrayList<>();
     HashMap<String, String> tpaInvites = new HashMap<>();
+    public ProtocolManager protocolManager;
+    public LanguageManager languageManager;
+    public ArrayList<String> currentDownloadingWorlds = new ArrayList<>();
+    RankManager rankManager;
+    NPCManager npcManager;
+    ArrayList<Player> afkPlayers = new ArrayList<>();
+    NPCPlayerInjector npcPlayerInjector;
+    private Map<UUID, List<UUID>> tpaRequests = new HashMap<>(), tpaHereRequests = new HashMap<>(),
+            tradeRequests = new HashMap<>();
+
 
     public static Bootstrap getInstance() {
         return instance;
@@ -100,6 +119,8 @@ public class Bootstrap extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ListenerChat(), this);
         Bukkit.getPluginManager().registerEvents(new VoteEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new VoteCaseListener(), this);
+        Bukkit.getPluginManager().registerEvents(new AntiCrashListener(), this);
+        Bukkit.getPluginManager().registerEvents(new NPCPlayerInjector(), this);
         getConfig().options().copyDefaults(true);
         getConfig().addDefault("DB", "1");
         getConfig().addDefault("SpawnWorld", "world");
@@ -115,14 +136,21 @@ public class Bootstrap extends JavaPlugin {
         }
 
         mainScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
+        languageManager = new LanguageManager();
         new OntimeTracker().startCounter();
         chatLogManager = new ChatLogManager();
         spawnWorld = getConfig().getString("SpawnWorld");
 
         NameTags.createScoreboardTeam();
 
+        rankManager = new RankManager();
+        npcManager = new NPCManager();
+        npcPlayerInjector = new NPCPlayerInjector();
+
         loadCommands();
+
+        this.protocolManager = ProtocolLibrary.getProtocolManager();
+        new AntiCrash(Bootstrap.getInstance());
 
         runEntityDestroyScheduler();
 
@@ -159,6 +187,7 @@ public class Bootstrap extends JavaPlugin {
                 getBackupManager().runCronJob();
             }
         }, 20 * 60 * 60 * 6, 20 * 60 * 60 * 6);
+
     }
 
     @Override
@@ -174,7 +203,6 @@ public class Bootstrap extends JavaPlugin {
         getCommand("removeresident").setExecutor(new CommandRemoveResident());
         getCommand("acceptinvite").setExecutor(new CommandAcceptinvite());
         getCommand("newworldspawn").setExecutor(new CommandNewWorldSpawn());
-        getCommand("worldinfo").setExecutor(new CommandWorldInfo());
         getCommand("worlds").setExecutor(new CommandWorlds());
         getCommand("setpvp").setExecutor(new CommandSetPvP());
         getCommand("tutorial").setExecutor(new CommandTutorial());
@@ -202,6 +230,19 @@ public class Bootstrap extends JavaPlugin {
         getCommand("createvotechest").setExecutor(new CommandCreateVoteChest());
         getCommand("home").setExecutor(new CommandHome());
         getCommand("sethome").setExecutor(new CommandSethome());
+        getCommand("discord").setExecutor(new CommandDiscord());
+        getCommand("tp").setExecutor(new CommandTeleport());
+        getCommand("tpaaccept").setExecutor(new CommandTPAAccept());
+        getCommand("tpa").setExecutor(new CommandTPA());
+        getCommand("tpadeny").setExecutor(new CommandTPADeny());
+        getCommand("tpahere").setExecutor(new CommandTPAHere());
+        getCommand("tpahereaccept").setExecutor(new CommandTPAHereAccept());
+        getCommand("tpahereall").setExecutor(new CommandTPAHereAll());
+        getCommand("tpaheredeny").setExecutor(new CommandTPAHereDeny());
+        getCommand("tpatoggle").setExecutor(new CommandTPAToggle());
+        getCommand("lockworld").setExecutor(new CommandLockWorld());
+        getCommand("afk").setExecutor(new CommandAFK());
+
     }
 
     private void runEntityDestroyScheduler() {
@@ -220,6 +261,12 @@ public class Bootstrap extends JavaPlugin {
 
 
     public Jedis getJedis() {
+        try {
+            return jedis;
+        } catch (Exception exception) {
+            Bootstrap.getInstance().getRedisConnector().connectToRedis("127.0.0.1", 6379);
+            Bootstrap.getInstance().jedis = Bootstrap.getInstance().getRedisConnector().getJedis();
+        }
         return jedis;
     }
 
@@ -261,5 +308,37 @@ public class Bootstrap extends JavaPlugin {
 
     public HashMap<String, String> getTpaInvites() {
         return tpaInvites;
+    }
+
+    public RankManager getRankManager() {
+        return rankManager;
+    }
+
+    public Map<UUID, List<UUID>> getTpaRequests() {
+        return tpaRequests;
+    }
+
+    public Map<UUID, List<UUID>> getTpaHereRequests() {
+        return tpaHereRequests;
+    }
+
+    public ArrayList<Player> getAfkPlayers() {
+        return afkPlayers;
+    }
+
+    public NPCManager getNpcManager() {
+        return npcManager;
+    }
+
+    public NPCPlayerInjector getNpcPlayerInjector() {
+        return npcPlayerInjector;
+    }
+
+    public ArrayList<String> getCurrentDownloadingWorlds() {
+        return currentDownloadingWorlds;
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
 }

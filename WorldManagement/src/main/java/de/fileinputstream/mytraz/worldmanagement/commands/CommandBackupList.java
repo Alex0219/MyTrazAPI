@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * © Alexander Fiedler 2018 - 2019
@@ -35,64 +36,70 @@ public class CommandBackupList implements CommandExecutor {
             if (rank.equalsIgnoreCase("admin")) {
                 if (args.length == 1) {
                     String worldID = args[0];
-                    List<String> worldBackups = Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(args[0]);
-                    if (worldBackups.size() < 1) {
-                        player.sendMessage("§7MC-Survival.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
-                        return true;
-                    }
-                    List<List<String>> pages = CommandBackupList.getPages(worldBackups, 5);
-                    player.sendMessage("§bMC-Survival.de §7» Es gibt §c" + pages.size() + " §7Seiten.");
-                    player.sendMessage("§bMC-Survival.de §7» Seite: 0");
-                    for (int i = 0; i < pages.size(); i++) {
-                        if (i == 0) {
+                    player.sendMessage("§cLade Daten.. Könnte etwas Zeit in Anspruch nehmen.");
+                    Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(worldID, (Consumer<List<String>>) worldBackups -> {
+                        if (worldBackups.size() < 1) {
+                            player.sendMessage("§7MC-Survival.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
+                            return;
+                        }
+                        List<List<String>> pages = CommandBackupList.getPages(worldBackups, 5);
+                        player.sendMessage("§bMC-Survival.de §7» Es gibt §c" + pages.size() + " §7Seiten.");
+                        player.sendMessage("§bMC-Survival.de §7» Seite: 0");
+                        for (int i = 0; i < pages.size(); i++) {
+                            if (i == 0) {
 
-                            List<String> sortedList = pages.get(i);
-                            Collections.sort(sortedList, Collections.reverseOrder());
-                            for (String singleListItem : sortedList) {
-                                String[] splitted = singleListItem.split("_");
-                                String millisString = splitted[1].replace(".zip", "");
-                                millisString = millisString.replace(" ", "");
-                                Long millis = Long.valueOf(millisString);
-                                Instant instant = Instant.ofEpochMilli(millis);
-                                ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
+                                List<String> sortedList = pages.get(i);
+                                Collections.sort(sortedList, Collections.reverseOrder());
+                                for (String singleListItem : sortedList) {
+                                    String[] splitted = singleListItem.split("_");
+                                    String millisString = splitted[1].replace(".zip", "");
+                                    millisString = millisString.replace(" ", "");
+                                    Long millis = Long.valueOf(millisString);
+                                    Instant instant = Instant.ofEpochMilli(millis);
+                                    ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
 
-                                DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
-                                player.sendMessage("§bMC-Survival.de §7» ID:§b" + millis + " §7Von:§b" + fmt.format(z));
+                                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
+                                    player.sendMessage("§bMC-Survival.de §7» ID:§b" + millis + " §7Von:§b" + fmt.format(z));
 
+                                }
                             }
+
                         }
 
-                    }
+                    });
 
                 } else if (args.length == 2) {
+                    String worldID = args[0];
+                    player.sendMessage("§cLade Daten.. Könnte etwas Zeit in Anspruch nehmen.");
+                    Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(worldID, (Consumer<List<String>>) worldBackups -> {
+                        int pageNumber = Integer.valueOf(args[1]);
+                        if (worldBackups.size() < 1) {
+                            player.sendMessage("§7MC-Survival.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
+                            return;
+                        }
+                        List<List<String>> pages = CommandBackupList.getPages(worldBackups, 5);
+                        for (int i = 0; i < pages.size(); i++) {
+                            System.out.println(i);
+                            if (i == pageNumber) {
+                                System.out.println("List: " + i);
+                                List<String> sortedList = pages.get(i);
+                                Collections.sort(sortedList, Collections.reverseOrder());
+                                for (String singleListItem : sortedList) {
+                                    String[] splitted = singleListItem.split("_");
+                                    String millisString = splitted[1].replace(".zip", "");
+                                    millisString = millisString.replace(" ", "");
+                                    Long millis = Long.valueOf(millisString);
+                                    Instant instant = Instant.ofEpochMilli(millis);
+                                    ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
 
-                    int pageNumber = Integer.valueOf(args[1]);
-                    List<String> worldBackups = Bootstrap.getInstance().getBackupManager().getBackupsFromWorld(args[0]);
-                    if (worldBackups.size() < 1) {
-                        player.sendMessage("§7MC-Survival.de §7» §cFür diese Welt wurde noch kein Backup erstellt!");
-                        return true;
-                    }
-                    List<List<String>> pages = CommandBackupList.getPages(worldBackups, 5);
-                    for (int i = 0; i < pages.size(); i++) {
-                        System.out.println(i);
-                        if (i == pageNumber) {
-                            System.out.println("List: " + i);
-                            List<String> sortedList = pages.get(i);
-                            Collections.sort(sortedList, Collections.reverseOrder());
-                            for (String singleListItem : sortedList) {
-                                String[] splitted = singleListItem.split("_");
-                                String millisString = splitted[1].replace(".zip", "");
-                                millisString = millisString.replace(" ", "");
-                                Long millis = Long.valueOf(millisString);
-                                Instant instant = Instant.ofEpochMilli(millis);
-                                ZonedDateTime z = instant.atZone(ZoneId.of("Europe/Berlin"));
+                                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
+                                    player.sendMessage("§bMC-Survival.de §7» ID:§b" + millis + " §7Von:§b" + fmt.format(z));
 
-                                DateTimeFormatter fmt = DateTimeFormatter.ofPattern(" dd.MM.yyyy kk:mm ");
-                                player.sendMessage("§bMC-Survival.de §7» ID:§b" + millis + " §7Von:§b" + fmt.format(z));
-
+                                }
                             }
                         }
-                    }
+                    });
+
                 } else {
                     player.sendMessage("§bMC-Survival.de §7» Verwende /listbackups <ID> oder /listbackups <ID> <Seitenzahl>");
                     return true;

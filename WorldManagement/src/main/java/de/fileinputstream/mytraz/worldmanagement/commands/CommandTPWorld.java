@@ -2,6 +2,8 @@ package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import com.boydti.fawe.bukkit.wrapper.AsyncWorld;
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
@@ -57,17 +59,22 @@ public class CommandTPWorld implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String uuid = player.getUniqueId().toString();
-            String rank = RankManager.getRank(uuid);
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(player.getName());
             if (args.length == 0) {
                 if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
                     String world = getWorld(uuid);
                     System.out.println(world);
-                    if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(world).exists()) {
-                        AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(world));
-                        Bukkit.getWorld(world).setKeepSpawnInMemory(false);
-                        player.teleport(Bootstrap.getInstance().getWorldManager().getSpawnLocation(world));
+                    if (!Bootstrap.getInstance().getCurrentDownloadingWorlds().contains(world)) {
+                        if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(world).exists()) {
+                            AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(world));
+                            Bukkit.getWorld(world).setKeepSpawnInMemory(false);
+                            player.teleport(Bootstrap.getInstance().getWorldManager().getSpawnLocation(world));
+                        } else {
+                            player.sendMessage("§bMC-Survival.de §7» §cDiese Welt existiert nicht!");
+                            return true;
+                        }
                     } else {
-                        player.sendMessage("§bMC-Survival.de §7» §cDiese Welt existiert nicht!");
+                        player.sendMessage("§bMC-Survival.de §7» §cDiese Welt ist momentan nicht verfügbar, da ein Backup geladen wird!");
                         return true;
                     }
 
@@ -76,48 +83,49 @@ public class CommandTPWorld implements CommandExecutor {
                     return true;
                 }
             } else if (args.length == 1) {
-                if (getWorld(uuid).equalsIgnoreCase(args[0])) {
-                    if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
 
-
-                    }
-
-
-                } else {
-                    if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod")) {
-                        File file = new File(Bukkit.getServer().getWorldContainer(), args[0]);
-
-                        if (file.exists()) {
-                            AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(args[0]));
-                            Bukkit.getWorld(args[0]).setKeepSpawnInMemory(false);
-                            if (Bootstrap.getInstance().getWorldManager().getSpawnLocation(args[0]) != null) {
-                                player.teleport(Bootstrap.getInstance().getWorldManager().getSpawnLocation(args[0]));
-                            } else {
-                                player.teleport(worldInstance.getSpawnLocation());
-                            }
-
-                            return true;
-                        } else {
-                            player.sendMessage("§bMC-Survival.de §7» §cDiese Welt existiert nicht!");
-                            return true;
-                        }
-
-
-                    } else if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, args[0])) {
-                        if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(args[0]).exists()) {
-                            AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(args[0]));
-                            Bukkit.getWorld(args[0]).setKeepSpawnInMemory(false);
-                            player.teleport(Bootstrap.getInstance().getWorldManager().getSpawnLocation(args[0]));
-                        } else {
-                            player.sendMessage("§bMC-Survival.de §7» §cDiese Welt existiert nicht!");
-                            return true;
-                        }
+                if (!Bootstrap.getInstance().getCurrentDownloadingWorlds().contains(args[0])) {
+                    if (getWorld(uuid).equalsIgnoreCase(args[0])) {
 
                     } else {
-                        player.sendMessage("§bMC-Survival.de §7» Du darfst dich nicht in diese Welt teleportieren.");
-                        return true;
-                    }
+                        if (dbUser.getRank() == RankEnum.ADMIN || dbUser.getRank() == RankEnum.MOD) {
+                            File file = new File(Bukkit.getServer().getWorldContainer(), args[0]);
 
+                            if (file.exists()) {
+                                AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(args[0]));
+                                Bukkit.getWorld(args[0]).setKeepSpawnInMemory(false);
+                                if (Bootstrap.getInstance().getWorldManager().getSpawnLocation(args[0]) != null) {
+                                    player.teleport(Bootstrap.getInstance().getWorldManager().getSpawnLocation(args[0]));
+                                } else {
+                                    player.teleport(worldInstance.getSpawnLocation());
+                                }
+
+                                return true;
+                            } else {
+                                player.sendMessage("§bMC-Survival.de §7» §cDiese Welt existiert nicht!");
+                                return true;
+                            }
+
+
+                        } else if (Bootstrap.getInstance().getWorldManager().isResidentInWorld(uuid, args[0])) {
+                            if (Bootstrap.getInstance().getWorldManager().getWorldResidentsFile(args[0]).exists()) {
+                                AsyncWorld worldInstance = AsyncWorld.create(new WorldCreator(args[0]));
+                                Bukkit.getWorld(args[0]).setKeepSpawnInMemory(false);
+                                player.teleport(Bootstrap.getInstance().getWorldManager().getSpawnLocation(args[0]));
+                            } else {
+                                player.sendMessage("§bMC-Survival.de §7» §cDiese Welt existiert nicht!");
+                                return true;
+                            }
+
+                        } else {
+                            player.sendMessage("§bMC-Survival.de §7» Du darfst dich nicht in diese Welt teleportieren.");
+                            return true;
+                        }
+
+                    }
+                } else {
+                    player.sendMessage("§bMC-Survival.de §7» Du besitzt keine Welt.");
+                    return true;
                 }
 
 

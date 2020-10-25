@@ -1,8 +1,9 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,34 +24,22 @@ public class CommandVanish implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = player.getUniqueId().toString();
-            String rank = RankManager.getRank(uuid);
-            if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("mod")) {
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(player.getName());
+            if (dbUser.getRank() == RankEnum.ADMIN || dbUser.getRank() == RankEnum.MOD) {
                 if (args.length == 0) {
                     if (!getVanishedPlayers().contains(player)) {
                         player.sendMessage("§cDu bist nun im Vanish.");
                         Bukkit.broadcastMessage("§c" + player.getDisplayName() + " §7hat den Server verlassen.");
                         getVanishedPlayers().add(player);
-                        int fakePlayerCount = Bukkit.getOnlinePlayers().size() - CommandVanish.getVanishedPlayers().size();
-                        Bukkit.getOnlinePlayers().forEach(players -> {
-                            players.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§7Spieler online: " + fakePlayerCount + "/" + Bukkit.getMaxPlayers()));
-                        });
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§7Spieler online: " + fakePlayerCount + "/" + Bukkit.getMaxPlayers()));
                         Bukkit.getOnlinePlayers().forEach(players -> {
                             if (!RankManager.getRank(players.getUniqueId().toString()).equalsIgnoreCase("admin")) {
                                 players.hidePlayer(player);
                             }
-
                         });
                     } else {
                         player.sendMessage("§cDu bist nun nicht mehr im Vanish.");
                         Bukkit.broadcastMessage("§c" + player.getDisplayName() + " §7hat den Server betreten.");
                         getVanishedPlayers().remove(player);
-                        int fakePlayerCount = Bukkit.getOnlinePlayers().size() - CommandVanish.getVanishedPlayers().size();
-                        Bukkit.getOnlinePlayers().forEach(players -> {
-                            players.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§7Spieler online: " + fakePlayerCount + "/" + Bukkit.getMaxPlayers()));
-                        });
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§7Spieler online: " + fakePlayerCount + "/" + Bukkit.getMaxPlayers()));
                         Bukkit.getOnlinePlayers().forEach(players -> {
                             players.showPlayer(player);
                         });

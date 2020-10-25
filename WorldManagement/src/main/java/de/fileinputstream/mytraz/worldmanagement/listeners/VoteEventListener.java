@@ -2,7 +2,9 @@ package de.fileinputstream.mytraz.worldmanagement.listeners;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -25,13 +27,13 @@ public class VoteEventListener implements Listener {
     public void onVote(final VotifierEvent event) {
         final Vote vote = event.getVote();
         Bukkit.broadcastMessage("§bMC-Survival.de §7» §c" + vote.getUsername() + " §7hat gevotet! Vote jetzt auch und erhalte einen §cVote-Key§7! §7/vote");
-        DBUser dbuser = new DBUser(UUIDFetcher.getUUID(vote.getUsername()), vote.getUsername());
-        if (dbuser.getRank() != null) {
+        DBUser dbuser = Bootstrap.getInstance().getRankManager().getDBUser(event.getVote().getUsername());
+        if (dbuser != null) {
             dbuser.addVote();
         }
         if (Bukkit.getPlayer(vote.getUsername()) != null) {
             final Player player = Bukkit.getPlayer(vote.getUsername());
-            if (RankManager.getRank(player.getUniqueId().toString()).equalsIgnoreCase("stammspieler")) {
+            if (dbuser.getRank() == RankEnum.STAMMSPIELER || dbuser.getRank() == RankEnum.SPENDER) {
                 final ItemStack schlüssel = new ItemStack(Material.TRIPWIRE_HOOK, 2);
                 final ItemMeta schlüssel_im = schlüssel.getItemMeta();
                 schlüssel_im.setDisplayName("§6Vote-Key");

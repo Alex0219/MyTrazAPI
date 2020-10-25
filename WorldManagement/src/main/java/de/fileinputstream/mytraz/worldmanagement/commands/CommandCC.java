@@ -1,6 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -14,11 +16,10 @@ public class CommandCC implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            String uuid = player.getUniqueId().toString();
-            String rank = RankManager.getRank(uuid);
-            if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("mod")) {
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(player.getName());
+            if (dbUser.getRank() == RankEnum.ADMIN || dbUser.getRank() == RankEnum.MOD) {
                 Bukkit.getOnlinePlayers().forEach(players -> {
-                    DBUser dbusers = new DBUser(players.getUniqueId().toString(), players.getName());
+                    DBUser dbusers = Bootstrap.getInstance().getRankManager().getDBUser(players.getName());
                     if (dbusers.getRank().getRankLevel() < 2) {
                         for (int i = 0; i < 150; i++) {
                             players.sendMessage("");

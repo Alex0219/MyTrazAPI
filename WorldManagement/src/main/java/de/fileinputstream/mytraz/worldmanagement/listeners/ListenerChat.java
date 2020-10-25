@@ -2,6 +2,8 @@ package de.fileinputstream.mytraz.worldmanagement.listeners;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
 import de.fileinputstream.mytraz.worldmanagement.chatlog.entry.ChatEntry;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -50,41 +52,22 @@ public class ListenerChat implements Listener {
             @Override
             public void run() {
                 String msg = event.getMessage();
-                String rank = RankManager.getRank(uuid);
-                if (rank.equalsIgnoreCase("mod")) {
+                DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(event.getPlayer().getName());
+                if (dbUser.getRank() == RankEnum.MOD) {
                     Bukkit.broadcastMessage("§cMod §7| §c" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("architekt")) {
-                    Bukkit.broadcastMessage("§2" + p.getName() + "§7 » " + msg);
-                }
-                if (rank.equalsIgnoreCase("spieler")) {
+                if (dbUser.getRank() == RankEnum.SPIELER) {
                     Bukkit.broadcastMessage("§a" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("dev")) {
-                    Bukkit.broadcastMessage("§3" + p.getName() + "§7 » " + msg);
-                }
-                if (rank.equalsIgnoreCase("admin")) {
+                if (dbUser.getRank() == RankEnum.ADMIN) {
                     Bukkit.broadcastMessage("§4Admin §7| §4" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("stammspieler")) {
+                if (dbUser.getRank() == RankEnum.STAMMSPIELER) {
                     Bukkit.broadcastMessage("§6Stammspieler §7| §6" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("youtuber")) {
-                    Bukkit.broadcastMessage("§5" + p.getName() + "§7 » " + msg);
+                if (dbUser.getRank() == RankEnum.SPENDER) {
+                    Bukkit.broadcastMessage("§bSpender §7| §b" + p.getName() + "§7 » " + msg);
                 }
-                if (rank.equalsIgnoreCase("premium".toLowerCase())) {
-                    Bukkit.broadcastMessage("§6" + p.getName() + "§7 » " + msg);
-                }
-                if (rank.equalsIgnoreCase("bauleitung")) {
-                    Bukkit.broadcastMessage("§2§l" + p.getName() + "§7 » " + msg);
-                }
-                if (rank.equalsIgnoreCase("superadmin")) {
-                    Bukkit.broadcastMessage("§4Admin §7❘ §4" + p.getName() + "§7 » " + msg);
-                }
-                if (rank.equalsIgnoreCase("partner")) {
-                    Bukkit.broadcastMessage("§6§l" + p.getName() + "§7 » " + msg);
-                }
-
             }
 
         });

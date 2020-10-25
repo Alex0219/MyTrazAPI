@@ -1,6 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement.rank;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.language.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -53,14 +54,24 @@ public class DBUser {
 
     String uuid;
     String name;
+    RankEnum rank = null;
+    Language language;
     Player player;
 
     public DBUser(String uuid, String name) {
         this.uuid = uuid;
         this.name = name;
+        this.rank = RankEnum.getRankByName(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "rank"));
         if (Bukkit.getPlayer(name) != null) {
             this.player = Bukkit.getPlayer(uuid);
         }
+        String language = Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "language");
+        if (language == "DE") {
+            this.language = Language.GERMAN;
+        } else if (language == "EN") {
+            this.language = Language.ENGLISH;
+        }
+
     }
 
     public String getUuid() {
@@ -77,8 +88,11 @@ public class DBUser {
         } catch (java.lang.ClassCastException exception) {
             Bootstrap.getInstance().getRedisConnector().connectToRedis("127.0.0.1", 6379);
             Bootstrap.getInstance().jedis = Bootstrap.getInstance().getRedisConnector().getJedis();
+        } catch (Exception exception) {
+            Bootstrap.getInstance().getRedisConnector().connectToRedis("127.0.0.1", 6379);
+            Bootstrap.getInstance().jedis = Bootstrap.getInstance().getRedisConnector().getJedis();
         }
-        return false;
+        return true;
     }
 
     public void createUser() {
@@ -117,12 +131,21 @@ public class DBUser {
         return Integer.valueOf(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "votes"));
     }
 
+    public Integer getStoredEXP() {
+        return Integer.valueOf(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "storedexp"));
+    }
+
+    public void setEXP(int exp) {
+        Bootstrap.getInstance().getJedis().hset("uuid:" + getUuid(), "storedexp", String.valueOf(exp));
+    }
+
     public void addVote() {
         int currentVotes = getVotes();
         int newVotes = currentVotes + 1;
         Bootstrap.getInstance().getJedis().hset("uuid:" + getUuid(), "votes", String.valueOf(newVotes));
 
     }
+
 
     public String getOnlinetime() {
         int minutes = Integer.parseInt(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "ontime"));
@@ -151,10 +174,15 @@ public class DBUser {
     }
 
     public RankEnum getRank() {
-        return RankEnum.getRankByName(Bootstrap.getInstance().getJedis().hget("uuid:" + getUuid(), "rank"));
+        return rank;
     }
 
+    public void setRank(RankEnum rank) {
+        this.rank = rank;
+    }
 
-
+    public Language getLanguage() {
+        return language;
+    }
 }
 

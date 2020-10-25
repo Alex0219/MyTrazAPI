@@ -1,5 +1,8 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
+import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -13,10 +16,8 @@ public class CommandGM implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-
-            String uuid = player.getUniqueId().toString();
-            String rank = RankManager.getRank(uuid);
-            if (rank.equalsIgnoreCase("admin")) {
+            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(player.getName());
+            if (dbUser.getRank() == RankEnum.ADMIN) {
                 if (args.length == 1) {
                     switch (Integer.parseInt(args[0])) {
 

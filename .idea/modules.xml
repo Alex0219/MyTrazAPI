@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BungeeAddon/BungeeAddon.iml" filepath="$PROJECT_DIR$/BungeeAddon/BungeeAddon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GlobalCore/GlobalCore.iml" filepath="$PROJECT_DIR$/GlobalCore/GlobalCore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/None - API.iml" filepath="$PROJECT_DIR$/None - API.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MC-Survival.de.iml" filepath="$PROJECT_DIR$/.idea/MC-Survival.de.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WorldManagement/NPC-Util/NPC-Util.iml" filepath="$PROJECT_DIR$/WorldManagement/NPC-Util/NPC-Util.iml" />
       <module fileurl="file://$PROJECT_DIR$/WorldManagement/WorldManagement.iml" filepath="$PROJECT_DIR$/WorldManagement/WorldManagement.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MyTrazAPI/src/main/main.iml" filepath="$PROJECT_DIR$/MyTrazAPI/src/main/main.iml" />
     </modules>
   </component>
 </project>

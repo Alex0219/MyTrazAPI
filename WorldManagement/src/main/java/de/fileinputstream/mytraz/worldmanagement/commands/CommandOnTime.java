@@ -47,7 +47,7 @@ public class CommandOnTime implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player) {
-            commandSender.sendMessage("§7Deine Spielzeit: §c" + new DBUser(((Player) commandSender).getUniqueId().toString(),commandSender.getName()).getOnlinetime());
+            commandSender.sendMessage("§7Deine Spielzeit: §c" + Bootstrap.getInstance().getRankManager().getDBUser(commandSender.getName()).getOnlinetime());
         }
         return false;
     }

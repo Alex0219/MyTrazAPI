@@ -1,8 +1,10 @@
 package de.fileinputstream.mytraz.worldmanagement.commands;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
-import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
+import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,8 +12,8 @@ import org.bukkit.entity.Player;
 
 /**
  * User: Alexander<br/>
- * Date: 04.02.2018<br/>
- * Time: 21:46<br/>
+ * Date: 13.02.2018<br/>
+ * Time: 19:53<br/>
  * MIT License
  * <p>
  * Copyright (c) 2017 Alexander Fiedler
@@ -43,34 +45,49 @@ import org.bukkit.entity.Player;
  * <p>
  * DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEßLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
  */
-public class CommandWorldInfo implements CommandExecutor {
+public class CommandLockWorld implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = UUIDFetcher.getUUID(player.getName()).toString();
-            String rank = RankManager.getRank(uuid);
-            if (rank.equalsIgnoreCase("admin") || rank.equalsIgnoreCase("sup") || rank.equalsIgnoreCase("mod") || rank.equalsIgnoreCase("partner")) {
-                if (args.length == 1) {
-                    String playername = args[0];
-                    String targetUUID = UUIDFetcher.getUUID(playername).toString();
-                    player.sendMessage("§7===========§a" + playername + "§7==============");
-                    player.sendMessage("§aInfo über:§4 " + playername);
-                    player.sendMessage("§aWelten:§6 " + Bootstrap.getInstance().getWorldManager().getWorld(targetUUID));
-                    player.sendMessage("§7===========§a" + playername + "§7==============");
-                    if (RankManager.getRank(targetUUID).equalsIgnoreCase("")) {
-                        player.sendMessage("§bMC-Survival.de §7» Dieser Spieler existiert nicht!");
+            if (args.length == 0) {
+                DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(player.getName());
+                String uuid = dbUser.getUuid();
+                if (Bootstrap.getInstance().getWorldManager().hasWorld(uuid)) {
+                    String worldID = Bootstrap.getInstance().getWorldManager().getWorld(uuid);
+                    if (Bukkit.getWorld(worldID) == null) {
+                        player.sendMessage("§bMC-Survival.de §7» §cIn deiner Welt befindet sich derzeit kein fremder Spieler.");
+                        return true;
+                    }
+                    for (Player worldPlayers : Bukkit.getWorld(worldID).getPlayers()) {
+                        DBUser worldDBUser = Bootstrap.getInstance().getRankManager().getDBUser(worldPlayers.getName());
+                        if (!worldPlayers.equals(player)) {
+                            if (!Bootstrap.getInstance().getWorldManager().isResidentInWorld(worldDBUser.getUuid(), worldID)) {
+                                if (dbUser.getRank().getRankLevel() >= worldDBUser.getRank().getRankLevel()) {
+                                    worldPlayers.teleport(Bootstrap.getInstance().getSpawnLocation());
+                                    worldPlayers.sendMessage("§bMC-Survival.de §7» §cDu wurdest zum Spawn teleportiert, da die aktuelle Welt gesichert wurde!");
+
+                                } else {
+                                }
+                            }
+
+                        }
 
                     }
+
+                    player.sendMessage("§bMC-Survival.de §7» Es wurden alle Spieler aus der Welt geworfen!");
+                    return true;
+
                 } else {
-                    player.sendMessage("§bMC-Survival.de §7» Verwende /worldinfo <Spieler>");
+                    player.sendMessage("§bMC-Survival.de §7» Du hast noch keine Welt.");
                     return true;
                 }
-            } else {
 
+            } else {
+                player.sendMessage("§bMC-Survival.de §7» Bitte verwende /lockworld");
+                return true;
             }
-        } else {
-            sender.sendMessage("§bMC-Survival.de §7» Nur Spieler können diesen Befehö ausführen.");
+
         }
         return false;
     }

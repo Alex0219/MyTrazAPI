@@ -53,7 +53,6 @@ public class CommandAcceptinvite implements CommandExecutor {
             if (Bootstrap.getInstance().getWorldManager().worldInvites.containsKey(uuid)) {
                 String worldID = Bootstrap.getInstance().getWorldManager().worldInvites.get(uuid);
                 Bootstrap.getInstance().getWorldManager().addResident(worldID, uuid);
-                System.out.println("§bMC-Survival.de §7» Du hast die Einladung erfolgreich angenommen!");
                 Bootstrap.getInstance().getWorldManager().worldInvites.remove(uuid);
                 Bukkit.createWorld(new WorldCreator(worldID));
                 player.teleport(Bukkit.getWorld(worldID).getSpawnLocation());

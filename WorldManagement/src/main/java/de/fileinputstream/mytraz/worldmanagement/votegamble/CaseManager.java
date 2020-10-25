@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -62,11 +63,16 @@ public class CaseManager {
 
     public static void loadCaseOpening() {
 
-        ItemStack repairBook = new ItemStack(Material.ENCHANTED_BOOK, 1);
+
+        ItemStack repairBook = addBookEnchantment(new ItemStack(Material.ENCHANTED_BOOK, 1), Enchantment.MENDING, 1);
         ItemMeta repairBook_im = repairBook.getItemMeta();
         repairBook_im.setDisplayName("Repair-Book x" + repairBook.getAmount());
-        addBookEnchantment(repairBook, Enchantment.MENDING, 1);
         repairBook.setItemMeta(repairBook_im);
+
+        ItemStack dyingTotem = new ItemStack(Material.TOTEM_OF_UNDYING, 1);
+        ItemMeta dyingTotem_meta = dyingTotem.getItemMeta();
+        dyingTotem_meta.setDisplayName("Unsterblichkeitstotem  x" + dyingTotem.getAmount());
+        dyingTotem.setItemMeta(dyingTotem_meta);
 
         ItemStack diamond = new ItemStack(Material.DIAMOND, 4);
         ItemMeta diamond_meta = diamond.getItemMeta();
@@ -161,6 +167,7 @@ public class CaseManager {
         caseopeningitems.add(diamond_leggings);
         caseopeningitems.add(oakWood);
         caseopeningitems.add(sapling);
+        caseopeningitems.add(dyingTotem);
         caseopeningitems.add(bread);
         caseopeningitems.add(diamond_boots);
         caseopeningitems.add(xp_bottle);

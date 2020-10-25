@@ -1,6 +1,7 @@
 package de.fileinputstream.mytraz.worldmanagement.tracker;
 
 import de.fileinputstream.mytraz.worldmanagement.Bootstrap;
+import de.fileinputstream.mytraz.worldmanagement.rank.DBUser;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankEnum;
 import de.fileinputstream.mytraz.worldmanagement.rank.RankManager;
 import de.fileinputstream.mytraz.worldmanagement.uuid.NameTags;
@@ -68,27 +69,30 @@ public class OntimeTracker {
                     Bootstrap.getInstance().jedis = Bootstrap.getInstance().getRedisConnector().getJedis();
                 }
                 for (final Player all : Bukkit.getOnlinePlayers()) {
-                    try {
-                        final RankEnum rank = RankEnum.getRankByName(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "rank"));
-                        final long currentOntime = Long.parseUnsignedLong(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "ontime"));
-                        if (rank.getRankLevel() == 0 && currentOntime > 5630) {
-                            //set new rank if ontime is more than 4 days
-                            RankManager.setRank(all.getUniqueId().toString(), "stammspieler");
-                            //update tablist
+                    if (!Bootstrap.getInstance().getAfkPlayers().contains(all)) {
+                        try {
+                            DBUser dbUser = Bootstrap.getInstance().getRankManager().getDBUser(all.getName());
+                            final long currentOntime = Long.parseLong(Bootstrap.getInstance().getJedis().hget("uuid:" + all.getUniqueId().toString(), "ontime"));
+                            if (dbUser.getRank().getId() == 0 && currentOntime > 2864) {
+                                //set new rank if ontime is more than 4 days
+                                RankManager.setRank(all.getUniqueId().toString(), "stammspieler");
+                                dbUser.setRank(RankEnum.STAMMSPIELER);
+                                //update tablist
 
-                            Bukkit.getOnlinePlayers().forEach(players -> NameTags.setTags(players));
-                        }
+                                Bukkit.getOnlinePlayers().forEach(players -> NameTags.setTags(players));
+                            }
 
-                        final long ontimeNow = currentOntime + 1;
-                        if (!Bootstrap.getInstance().getJedis().isConnected()) {
-                            Bootstrap.getInstance().getJedis().connect();
+                            final long ontimeNow = currentOntime + 1;
+                            if (!Bootstrap.getInstance().getJedis().isConnected()) {
+                                Bootstrap.getInstance().getJedis().connect();
+                            }
+                            Bootstrap.getInstance().getJedis().hset("uuid:" + UUIDFetcher.getUUID(all.getName()), "ontime", String.valueOf(ontimeNow));
+                        } catch (final Exception ex) {
                         }
-                        Bootstrap.getInstance().getJedis().hset("uuid:" + UUIDFetcher.getUUID(all.getName()), "ontime", String.valueOf(ontimeNow));
-                    } catch (final Exception ex) {
                     }
                 }
             }
-        }, 1L, 60 * 20);
+        }, 60 * 20, 60 * 20);
     }
 
 

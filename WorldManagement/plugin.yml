@@ -1,9 +1,12 @@
 name: WorldManagement
 main: de.fileinputstream.mytraz.worldmanagement.Bootstrap
+depend: [ProtocolLib]
 version: 1.0
 description: MyTraz World Management
 author: FileInputStream
 api-version: 1.16
+loadbefore:
+  - ProtocolLib
 
 commands:
     tpworld:
@@ -65,7 +68,7 @@ commands:
     invsee:
 
     cc:
-        aliases: [chatclear,leerdenchat]
+      aliases: [chatclear,leerdenchat]
 
     denybackup:
 
@@ -74,3 +77,27 @@ commands:
     home:
 
     sethome:
+
+    discord:
+
+    tp:
+
+    tpa:
+
+    tpaaccept:
+
+    tpadeny:
+
+    tpahere:
+
+    tpahereaccept:
+
+    tpahereall:
+
+    tpaheredeny:
+
+    tpatoggle:
+
+    lockworld:
+
+    afk:

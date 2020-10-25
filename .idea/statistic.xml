@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Statistic">
+    <option name="activateWhenOpenProject" value="true" />
     <option name="excludedDirectories">
       <list>
         <option value="$PROJECT_DIR$/Teamspeak3Module/src/com" />
         <option value="$PROJECT_DIR$/BungeeAddon/src/com" />
+        <option value="$PROJECT_DIR$/BungeeAddon" />
+        <option value="$PROJECT_DIR$/GlobalCache" />
+        <option value="$PROJECT_DIR$/MyTrazKnockffa" />
+        <option value="$PROJECT_DIR$/MyTrazAPI" />
+        <option value="$PROJECT_DIR$/MyTrazSignAddon" />
+        <option value="$PROJECT_DIR$/MyTrazKnockffa" />
+        <option value="$PROJECT_DIR$/RedisBuilder" />
+        <option value="$PROJECT_DIR$/WorldBackup" />
+        <option value="$PROJECT_DIR$/MyTrazMiniGameLib" />
+        <option value="$PROJECT_DIR$/src" />
+        <option value="$PROJECT_DIR$/Teamspeak3Module" />
       </list>
     </option>
   </component>

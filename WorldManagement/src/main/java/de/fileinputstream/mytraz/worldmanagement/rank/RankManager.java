@@ -7,6 +7,7 @@ import de.fileinputstream.mytraz.worldmanagement.uuid.UUIDFetcher;
 
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -46,6 +47,8 @@ import java.util.UUID;
  */
 public class RankManager {
 
+    public ArrayList<DBUser> dbusers = new ArrayList<>();
+
     /**
      * @param uuid
      * @return @{@link String} Gibt einen String zurück, der den Rang des Spielers enthält.
@@ -69,6 +72,15 @@ public class RankManager {
             Bootstrap.getInstance().getJedis().hset("uuid:" + uuid, "rank", rank);
 
         }
+    }
+
+    public DBUser getDBUser(final String name) {
+        for (DBUser dbusers : Bootstrap.getInstance().getRankManager().getDbusers()) {
+            if (dbusers.getName().equalsIgnoreCase(name)) {
+                return dbusers;
+            }
+        }
+        return null;
     }
 
 
@@ -140,5 +152,7 @@ public class RankManager {
         }
     }
 
-
+    public ArrayList<DBUser> getDbusers() {
+        return dbusers;
+    }
 }
